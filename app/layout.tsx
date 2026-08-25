@@ -1,5 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import Header from "@/components/Header";
+import { ClimateProvider } from "@/lib/ClimateContext";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -38,7 +40,15 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       <head>
         <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
       </head>
-      <body className="min-h-full flex flex-col bg-background text-foreground">{children}</body>
+      <body className="min-h-full flex flex-col bg-background text-foreground">
+        <ClimateProvider>
+          <Header />
+          <main className="mx-auto flex w-full max-w-7xl flex-1 flex-col gap-5 px-4 py-6 sm:px-6 lg:px-8">{children}</main>
+          <footer className="mx-auto w-full max-w-7xl px-4 py-6 text-center text-xs text-muted sm:px-6 lg:px-8">
+            Climate data from Open-Meteo. All analytics computed locally in your browser.
+          </footer>
+        </ClimateProvider>
+      </body>
     </html>
   );
 }

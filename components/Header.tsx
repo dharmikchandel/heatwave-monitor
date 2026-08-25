@@ -2,29 +2,25 @@
 
 import { AnimatePresence, motion } from "framer-motion";
 import { Loader2, LocateFixed, MapPin, Search, Thermometer } from "lucide-react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState, type KeyboardEvent } from "react";
+import { useClimate } from "@/lib/ClimateContext";
 import { searchLocations } from "@/lib/api";
 import type { GeoLocation } from "@/lib/types";
 import { cn, FOCUS_RING, formatClock } from "@/lib/utils";
 import ThemeToggle from "./ThemeToggle";
 
-interface HeaderProps {
-  currentLocation: GeoLocation | null;
-  onLocationSelect: (location: GeoLocation) => void;
-  onUseMyLocation: () => void;
-  isLocating: boolean;
-  unit: "C" | "F";
-  onUnitChange: (unit: "C" | "F") => void;
-}
+const NAV_LINKS = [
+  { href: "/", label: "Dashboard" },
+  { href: "/forecast", label: "Forecast" },
+  { href: "/safety", label: "Safety" },
+  { href: "/about", label: "About" },
+] as const;
 
-export default function Header({
-  currentLocation,
-  onLocationSelect,
-  onUseMyLocation,
-  isLocating,
-  unit,
-  onUnitChange,
-}: HeaderProps) {
+export default function Header() {
+  const { location: currentLocation, selectLocation, locateDevice, isLocating, unit, setUnit } = useClimate();
+  const pathname = usePathname();
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<GeoLocation[]>([]);
   const [isSearching, setIsSearching] = useState(false);
@@ -78,7 +74,7 @@ export default function Header({
   }, [query]);
 
   function handleSelect(location: GeoLocation) {
-    onLocationSelect(location);
+    selectLocation(location);
     setQuery("");
     setResults([]);
     setIsOpen(false);
@@ -108,15 +104,15 @@ export default function Header({
   return (
     <header className="sticky top-0 z-40 border-b border-surface-border bg-background/80 backdrop-blur-md">
       <div className="mx-auto flex max-w-7xl flex-wrap items-center gap-3 px-4 py-3 sm:px-6 lg:px-8">
-        <div className="flex items-center gap-2.5">
+        <Link href="/" className={cn("flex items-center gap-2.5 rounded-lg", FOCUS_RING)}>
           <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-orange-500 to-red-600 shadow-lg shadow-orange-600/20">
-            <Thermometer className="h-5 w-5 text-white" strokeWidth={2.5} />
+            <Thermometer className="h-5 w-5 text-white" strokeWidth={2.5} aria-hidden="true" />
           </div>
           <div className="leading-tight">
             <h1 className="text-base font-bold tracking-tight sm:text-lg">Heatwave Monitor</h1>
             <p className="text-[11px] font-medium text-muted">Climate Intelligence Dashboard</p>
           </div>
-        </div>
+        </Link>
 
         <div ref={containerRef} className="relative ml-0 flex-1 sm:ml-4 sm:min-w-[240px] sm:max-w-md">
           <div className="relative">
@@ -192,7 +188,7 @@ export default function Header({
 
         <button
           type="button"
-          onClick={onUseMyLocation}
+          onClick={locateDevice}
           disabled={isLocating}
           aria-label="Use my current location"
           className={cn(
@@ -208,7 +204,7 @@ export default function Header({
             <button
               key={u}
               type="button"
-              onClick={() => onUnitChange(u)}
+              onClick={() => setUnit(u)}
               aria-pressed={unit === u}
               className={cn(
                 "rounded-full px-2.5 py-1.5 transition",
@@ -233,6 +229,28 @@ export default function Header({
           </span>
         </div>
       </div>
+
+      <nav aria-label="Main" className="border-t border-surface-border/60">
+        <div className="mx-auto flex max-w-7xl gap-1 overflow-x-auto px-4 py-1.5 sm:px-6 lg:px-8">
+          {NAV_LINKS.map((link) => {
+            const isActive = link.href === "/" ? pathname === "/" : pathname.startsWith(link.href);
+            return (
+              <Link
+                key={link.href}
+                href={link.href}
+                aria-current={isActive ? "page" : undefined}
+                className={cn(
+                  "shrink-0 rounded-full px-3 py-1.5 text-xs font-semibold transition",
+                  isActive ? "bg-orange-600 text-white shadow-sm" : "text-muted hover:bg-surface hover:text-foreground",
+                  FOCUS_RING,
+                )}
+              >
+                {link.label}
+              </Link>
+            );
+          })}
+        </div>
+      </nav>
     </header>
   );
 }
