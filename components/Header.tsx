@@ -8,7 +8,7 @@ import { useEffect, useRef, useState, type KeyboardEvent } from "react";
 import { useClimate } from "@/lib/ClimateContext";
 import { searchLocations } from "@/lib/api";
 import type { GeoLocation } from "@/lib/types";
-import { cn, FOCUS_RING, formatClock } from "@/lib/utils";
+import { cn, FOCUS_RING, formatClock, formatRelativeTime } from "@/lib/utils";
 import ThemeToggle from "./ThemeToggle";
 
 const NAV_LINKS = [
@@ -19,7 +19,7 @@ const NAV_LINKS = [
 ] as const;
 
 export default function Header() {
-  const { location: currentLocation, selectLocation, locateDevice, isLocating, unit, setUnit } = useClimate();
+  const { location: currentLocation, selectLocation, locateDevice, isLocating, unit, setUnit, lastUpdated } = useClimate();
   const pathname = usePathname();
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<GeoLocation[]>([]);
@@ -30,7 +30,10 @@ export default function Header() {
   const containerRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const isDropdownVisible = isOpen && query.trim().length >= 2 && results.length > 0;
+  const hasQuery = query.trim().length >= 2;
+  const showResults = isOpen && hasQuery && results.length > 0;
+  const showNoResults = isOpen && hasQuery && !isSearching && results.length === 0;
+  const isDropdownVisible = showResults || showNoResults;
 
   useEffect(() => {
     const interval = setInterval(() => setNow(new Date()), 1000);
@@ -53,9 +56,14 @@ export default function Header() {
       return;
     }
 
+    // Set synchronously (not inside the debounced callback below) so the
+    // dropdown never briefly renders a false "no cities found" message in
+    // the ~300ms gap between typing and the debounced fetch actually starting.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setIsSearching(true);
+
     const controller = new AbortController();
     const timeout = setTimeout(async () => {
-      setIsSearching(true);
       try {
         const locations = await searchLocations(trimmed, controller.signal);
         setResults(locations);
@@ -82,7 +90,13 @@ export default function Header() {
   }
 
   function handleInputKeyDown(e: KeyboardEvent<HTMLInputElement>) {
-    if (!isDropdownVisible) return;
+    if (e.key === "Escape") {
+      setIsOpen(false);
+      setActiveIndex(-1);
+      return;
+    }
+
+    if (!showResults) return;
 
     if (e.key === "ArrowDown") {
       e.preventDefault();
@@ -95,9 +109,6 @@ export default function Header() {
         e.preventDefault();
         handleSelect(results[activeIndex]);
       }
-    } else if (e.key === "Escape") {
-      setIsOpen(false);
-      setActiveIndex(-1);
     }
   }
 
@@ -145,7 +156,19 @@ export default function Header() {
           </div>
 
           <AnimatePresence>
-            {isDropdownVisible && (
+            {showNoResults && (
+              <motion.div
+                initial={{ opacity: 0, y: -6 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -6 }}
+                transition={{ duration: 0.15 }}
+                role="status"
+                className="glass-card absolute top-full z-50 mt-2 w-full rounded-xl px-4 py-3 text-sm text-muted shadow-xl"
+              >
+                No cities found for &ldquo;{query.trim()}&rdquo;.
+              </motion.div>
+            )}
+            {showResults && (
               <motion.ul
                 id="location-search-listbox"
                 role="listbox"
@@ -221,11 +244,12 @@ export default function Header() {
 
         <div className="hidden flex-col items-end leading-tight lg:flex">
           <span className="flex items-center gap-1.5 text-xs font-medium">
-            <MapPin className="h-3 w-3 text-orange-500" />
+            <MapPin className="h-3 w-3 text-orange-500" aria-hidden="true" />
             {currentLocation ? `${currentLocation.name}${currentLocation.country ? `, ${currentLocation.country}` : ""}` : "Locating..."}
           </span>
-          <span className="font-mono text-[11px] text-muted" suppressHydrationWarning>
+          <span className="font-mono text-[11px] text-muted" suppressHydrationWarning={true}>
             {now ? formatClock(now, currentLocation?.timezone) : " "}
+            {now && lastUpdated ? ` · Updated ${formatRelativeTime(lastUpdated, now)}` : null}
           </span>
         </div>
       </div>

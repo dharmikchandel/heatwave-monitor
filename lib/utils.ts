@@ -53,6 +53,17 @@ export function formatClock(date: Date, timezone?: string): string {
   });
 }
 
+/** Short "time ago" label (e.g. "3m ago"), used to surface how stale cached data might be. */
+export function formatRelativeTime(from: Date, to: Date): string {
+  const diffSec = Math.max(0, Math.round((to.getTime() - from.getTime()) / 1000));
+  if (diffSec < 10) return "just now";
+  if (diffSec < 60) return `${diffSec}s ago`;
+  const diffMin = Math.round(diffSec / 60);
+  if (diffMin < 60) return `${diffMin}m ago`;
+  const diffHr = Math.round(diffMin / 60);
+  return `${diffHr}h ago`;
+}
+
 export const RISK_LEVEL_COLOR: Record<HeatRiskLevel, string> = {
   normal: "#10B981",
   caution: "#F59E0B",

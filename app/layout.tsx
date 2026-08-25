@@ -1,3 +1,4 @@
+import { Analytics } from "@vercel/analytics/next";
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import Header from "@/components/Header";
@@ -48,6 +49,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
             Climate data from Open-Meteo. All analytics computed locally in your browser.
           </footer>
         </ClimateProvider>
+        <Analytics />
       </body>
     </html>
   );

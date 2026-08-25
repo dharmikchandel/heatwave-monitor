@@ -1,7 +1,7 @@
 "use client";
 
 import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from "react";
-import { climateCacheKey, fetchClimateData, readCache, writeCache } from "./api";
+import { ApiError, climateCacheKey, fetchClimateData, readCache, writeCache } from "./api";
 import { assessHeatwave, buildDailyRiskForecast } from "./heatwaveEngine";
 import type { ClimateData, DailyRiskForecast, GeoLocation, HeatwaveAssessment } from "./types";
 
@@ -17,6 +17,15 @@ const DEFAULT_LOCATION: GeoLocation = {
 
 const UNIT_STORAGE_KEY = "heatwave-unit";
 
+function describeError(err: unknown): string {
+  if (err instanceof ApiError) {
+    if (err.status === 429) return "The weather service is receiving too many requests right now. Please wait a moment and try again.";
+    if (err.status >= 500) return "The weather service is temporarily unavailable. Please try again shortly.";
+    if (err.status === 404) return "No weather data is available for this location.";
+  }
+  return "Couldn't reach the climate data service. Check your connection and try again.";
+}
+
 interface ClimateContextValue {
   location: GeoLocation | null;
   climateData: ClimateData | null;
@@ -27,6 +36,7 @@ interface ClimateContextValue {
   isLoading: boolean;
   isLocating: boolean;
   error: string | null;
+  lastUpdated: Date | null;
   selectLocation: (location: GeoLocation) => void;
   locateDevice: () => void;
   retry: () => void;
@@ -54,6 +64,7 @@ export function ClimateProvider({ children }: { children: ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
   const [isLocating, setIsLocating] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
 
   const locateDevice = useCallback(() => {
     if (typeof navigator === "undefined" || !navigator.geolocation) {
@@ -95,16 +106,18 @@ export function ClimateProvider({ children }: { children: ReactNode }) {
     const cacheKey = climateCacheKey(loc.latitude, loc.longitude);
     const cached = readCache<ClimateData>(cacheKey);
     if (cached) {
-      setClimateData(cached);
+      setClimateData(cached.value);
+      setLastUpdated(new Date(cached.timestamp));
       setIsLoading(false);
     }
 
     try {
       const data = await fetchClimateData(loc.latitude, loc.longitude);
       setClimateData(data);
+      setLastUpdated(new Date());
       writeCache(cacheKey, data);
-    } catch {
-      if (!cached) setError("Couldn't reach the climate data service. Check your connection and try again.");
+    } catch (err) {
+      if (!cached) setError(describeError(err));
     } finally {
       setIsLoading(false);
     }
@@ -155,6 +168,7 @@ export function ClimateProvider({ children }: { children: ReactNode }) {
     isLoading,
     isLocating,
     error,
+    lastUpdated,
     selectLocation,
     locateDevice,
     retry,

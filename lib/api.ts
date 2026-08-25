@@ -7,6 +7,28 @@ const FORECAST_URL = "https://api.open-meteo.com/v1/forecast";
 const CACHE_PREFIX = "heatwave-monitor:";
 const CLIMATE_CACHE_TTL_MS = 10 * 60 * 1000; // 10 minutes — matches Open-Meteo's update cadence
 
+/** Thrown for non-2xx API responses, carrying the HTTP status so callers can
+ * distinguish "rate limited" / "service down" from a generic network failure. */
+export class ApiError extends Error {
+  status: number;
+  constructor(message: string, status: number) {
+    super(message);
+    this.name = "ApiError";
+    this.status = status;
+  }
+}
+
+/** Open-Meteo can return `null` for individual samples it has no data for
+ * (forecast-horizon edges, model gaps). Coerces those — and any other
+ * non-finite value — to a safe fallback so downstream math never sees NaN. */
+function sanitizeNumberArray(values: unknown[], fallback = 0): number[] {
+  return values.map((v) => (typeof v === "number" && Number.isFinite(v) ? v : fallback));
+}
+
+function sanitizeNumber(value: unknown, fallback = 0): number {
+  return typeof value === "number" && Number.isFinite(value) ? value : fallback;
+}
+
 interface OpenMeteoGeocodingResult {
   id: number;
   name: string;
@@ -57,7 +79,7 @@ export async function searchLocations(query: string, signal?: AbortSignal): Prom
   url.searchParams.set("format", "json");
 
   const res = await fetch(url.toString(), { signal });
-  if (!res.ok) throw new Error(`Geocoding request failed: ${res.status}`);
+  if (!res.ok) throw new ApiError(`Geocoding request failed: ${res.status}`, res.status);
 
   const data: { results?: OpenMeteoGeocodingResult[] } = await res.json();
   return (data.results ?? []).map((r) => ({
@@ -92,13 +114,14 @@ export async function fetchClimateData(
   url.searchParams.set("forecast_days", "7");
 
   const res = await fetch(url.toString(), { signal });
-  if (!res.ok) throw new Error(`Forecast request failed: ${res.status}`);
+  if (!res.ok) throw new ApiError(`Forecast request failed: ${res.status}`, res.status);
 
   const data: OpenMeteoForecastResponse = await res.json();
 
-  const heatIndex = data.hourly.temperature_2m.map((t, i) =>
-    calculateHeatIndex(t, data.hourly.relative_humidity_2m[i]),
-  );
+  const hourlyTemp = sanitizeNumberArray(data.hourly.temperature_2m);
+  const hourlyHumidity = sanitizeNumberArray(data.hourly.relative_humidity_2m);
+  const hourlyApparent = sanitizeNumberArray(data.hourly.apparent_temperature);
+  const heatIndex = hourlyTemp.map((t, i) => calculateHeatIndex(t, hourlyHumidity[i]));
 
   return {
     latitude: data.latitude,
@@ -106,40 +129,40 @@ export async function fetchClimateData(
     timezone: data.timezone,
     current: {
       time: data.current.time,
-      temperature2m: data.current.temperature_2m,
-      relativeHumidity2m: data.current.relative_humidity_2m,
-      apparentTemperature: data.current.apparent_temperature,
-      weatherCode: data.current.weather_code,
-      windSpeed10m: data.current.wind_speed_10m,
-      directNormalIrradiance: data.current.direct_normal_irradiance,
+      temperature2m: sanitizeNumber(data.current.temperature_2m),
+      relativeHumidity2m: sanitizeNumber(data.current.relative_humidity_2m),
+      apparentTemperature: sanitizeNumber(data.current.apparent_temperature),
+      weatherCode: sanitizeNumber(data.current.weather_code),
+      windSpeed10m: sanitizeNumber(data.current.wind_speed_10m),
+      directNormalIrradiance: sanitizeNumber(data.current.direct_normal_irradiance),
     },
     hourly: {
       time: data.hourly.time,
-      temperature2m: data.hourly.temperature_2m,
-      relativeHumidity2m: data.hourly.relative_humidity_2m,
-      apparentTemperature: data.hourly.apparent_temperature,
+      temperature2m: hourlyTemp,
+      relativeHumidity2m: hourlyHumidity,
+      apparentTemperature: hourlyApparent,
       heatIndex,
     },
     daily: {
       time: data.daily.time,
-      temperature2mMax: data.daily.temperature_2m_max,
-      temperature2mMin: data.daily.temperature_2m_min,
-      apparentTemperatureMax: data.daily.apparent_temperature_max,
-      uvIndexMax: data.daily.uv_index_max,
-      precipitationSum: data.daily.precipitation_sum,
+      temperature2mMax: sanitizeNumberArray(data.daily.temperature_2m_max),
+      temperature2mMin: sanitizeNumberArray(data.daily.temperature_2m_min),
+      apparentTemperatureMax: sanitizeNumberArray(data.daily.apparent_temperature_max),
+      uvIndexMax: sanitizeNumberArray(data.daily.uv_index_max),
+      precipitationSum: sanitizeNumberArray(data.daily.precipitation_sum),
     },
   };
 }
 
 /** Simple TTL cache over localStorage, used to avoid refetching on quick reloads. */
-export function readCache<T>(key: string, maxAgeMs = CLIMATE_CACHE_TTL_MS): T | null {
+export function readCache<T>(key: string, maxAgeMs = CLIMATE_CACHE_TTL_MS): { value: T; timestamp: number } | null {
   if (typeof window === "undefined") return null;
   try {
     const raw = window.localStorage.getItem(CACHE_PREFIX + key);
     if (!raw) return null;
     const parsed: { value: T; timestamp: number } = JSON.parse(raw);
     if (Date.now() - parsed.timestamp > maxAgeMs) return null;
-    return parsed.value;
+    return parsed;
   } catch {
     return null;
   }
