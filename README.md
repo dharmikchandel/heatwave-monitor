@@ -21,6 +21,7 @@ Heatwave Monitor is a real-time climate dashboard that fetches live weather data
 - [Accessibility](#accessibility)
 - [Data Source & Attribution](#data-source--attribution)
 - [Deployment](#deployment)
+- [CI/CD Pipeline (Jenkins, Docker, Kubernetes)](#cicd-pipeline-jenkins-docker-kubernetes)
 - [Author](#author)
 
 ---
@@ -191,6 +192,89 @@ This project deploys cleanly to [Vercel](https://vercel.com) with zero configura
 2. Import it in the [Vercel dashboard](https://vercel.com/new) — Next.js is auto-detected.
 3. Deploy. No environment variables are required.
 4. To see Web Analytics data, open the project in the Vercel dashboard and enable **Analytics** for it — the `<Analytics />` component is already wired into the app, but Vercel's dashboard toggle is a separate, one-time step.
+
+## CI/CD Pipeline (Jenkins, Docker, Kubernetes)
+
+This project includes a pipeline-as-code CI/CD setup for a college DevOps lab exercise (build → test → containerize → deploy). It runs alongside, and independently of, the Vercel deployment above.
+
+```text
+GitHub
+   ↓  (Poll SCM / webhook)
+Jenkins
+   ↓
+Install Dependencies (bun install)
+   ↓
+Build (bun run build)
+   ↓
+Test (bun test)
+   ↓
+Docker Build
+   ↓
+Kubernetes Deploy
+   ↓
+Application (NodePort service, port 3000)
+```
+
+### Local Development
+
+**Prerequisites:** [Bun](https://bun.sh).
+
+```bash
+bun install        # install dependencies
+bun run dev         # start the dev server at http://localhost:3000
+bun test             # run the automated test suite
+bun run build         # production build
+bun run start          # run the production build locally
+```
+
+### Automated Tests
+
+`lib/heatwaveEngine.ts` is a pure, dependency-free module (heat index formula, risk classification, trend detection), which makes it directly unit-testable with no mocking. `lib/heatwaveEngine.test.ts` uses Bun's built-in test runner (`bun test`) — no extra test framework was added. The Jenkins **Test** stage runs this suite and fails the build if any test fails.
+
+### Docker
+
+```bash
+docker build -t heatwave-monitor:latest .
+docker run -p 3000:3000 heatwave-monitor:latest
+```
+
+Then open `http://localhost:3000`. The image is a multi-stage build: dependencies and the production build happen in a Bun stage, but the final runtime image is a plain `node:22-alpine` running only the traced [`output: "standalone"`](https://nextjs.org/docs/app/api-reference/config/next-config-js/output) server (`node server.js`) — no source code, dev dependencies, or Bun in the shipped image.
+
+### Kubernetes
+
+Manifests live in `k8s/`:
+
+- `k8s/deployment.yaml` — one replica of the `heatwave-monitor` container on port 3000, with `imagePullPolicy: Never` (see [Image Strategy](#docker--kubernetes-image-strategy) below).
+- `k8s/service.yaml` — a `NodePort` Service (port 3000, nodePort 30080), since the Killercoda playground has no cloud load balancer for a `LoadBalancer`-type Service.
+
+```bash
+kubectl apply -f k8s/
+kubectl get pods
+kubectl get deployment heatwave-monitor
+kubectl get service heatwave-monitor
+```
+
+### Docker + Kubernetes Image Strategy
+
+No container registry is used. The Docker image is built directly on the same node's container runtime that Kubernetes/kubelet uses, so `imagePullPolicy: Never` tells Kubernetes to use the local image instead of trying (and failing) to pull one. This is the simplest approach for a single-node Killercoda lab environment — see `NEXT_STEPS.md` for what to do if your specific Killercoda scenario uses a separate cluster runtime (e.g. `kind`/`k3d`) that can't see images built with the host's `docker build` directly.
+
+### Jenkins
+
+The `Jenkinsfile` in the repo root defines a declarative pipeline with these stages:
+
+| Stage | What it does |
+|---|---|
+| Checkout | Pulls the repo from GitHub (`checkout scm`) |
+| Install Dependencies | `bun install --frozen-lockfile` |
+| Build | `bun run build` (Next.js production build) |
+| Test | `bun test` — fails the build (and skips every later stage) if any test fails |
+| Docker Build | `docker build`, tagged `heatwave-monitor:<BUILD_NUMBER>` and `:latest` |
+| Kubernetes Deploy | `kubectl apply -f k8s/`, then `kubectl set image` to roll out the new tag, then `kubectl rollout status` |
+| Verify Deployment | `kubectl get deployment/pods/service` so the console output shows the result |
+
+On success, `package.json` and a generated `build-info.txt` (build number, git commit, image tag) are archived as build artifacts.
+
+Jenkins is triggered from GitHub via **Poll SCM** (checking for new commits on a schedule) rather than a webhook, because the Killercoda environment is a temporary, non-publicly-reachable sandbox that GitHub's webhook delivery can't reach. See `NEXT_STEPS.md` for exact setup steps, since this project ships as code (Jenkinsfile, Dockerfile, k8s manifests) but the Jenkins *job*, its trigger, and the Killercoda cluster itself are configured through the Jenkins/Killercoda UI, not checked into this repository.
 
 ## Author
 

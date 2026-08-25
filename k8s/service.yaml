@@ -1,0 +1,17 @@
+# NodePort is used (not LoadBalancer) because Killercoda's Kubernetes
+# playground has no cloud load balancer to provision one — NodePort exposes
+# the app on every cluster node's IP without extra setup. See README.md.
+apiVersion: v1
+kind: Service
+metadata:
+  name: heatwave-monitor
+  labels:
+    app: heatwave-monitor
+spec:
+  type: NodePort
+  selector:
+    app: heatwave-monitor
+  ports:
+    - port: 3000
+      targetPort: 3000
+      nodePort: 30080
