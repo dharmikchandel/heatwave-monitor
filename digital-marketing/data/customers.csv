@@ -1,0 +1,741 @@
+customer_id,age,gender,occupation,education,annual_income,website_visits_per_month,purchase_frequency,avg_order_value,spending_score,preferred_channel,interests,city,state,country
+HW0113,28.0,Female,Marketing Manager,Bachelor's,2319000.0,21.0,12.0,2539.0,73.0,Google Search,Running; Fitness,Ahmedabad,Gujarat,India
+HW0636,18.0,Female,Student,Bachelor's,91000.0,17.0,4.0,163.0,28.0,Instagram,Campus Life; Fitness,Pune,Maharashtra,India
+HW0664,33.0, m,Traffic Police,High School,257000.0,27.0,7.0,303.0,20.0,,Work Safety; Heat Alerts,Pune,Maharashtra,India
+HW0233,18.0,Female,Student,Bachelor's,92000.0,8.0,4.0,246.0,54.0,Push Notification,Fitness; Gadgets,Nagpur,Maharashtra,India
+HW0189,19.0,Female,Student,Bachelor's,196000.0,7.0,4.0,292.0,34.0,Instagram,Campus Life; Travel,delhi ,Delhi,India
+HW0137,21.0,Male,Traffic Police,High School,,19.0,6.0,380.0,45.0,WhatsApp,Hydration; Heat Alerts,Pune,Maharashtra,India
+HW0087,29.0, m,Software Engineer,Master's,1902000.0,21.0,16.0,2651.0,92.0,Email,Running; Outdoor Sports,Lucknow,Uttar Pradesh,India
+HW0049,45.0,Male,School Administrator,Bachelor's,818000.0,4.0,3.0,3056.0,77.0,Google Search,Heat Action Plans; Reports,Pune,Maharashtra,India
+HW0535,51.0,Female,Government Employee,Bachelor's,1314000.0,11.0,5.0,1312.0,49.0,WhatsApp,Elderly Care; Home Cooling,Delhi,Delhi,India
+HW0292,25.0,Male,Construction Worker,High School,,29.0,6.0,,52.0,WhatsApp,Work Safety; Hydration,Bengaluru,Karnataka,India
+HW0462,47.0,,Doctor,Master's,1039000.0,6.0,5.0,1416.0,67.0,WhatsApp,Home Cooling; Health Advisories,Lucknow,Uttar Pradesh,India
+HW0596,27.0,Female,Software Engineer,Bachelor's,1248000.0,13.0,16.0,3028.0,95.0,Email,Travel; Outdoor Sports,Jaipur,Rajasthan,India
+HW0628,42.0,Female,Event Organiser,Bachelor's,1570000.0,5.0,1.0,3557.0,68.0,LinkedIn,Climate Data; Heat Action Plans,Mumbai,Maharashtra,India
+HW0432,49.0,Male,Retired,Master's,730000.0,7.0,6.0,,67.0,WhatsApp,,Mumbai,Maharashtra,India
+HW0171,24.0,Male,Intern,Bachelor's,161000.0,9.0,2.0,341.0,45.0,Instagram,Campus Life; Fitness,Lucknow,Uttar Pradesh,India
+HW0522,23.0,Male,Student,High School,94000.0,12.0,3.0,210.0,62.0,WhatsApp,Weather Trends; Gadgets,Mumbai,Maharashtra,India
+HW0516,28.0,Male,Delivery Partner,Diploma,129000.0,25.0,10.0,402.0,45.0,WhatsApp,Hydration; Work Safety,Chennai,Tamil Nadu,India
+HW0058,22.0,Female,Intern,High School,60000.0,12.0,6.0,168.0,42.0,Push Notification,Campus Life; Travel,Mumbai,Maharashtra,India
+HW0103,21.0,Female,Intern,Bachelor's,123000.0,12.0,1.0,284.0,69.0,Instagram,Travel; Campus Life,Mumbai,Maharashtra,India
+HW0230,23.0,Male,Intern,High School,109000.0,20.0,3.0,282.0,57.0,Push Notification,Gadgets; Travel,Nagpur,Maharashtra,India
+HW0569,48.0,Female,Event Organiser,Master's,1053000.0,3.0,2.0,4221.0,66.0,LinkedIn,Public Health; Event Planning,Hyderabad,Telangana,India
+HW0578,35.0,Male,Consultant,Master's,1985000.0,30.0,10.0,3053.0,100.0,Email,Fitness; Travel,Nagpur,Maharashtra,India
+HW0272,19.0,Male,Intern,Bachelor's,,11.0,1.0,100.0,42.0,Instagram,Travel; Gadgets,Ahmedabad,Gujarat,India
+HW0240,53.0,Male,Facility Manager,Bachelor's,1071000.0,8.0,2.0,3266.0,83.0,Email,Climate Data; Public Health,Lucknow,Uttar Pradesh,India
+HW0156,19.0,Male,Intern,High School,118000.0,10.0,3.0,254.0,51.0,YouTube,Fitness; Travel,Hyderabad,Telangana,India
+HW0273,45.0,Female,Doctor,Master's,635000.0,6.0,8.0,1058.0,94.0,WhatsApp,Hydration; Home Cooling,Mumbai,Maharashtra,India
+HW0548,55.0,Female,Doctor,Master's,843000.0,8.0,5.0,767.0,50.0,WhatsApp,Home Cooling; Elderly Care,Hyderabad,Telangana,India
+HW0331,18.0,Male,Student,Bachelor's,115000.0,16.0,5.0,292.0,30.0,Instagram,Gadgets; Fitness,Pune,Maharashtra,India
+HW0701,21.0,MALE,Student,High School,140000.0,13.0,3.0,400.0,46.0,Instagram,Travel; Weather Trends,Mumbai,Maharashtra,India
+HW0238,22.0,Female,Intern,Bachelor's,60000.0,21.0,2.0,246.0,53.0,Push Notification,Travel; Fitness,Hyderabad,Telangana,India
+HW0579,39.0,Female,Software Engineer,Master's,1743000.0,18.0,16.0,2818.0,94.0,Instagram,Wearable Tech; Outdoor Sports,bengaluru ,Karnataka,India
+HW0433,47.0,Female,Retired,Master's,1210000.0,8.0,5.0,1340.0,62.0,Email,Home Cooling; Family Safety,Jaipur,Rajasthan,India
+HW0411,40.0,Female,City Planner,Bachelor's,1182000.0,5.0,1.0,4389.0,90.0,Email,Public Health; Reports,Pune,Maharashtra,India
+HW0358,23.0,M,Intern,High School,79000.0,25.0,5.0,228.0,29.0,YouTube,Weather Trends; Campus Life,Bangalore,Karnataka,India
+HW0234,33.0,Female,Software Engineer,Bachelor's,1678000.0,19.0,20.0,3664.0,87.0,Google Search,Running; Travel,Delhi,Delhi,India
+HW0138,41.0,Male,Street Vendor,Diploma,257000.0,31.0,11.0,507.0,44.0,WhatsApp,Heat Alerts; Work Safety,Chennai,Tamil Nadu,India
+HW0649,32.0,F,Teacher,Bachelor's,780000.0,11.0,7.0,1426.0,71.0,Facebook,Family Safety; Elderly Care,Mumbai,Maharashtra,India
+HW0378,41.0,Male,NGO Coordinator,Bachelor's,1889000.0,5.0,2.0,4927.0,61.0,Email,Heat Action Plans; Reports,Bengaluru,Karnataka,India
+HW0247,30.0,male,Software Engineer,Bachelor's,1872000.0,24.0,11.0,3616.0,89.0,,Travel; Fitness,Mumbai,Maharashtra,India
+HW0047,22.0,Female,Intern,High School,61000.0,11.0,1.0,259.0,59.0,YouTube,Fitness; Gadgets,Pune,Maharashtra,India
+HW0102,44.0,Female,School Administrator,Bachelor's,1367000.0,5.0,2.0,3558.0,58.0,Email,Reports; Climate Data,Jaipur,Rajasthan,India
+HW0017,27.0,Female,Construction Worker,Diploma,352000.0,25.0,8.0,594.0,56.0,push notification,Hydration; Heat Alerts,Ahmedabad,Gujarat,India
+HW0052,38.0,Male,Event Organiser,Bachelor's,1359000.0,7.0,3.0,5178.0,67.0,Email,Reports; Event Planning,Mumbai,Maharashtra,India
+HW0712,26.0, m,Delivery Partner,High School,285000.0,26.0,9.0,206.0,37.0,SMS,Heat Alerts; Hydration,Pune,Maharashtra,India
+HW0379,29.0,Male,Cab Driver,High School,282000.0,24.0,9.0,319.0,53.0,WhatsApp,Hydration; Cooling Gear,Bengaluru,Karnataka,India
+HW0314,18.0,male,Student,High School,86000.0,14.0,4.0,385.0,43.0,YouTube,Campus Life; Gadgets,Mumbai,Maharashtra,India
+HW0098,48.0,FEMALE,Traffic Police,Diploma,285000.0,29.0,9.0,285.0,40.0,Email,Heat Alerts; Hydration,Hyderabad,Telangana,India
+HW0614,44.0,Male,Street Vendor,High School,380000.0,28.0,11.0,330.0,33.0,,Work Safety; Hydration,Hyderabad,Telangana,India
+HW0666,43.0,f ,Marketing Manager,Master's,1071000.0,22.0,12.0,2659.0,84.0,YouTube,Travel; Wearable Tech,Pune,Maharashtra,India
+HW0104,21.0,Male,Intern,High School,115000.0,14.0,3.0,280.0,69.0,Push Notification,Gadgets; Travel,Hyderabad,Telangana,India
+HW0046,37.0,Male,Street Vendor,Diploma,242000.0,26.0,11.0,371.0,35.0,Push Notification,Cooling Gear; Hydration,Delhi,Delhi,India
+HW0460,34.0,Male,Construction Worker,High School,261000.0,21.0,10.0,298.0,25.0,WhatsApp,Hydration; Heat Alerts,Hyderabad,Telangana,India
+HW0125,20.0,Male,Intern,Bachelor's,153000.0,24.0,2.0,274.0,51.0,Instagram,Fitness; Gadgets,Bengaluru,Karnataka,India
+HW0506,,Female,Doctor,Master's,924000.0,10.0,7.0,1507.0,61.0,Email,Family Safety; Home Cooling,Lucknow,Uttar Pradesh,India
+HW0711,59.0,Male,Doctor,Master's,895000.0,12.0,5.0,1371.0,71.0,,Home Cooling; Family Safety,Delhi,Delhi,India
+HW0187,34.0,Male,Software Engineer,Bachelor's,1878000.0,10.0,16.0,2814.0,85.0,Email,Outdoor Sports; Fitness,Pune,Maharashtra,India
+HW0124,29.0,Male,Construction Worker,Diploma,282000.0,22.0,13.0,208.0,26.0,Push Notification,Hydration; Heat Alerts,Delhi,Delhi,India
+HW0042,39.0,Female,Traffic Police,Diploma,266000.0,27.0,3.0,252.0,45.0,WhatsApp,Cooling Gear; Work Safety,Chennai,Tamil Nadu,India
+HW0551,19.0,Male,Intern,Bachelor's,145000.0,20.0,10.0,311.0,49.0,WhatsApp,Fitness; Travel,Delhi,Delhi,India
+HW0446,31.0,Male,Marketing Manager,Master's,1133000.0,24.0,20.0,2226.0,77.0,Google Search,Wearable Tech; Fitness,Nagpur,Maharashtra,India
+HW0648,40.0,Female,Marketing Manager,Master's,1534000.0,18.0,14.0,3553.0,78.0,Instagram,Wearable Tech; Fitness,Mumbai,Maharashtra,India
+HW0359,20.0,Male,Student,Bachelor's,60000.0,10.0,5.0,400.0,60.0,Instagram,Campus Life; Fitness,Mumbai,Maharashtra,India
+HW0212,25.0,Male,Street Vendor,High School,226000.0,15.0,8.0,307.0,45.0,push notification,Work Safety; Hydration,Delhi,Delhi,India
+HW0270,19.0,Female,Intern,Bachelor's,142000.0,15.0,6.0,198.0,42.0,WhatsApp,Campus Life; Fitness,Nagpur,Maharashtra,India
+HW0412,24.0,Male,Street Vendor,Diploma,335000.0,30.0,8.0,293.0,30.0,WhatsApp,Hydration; Heat Alerts,Nagpur,Maharashtra,India
+HW0410,43.0,Male,NGO Coordinator,Bachelor's,1455000.0,6.0,2.0,6453.0,77.0,LinkedIn,Public Health; Event Planning,Chennai,Tamil Nadu,India
+HW0528,18.0,Male,Intern,Bachelor's,177000.0,11.0,4.0,224.0,41.0,WhatsApp,Weather Trends; Gadgets,Pune,Maharashtra,India
+HW0372,21.0,Female,Intern,Bachelor's,98000.0,11.0,5.0,255.0,55.0,Push Notification,Campus Life; Weather Trends,Bengaluru,Karnataka,India
+HW0637,18.0,Male,Intern,High School,68000.0,10.0,6.0,233.0,30.0,Instagram,Fitness; Travel,hyderabad ,Telangana,India
+HW0526,23.0,Male,Street Vendor,High School,297000.0,31.0,10.0,518.0,32.0,Push Notification,Heat Alerts; Hydration,Ahmedabad,Gujarat,India
+HW0040,36.0,Female,Doctor,Bachelor's,259000.0,5.0,3.0,1970.0,52.0,SMS,Health Advisories; Hydration,Bengaluru,Karnataka,India
+HW0195,22.0,Female,Intern,Bachelor's,147000.0,5.0,6.0,337.0,26.0,,Weather Trends; Fitness,Mumbai,Maharashtra,India
+HW0476,33.0,Male,Traffic Police,Diploma,,17.0,12.0,127.0,37.0,WhatsApp,Heat Alerts; Cooling Gear,Mumbai,Maharashtra,India
+HW0328,51.0,Male,Homemaker,Master's,675000.0,7.0,7.0,1305.0,54.0,Email,Family Safety; Elderly Care,Bengaluru,Karnataka,India
+HW0325,,Male,Consultant,Master's,856000.0,18.0,14.0,1977.0,75.0,Google Search,,Mumbai,Maharashtra,India
+HW0127,43.0,Female,Retired,Master's,929000.0,12.0,5.0,1880.0,60.0,WhatsApp,Elderly Care; Home Cooling,Ahmedabad,Gujarat,India
+HW0092,22.0,Male,Cab Driver,Diploma,343000.0,20.0,9.0,,25.0,Push Notification,,Mumbai,Maharashtra,India
+HW0593,21.0,Female,Student,Bachelor's,114000.0,16.0,5.0,337.0,49.0,Instagram,Weather Trends; Campus Life,Delhi,Delhi,India
+HW0086,64.0,Male,Homemaker,Bachelor's,1303000.0,10.0,5.0,1381.0,69.0,Email,Home Cooling; Family Safety,Mumbai,Maharashtra,India
+HW0081,37.0,FEMALE,Consultant,Master's,1543000.0,25.0,20.0,2763.0,90.0,Email,Fitness; Wearable Tech,Nagpur,Maharashtra,India
+HW0601,38.0,Female,Fitness Trainer,Bachelor's,1295000.0,11.0,24.0,1960.0,94.0,Google Search,Running; Fitness,Chennai,Tamil Nadu,India
+HW0533,22.0,Female,Student,Bachelor's,81000.0,15.0,3.0,382.0,34.0,Instagram,Campus Life; Gadgets,Jaipur,Rajasthan,India
+HW0641,22.0,Male,Student,Bachelor's,105000.0,18.0,5.0,273.0,64.0,YouTube,Travel; Campus Life,Mumbai,Maharashtra,India
+HW0510,23.0,Male,Intern,High School,85000.0,22.0,4.0,222.0,47.0,Instagram,Campus Life; Gadgets,Mumbai,Maharashtra,India
+HW0558,22.0,Female,Intern,High School,60000.0,14.0,4.0,306.0,50.0,YouTube,Gadgets; Fitness,Mumbai,Maharashtra,India
+HW0449,29.0,Male,Traffic Police,High School,234000.0,25.0,11.0,330.0,26.0,Push Notification,Hydration; Work Safety,Chennai,Tamil Nadu,India
+HW0630,38.0,Male,Cab Driver,High School,272000.0,30.0,10.0,332.0,46.0,WhatsApp,Work Safety; Cooling Gear,Bengaluru,Karnataka,India
+HW0128,55.0,f ,Event Organiser,Bachelor's,826000.0,4.0,2.0,4970.0,65.0,Google Search,Event Planning; Heat Action Plans,Mumbai,Maharashtra,India
+HW0082,19.0,Female,Student,High School,180000.0,14.0,2.0,268.0,53.0,Instagram,Gadgets; Fitness,Ahmedabad,Gujarat,India
+HW0577,35.0,Male,Consultant,Bachelor's,,16.0,20.0,3501.0,78.0,Google Search,Wearable Tech; Outdoor Sports,Hyderabad,Telangana,India
+HW0483,52.0,Female,Doctor,Master's,1099000.0,6.0,8.0,1573.0,75.0,SMS,Elderly Care; Home Cooling,Delhi,Delhi,India
+HW0145,59.0,Female,Retired,Master's,977000.0,16.0,4.0,1783.0,57.0,Email,Elderly Care; Health Advisories,Jaipur,Rajasthan,India
+HW0352,37.0,Male,Street Vendor,Diploma,318000.0,26.0,11.0,480.0,41.0,WhatsApp,Hydration; Heat Alerts,Lucknow,Uttar Pradesh,India
+HW0252,64.0,Male,Homemaker,Master's,473000.0,6.0,5.0,1163.0,66.0,Email,Hydration; Elderly Care,Ahmedabad,Gujarat,India
+HW0032,21.0,Male,Intern,Bachelor's,129000.0,14.0,5.0,258.0,61.0,instagram,Travel; Weather Trends,Delhi,Delhi,India
+HW0616,20.0,Male,Intern,High School,,12.0,4.0,497.0,47.0,Instagram,Fitness; Travel,Ahmedabad,Gujarat,India
+HW0011,49.0,F,City Planner,Bachelor's,1093000.0,8.0,2.0,3841.0,62.0,LinkedIn,Heat Action Plans; Public Health,Mumbai,Maharashtra,India
+HW0480,21.0,MALE,Intern,Bachelor's,111000.0,18.0,2.0,311.0,56.0,YouTube,Gadgets; Campus Life,Mumbai,Maharashtra,India
+HW0479,39.0,Female,City Planner,Master's,1323000.0,9.0,3.0,2893.0,49.0,Email,Heat Action Plans; Climate Data,Mumbai,Maharashtra,India
+HW0675,47.0,Male,City Planner,Master's,1274000.0,8.0,1.0,3696.0,56.0,LinkedIn,Heat Action Plans; Event Planning,delhi ,Delhi,India
+HW0465,,Female,Entrepreneur,Bachelor's,1906000.0,12.0,17.0,1736.0,81.0,Instagram,Outdoor Sports; Wearable Tech,Bengaluru,Karnataka,India
+HW0350,52.0,Male,Teacher,Master's,1085000.0,10.0,5.0,1056.0,70.0,Email,Hydration; Health Advisories,Jaipur,Rajasthan,India
+HW0330,58.0,Male,Homemaker,Master's,1169000.0,7.0,4.0,791.0,65.0,Email,Family Safety; Elderly Care,Chennai,Tamil Nadu,India
+HW0059,40.0,Male,Delivery Partner,High School,281000.0,28.0,15.0,392.0,19.0,WhatsApp,Hydration; Work Safety,Chennai,Tamil Nadu,India
+HW0357,30.0,Male,Traffic Police,Diploma,387000.0,23.0,7.0,346.0,40.0,WhatsApp,Cooling Gear; Heat Alerts,Nagpur,Maharashtra,India
+HW0200,49.0,MALE,Teacher,Master's,708000.0,7.0,4.0,1881.0,54.0,Facebook,Hydration; Health Advisories,Hyderabad,Telangana,India
+HW0216,35.0,,Fitness Trainer,Master's,1922000.0,16.0,20.0,2648.0,84.0,instagram,Travel; Outdoor Sports,Delhi,Delhi,India
+HW0402,33.0,Male,Cab Driver,Diploma,310000.0,27.0,5.0,347.0,46.0,SMS,Cooling Gear; Heat Alerts,Delhi,Delhi,India
+HW0015,49.0,Female,Retired,Master's,1224000.0,12.0,7.0,1143.0,73.0,Email,Elderly Care; Family Safety,Delhi,Delhi,India
+HW0408,32.0,Female,Street Vendor,High School,318000.0,23.0,11.0,409.0,27.0,sms,Heat Alerts; Cooling Gear,Pune,Maharashtra,India
+HW0523,18.0,Female,Student,High School,79000.0,7.0,6.0,259.0,46.0,Push Notification,Campus Life; Fitness,Ahmedabad,Gujarat,India
+HW0669,23.0,Male,Street Vendor,High School,348000.0,33.0,12.0,340.0,37.0,Push Notification,Work Safety; Hydration,Delhi,Delhi,India
+HW0265,19.0,Female,Intern,High School,127000.0,11.0,5.0,312.0,26.0,YouTube,Fitness; Campus Life,Delhi,Delhi,India
+HW0560,21.0,Male,Student,Bachelor's,115000.0,22.0,2.0,112.0,61.0,Instagram,,Lucknow,Uttar Pradesh,India
+HW0421,22.0,Male,Intern,Bachelor's,85000.0,18.0,5.0,262.0,52.0,WhatsApp,Fitness; Campus Life,Delhi,Delhi,India
+HW0079,33.0,Male,Facility Manager,Bachelor's,1423000.0,7.0,3.0,4192.0,69.0,LinkedIn,Reports; Climate Data,Jaipur,Rajasthan,India
+HW0304,21.0,Male,Student,Bachelor's,153000.0,19.0,6.0,325.0,53.0,YouTube,Fitness; Travel,HYDERABAD,Telangana,India
+HW0181,21.0,Male,Intern,Bachelor's,175000.0,10.0,8.0,120.0,35.0,Instagram,Travel; Fitness,Mumbai,Maharashtra,India
+HW0429,29.0,Female,Delivery Partner,High School,187000.0,24.0,13.0,396.0,41.0,WhatsApp,Work Safety; Heat Alerts,Hyderabad,Telangana,India
+HW0679,51.0,Female,Retired,Bachelor's,925000.0,6.0,5.0,882.0,47.0,WhatsApp,Home Cooling; Elderly Care,Delhi,Delhi,India
+HW0556,28.0,Female,Consultant,Bachelor's,2318000.0,29.0,19.0,,85.0,Google Search,Running; Travel,Mumbai,Maharashtra,India
+HW0244,59.0,Male,Government Employee,Bachelor's,737000.0,9.0,6.0,1083.0,62.0,Email,Home Cooling; Elderly Care,Lucknow,Uttar Pradesh,India
+HW0431,38.0,Female,Facility Manager,Master's,1342000.0,7.0,1.0,5098.0,71.0,Email,Heat Action Plans; Climate Data,Nagpur,Maharashtra,India
+HW0108,22.0,Female,Student,High School,115000.0,17.0,2.0,214.0,33.0,YouTube,Weather Trends; Gadgets,Hyderabad,Telangana,India
+HW0529,23.0,Female,Student,High School,124000.0,1.0,4.0,186.0,25.0,YouTube,Weather Trends; Travel,Jaipur,Rajasthan,India
+HW0515,34.0,Male,Construction Worker,Diploma,177000.0,26.0,10.0,223.0,24.0,Push Notification,Cooling Gear; Hydration,Delhi,Delhi,India
+HW0363,24.0,Male,Cab Driver,High School,276000.0,15.0,10.0,365.0,47.0,WhatsApp,Heat Alerts; Work Safety,Mumbai,Maharashtra,India
+HW0110,36.0,Male,School Administrator,Bachelor's,1179000.0,8.0,2.0,3438.0,66.0,email,Event Planning; Public Health,Bengaluru,Karnataka,India
+HW0106,18.0,F,Intern,High School,159000.0,17.0,7.0,362.0,59.0,YouTube,Gadgets; Fitness,Hyderabad,Telangana,India
+HW0458,41.0,MALE,NGO Coordinator,Master's,1237000.0,8.0,2.0,1924.0,78.0,Email,Public Health; Event Planning,delhi ,Delhi,India
+HW0416,41.0,Female,City Planner,Bachelor's,1446000.0,6.0,2.0,3709.0,60.0,Email,Public Health; Heat Action Plans,Mumbai,Maharashtra,India
+HW0374,30.0,Male,Traffic Police,High School,280000.0,22.0,14.0,384.0,29.0,push notification,Cooling Gear; Heat Alerts,Lucknow,Uttar Pradesh,India
+HW0110,36.0,Male,School Administrator,Bachelor's,1179000.0,8.0,2.0,3438.0,66.0,email,Event Planning; Public Health,Bengaluru,Karnataka,India
+HW0466,40.0,Male,Construction Worker,High School,301000.0,19.0,6.0,392.0,48.0,Push Notification,Hydration; Heat Alerts,Pune,Maharashtra,India
+HW0176,21.0,Male,Intern,Bachelor's,130000.0,14.0,3.0,198.0,48.0,YouTube,Fitness; Gadgets,Mumbai,Maharashtra,India
+HW0284,24.0,Female,Student,High School,104000.0,18.0,2.0,284.0,31.0,Push Notification,Gadgets; Fitness,Mumbai,Maharashtra,India
+HW0320,22.0,Male,Student,Bachelor's,93000.0,17.0,2.0,185.0,56.0,Instagram,Travel; Fitness,Chennai,Tamil Nadu,India
+HW0207,41.0,Female,Event Organiser,Master's,1245000.0,4.0,1.0,5123.0,84.0,Google Search,Public Health; Climate Data,Hyderabad,Telangana,India
+HW0217,30.0,Female,Consultant,Bachelor's,554000.0,22.0,16.0,1828.0,82.0,Email,Running; Fitness,Lucknow,Uttar Pradesh,India
+HW0297,24.0,,Street Vendor,Diploma,218000.0,27.0,10.0,278.0,42.0,Push Notification,Hydration; Cooling Gear,Delhi,Delhi,India
+HW0202,47.0,Female,Retired,Master's,691000.0,5.0,6.0,1919.0,66.0,Email,Elderly Care; Hydration,Jaipur,Rajasthan,India
+HW0164,34.0,Female,Fitness Trainer,Bachelor's,829000.0,27.0,17.0,2296.0,94.0,Email,Travel; Running,Nagpur,Maharashtra,India
+HW0592,35.0, m,Consultant,Master's,1959000.0,24.0,15.0,3013.0,83.0,Instagram,Running; Travel,Nagpur,Maharashtra,India
+HW0160,32.0,Male,Cab Driver,High School,334000.0,26.0,8.0,194.0,47.0,WhatsApp,Cooling Gear; Work Safety,Mumbai,Maharashtra,India
+HW0633,33.0,Female,Cab Driver,Diploma,387000.0,26.0,7.0,314.0,30.0,SMS,Work Safety; Heat Alerts,Mumbai,Maharashtra,India
+HW0231,30.0,Male,Consultant,Master's,1865000.0,26.0,13.0,3767.0,80.0,YouTube,Fitness; Running,Mumbai,Maharashtra,India
+HW0069,45.0, m,Homemaker,Bachelor's,1081000.0,6.0,5.0,1023.0,61.0,WhatsApp,Hydration; Elderly Care,Delhi,Delhi,India
+HW0443,57.0,Female,Homemaker,Bachelor's,917000.0,9.0,7.0,1561.0,62.0,WhatsApp,Home Cooling; Elderly Care,Pune,Maharashtra,India
+HW0112,49.0,Male,Retired,Master's,1096000.0,9.0,7.0,1267.0,42.0,Email,Family Safety; Elderly Care,PUNE,Maharashtra,India
+HW0146,31.0,Male,Cab Driver,Diploma,333000.0,18.0,8.0,158.0,42.0,WhatsApp,Work Safety; Cooling Gear,Ahmedabad,Gujarat,India
+HW0698,48.0, m,Teacher,Bachelor's,1112000.0,12.0,4.0,1233.0,71.0,Email,Family Safety; Elderly Care,Delhi,Delhi,India
+HW0500,23.0,Female,Student,High School,82000.0,5.0,7.0,230.0,56.0,Instagram,Travel; Campus Life,Bengaluru,Karnataka,India
+HW0144,54.0,Female,Government Employee,Bachelor's,665000.0,13.0,6.0,1182.0,43.0,WhatsApp,Health Advisories; Home Cooling,Ahmedabad,Gujarat,India
+HW0716,27.0,M,Street Vendor,High School,249000.0,28.0,8.0,209.0,28.0,Push Notification,Heat Alerts; Work Safety,Delhi,Delhi,India
+HW0356,31.0,Female,NGO Coordinator,Bachelor's,1312000.0,6.0,2.0,5111.0,76.0,Google Search,Reports; Event Planning,Delhi,Delhi,India
+HW0631,30.0,Male,Cab Driver,Diploma,224000.0,23.0,13.0,275.0,34.0,WhatsApp,Work Safety; Heat Alerts,Delhi,Delhi,India
+HW0038,31.0,Male,Marketing Manager,Master's,1548000.0,24.0,15.0,4042.0,80.0,Email,Running; Outdoor Sports,HYDERABAD,Telangana,India
+HW0518,33.0,Male,School Administrator,Master's,1664000.0,3.0,2.0,5801.0,77.0,Email,Public Health; Reports,HYDERABAD,Telangana,India
+HW0107,23.0,Female,Student,Bachelor's,96000.0,22.0,2.0,277.0,35.0,Push Notification,Campus Life; Weather Trends,Pune,Maharashtra,India
+HW0178,33.0,Male,Street Vendor,High School,361000.0,28.0,8.0,155.0,43.0,Push Notification,Hydration; Cooling Gear,Delhi,Delhi,India
+HW0096,18.0,Female,Intern,High School,120000.0,13.0,5.0,475.0,44.0,Instagram,Campus Life; Weather Trends,lucknow ,Uttar Pradesh,India
+HW0621,59.0,Male,Homemaker,Master's,1060000.0,10.0,6.0,1399.0,58.0,Facebook,Hydration; Home Cooling,Chennai,Tamil Nadu,India
+HW0215,36.0,Female,Facility Manager,Bachelor's,1905000.0,7.0,2.0,4547.0,82.0,LinkedIn,Event Planning; Reports,Mumbai,Maharashtra,India
+HW0417,19.0,Female,Intern,High School,133000.0,15.0,3.0,208.0,50.0,WhatsApp,Travel; Weather Trends,Ahmedabad,Gujarat,India
+HW0420,53.0, m,Homemaker,Bachelor's,623000.0,8.0,7.0,1093.0,67.0,sms,Health Advisories; Home Cooling,Hyderabad,Telangana,India
+HW0337,31.0,Male,Street Vendor,High School,199000.0,29.0,7.0,400.0,22.0,WhatsApp,Work Safety; Cooling Gear,Delhi,Delhi,India
+HW0135,21.0,Female,Student,Bachelor's,64000.0,18.0,3.0,247.0,45.0,Instagram,Campus Life; Weather Trends,Delhi,Delhi,India
+HW0285,36.0,male,Cab Driver,Diploma,267000.0,26.0,9.0,282.0,32.0,SMS,Work Safety; Cooling Gear,Jaipur,Rajasthan,India
+HW0576,54.0,Male,School Administrator,Master's,1084000.0,6.0,2.0,4962.0,85.0,Google Search,Public Health; Heat Action Plans,Hyderabad,Telangana,India
+HW0499,52.0,Female,Facility Manager,Master's,1624000.0,1.0,3.0,5788.0,70.0,LinkedIn,Public Health; Climate Data,Hyderabad,Telangana,India
+HW0470,29.0,male,Software Engineer,Bachelor's,2164000.0,32.0,14.0,2539.0,91.0,Google Search,Outdoor Sports; Fitness,Pune,Maharashtra,India
+HW0489,26.0, m,Traffic Police,High School,336000.0,23.0,12.0,483.0,39.0,SMS,Hydration; Work Safety,Pune,Maharashtra,India
+HW0638,20.0,Female,Construction Worker,Diploma,172000.0,24.0,9.0,327.0,36.0,WhatsApp,Hydration; Heat Alerts,Delhi,Delhi,India
+HW0519,29.0,Male,Software Engineer,Bachelor's,1685000.0,17.0,19.0,2862.0,80.0,Instagram,Fitness; Wearable Tech,Mumbai,Maharashtra,India
+HW0170,34.0,female,Cab Driver,Diploma,354000.0,24.0,12.0,488.0,32.0,WhatsApp,Work Safety; Hydration,NAGPUR,Maharashtra,India
+HW0571,57.0,Female,Doctor,Bachelor's,840000.0,9.0,7.0,1428.0,80.0,Email,Health Advisories; Home Cooling,Chennai,Tamil Nadu,India
+HW0054,32.0,Male,Marketing Manager,Master's,1871000.0,29.0,16.0,2404.0,87.0,YouTube,Travel; Fitness,Mumbai,Maharashtra,India
+HW0264,36.0,Male,Cab Driver,Diploma,262000.0,20.0,9.0,359.0,30.0,WhatsApp,,Ahmedabad,Gujarat,India
+HW0395,21.0,Male,Student,Bachelor's,225000.0,16.0,1.0,201.0,22.0,YouTube,Travel; Gadgets,Pune,Maharashtra,India
+HW0392,80.0,Male,Government Employee,Master's,733000.0,11.0,7.0,1400.0,77.0,Email,Home Cooling; Health Advisories,Mumbai,Maharashtra,India
+HW0152,20.0,Male,Student,High School,142000.0,18.0,6.0,101.0,24.0,Instagram,Travel; Fitness,Chennai,Tamil Nadu,India
+HW0210,47.0,MALE,Retired,Master's,1097000.0,10.0,7.0,822.0,56.0,Facebook,Elderly Care; Hydration,Delhi,Delhi,India
+HW0158,,Male,Intern,Bachelor's,142000.0,10.0,6.0,300.0,49.0,Instagram,Gadgets; Campus Life,Hyderabad,Telangana,India
+HW0574,23.0,Male,City Planner,Bachelor's,1224000.0,8.0,2.0,4370.0,66.0,LinkedIn,Heat Action Plans; Public Health,Delhi,Delhi,India
+HW0524,,Male,Delivery Partner,Diploma,329000.0,24.0,7.0,383.0,36.0,Push Notification,,Mumbai,Maharashtra,India
+HW0444,33.0, m,School Administrator,Bachelor's,1599000.0,5.0,2.0,5656.0,76.0,LinkedIn,Heat Action Plans; Event Planning,Ahmedabad,Gujarat,India
+HW0434,18.0,,Intern,High School,215000.0,19.0,7.0,265.0,45.0,Instagram,Gadgets; Weather Trends,Delhi,Delhi,India
+HW0236,45.0,Male,NGO Coordinator,Master's,912000.0,2.0,3.0,5768.0,77.0,Email,Heat Action Plans; Public Health,Bengaluru,Karnataka,India
+HW0133,20.0,Male,Intern,Bachelor's,175000.0,11.0,8.0,203.0,62.0,Push Notification,Weather Trends; Campus Life,Pune,Maharashtra,India
+HW0377,65.0,F,Doctor,Master's,851000.0,7.0,4.0,1756.0,67.0,whatsapp,Hydration; Elderly Care,Hyderabad,Telangana,India
+HW0581,35.0,Male,Street Vendor,Diploma,272000.0,25.0,14.0,409.0,38.0,Push Notification,Heat Alerts; Hydration,Jaipur,Rajasthan,India
+HW0334,28.0,Female,Entrepreneur,Bachelor's,1220000.0,20.0,14.0,3450.0,77.0,Google Search,Fitness; Travel,Chennai,Tamil Nadu,India
+HW0186,,Male,Retired,Master's,791000.0,14.0,8.0,2111.0,53.0,Facebook,Family Safety; Home Cooling,Pune,Maharashtra,India
+HW0294,36.0,male,Marketing Manager,Bachelor's,1129000.0,19.0,14.0,2876.0,96.0,Email,Wearable Tech; Fitness,Delhi,Delhi,India
+HW0237,57.0,FEMALE,Retired,Bachelor's,725000.0,15.0,6.0,1309.0,69.0,WhatsApp,Hydration; Home Cooling,Pune,Maharashtra,India
+HW0198,24.0,Male,Student,High School,219000.0,15.0,1.0,313.0,53.0,YouTube,Fitness; Weather Trends,Pune,Maharashtra,India
+HW0305,19.0,Male,Student,High School,60000.0,19.0,5.0,384.0,63.0,WhatsApp,Campus Life; Gadgets,Bengaluru,Karnataka,India
+HW0525,35.0,Male,Consultant,Master's,2174000.0,29.0,17.0,3949.0,83.0,Google Search,Running; Outdoor Sports,Mumbai,Maharashtra,India
+HW0143,41.0,Male,Street Vendor,Diploma,166000.0,20.0,2.0,192.0,26.0,WhatsApp,Cooling Gear; Hydration,Mumbai,Maharashtra,India
+HW0340,20.0,Female,Student,High School,137000.0,10.0,3.0,223.0,54.0,Instagram,Weather Trends; Fitness,Pune,Maharashtra,India
+HW0109,23.0,Female,Student,Bachelor's,75000.0,7.0,3.0,415.0,61.0,Instagram,Weather Trends; Fitness,Mumbai,Maharashtra,India
+HW0586,34.0,Male,Fitness Trainer,Master's,1490000.0,29.0,17.0,2498.0,94.0,YouTube,Wearable Tech; Travel,Mumbai,Maharashtra,India
+HW0383,28.0,Male,Traffic Police,Diploma,306000.0,24.0,12.0,403.0,48.0,SMS,Work Safety; Hydration,Lucknow,Uttar Pradesh,India
+HW0062,34.0,Male,Delivery Partner,High School,219000.0,25.0,11.0,422.0,30.0,Push Notification,Hydration; Work Safety,Lucknow,Uttar Pradesh,India
+HW0248,51.0,f ,Teacher,Bachelor's,1372000.0,7.0,8.0,1160.0,60.0,SMS,Family Safety; Elderly Care,Mumbai,Maharashtra,India
+HW0193,47.0,Male,Government Employee,Bachelor's,1039000.0,14.0,3.0,1323.0,70.0,Facebook,Health Advisories; Home Cooling,Nagpur,Maharashtra,India
+HW0360,33.0,male,Construction Worker,High School,246000.0,24.0,7.0,496.0,52.0,SMS,Cooling Gear; Work Safety,Bengaluru,Karnataka,India
+HW0717,28.0,Male,Traffic Police,High School,237000.0,22.0,11.0,313.0,19.0,Push Notification,Cooling Gear; Heat Alerts,Hyderabad,Telangana,India
+HW0267,25.0,Female,Intern,High School,158000.0,8.0,2.0,300.0,44.0,WhatsApp,Fitness; Weather Trends,Mumbai,Maharashtra,India
+HW0410,43.0,Male,NGO Coordinator,Bachelor's,1455000.0,6.0,2.0,6453.0,77.0,LinkedIn,Public Health; Event Planning,Chennai,Tamil Nadu,India
+HW0074,39.0,Male,Doctor,Master's,585000.0,9.0,4.0,1007.0,60.0,SMS,Health Advisories; Family Safety,BENGALURU,Karnataka,India
+HW0697,74.0,FEMALE,Doctor,Master's,979000.0,9.0,5.0,1532.0,53.0,WhatsApp,Elderly Care; Home Cooling,Mumbai,Maharashtra,India
+HW0655,46.0,Female,Facility Manager,Master's,1687000.0,7.0,1.0,3906.0,83.0,Email,Climate Data; Public Health,Jaipur,Rajasthan,India
+HW0425,33.0,Male,Street Vendor,High School,310000.0,19.0,7.0,405.0,38.0,Push Notification,Heat Alerts; Work Safety,delhi ,Delhi,India
+HW0068,32.0,Male,Construction Worker,Diploma,228000.0,26.0,10.0,409.0,47.0,Push Notification,Heat Alerts; Hydration,Pune,Maharashtra,India
+HW0065,20.0,Male,Intern,Bachelor's,96000.0,11.0,4.0,323.0,34.0,Instagram,Travel; Fitness,Lucknow,Uttar Pradesh,India
+HW0239,69.0,male,Doctor,Master's,,8.0,8.0,1654.0,66.0,WhatsApp,Elderly Care; Health Advisories,Ahmedabad,Gujarat,India
+HW0453,21.0,Female,Intern,Bachelor's,162000.0,15.0,5.0,196.0,44.0,Instagram,Fitness; Weather Trends,Mumbai,Maharashtra,India
+HW0703,30.0,Male,Traffic Police,Diploma,323000.0,27.0,9.0,321.0,33.0,WhatsApp,Hydration; Heat Alerts,Hyderabad,Telangana,India
+HW0389,18.0,Male,Student,High School,103000.0,9.0,3.0,211.0,51.0,YouTube,Fitness; Gadgets,Ahmedabad,Gujarat,India
+HW0343,30.0,Female,Homemaker,Bachelor's,934000.0,7.0,10.0,1689.0,63.0,whatsapp,Family Safety; Home Cooling,delhi ,Delhi,India
+HW0640,26.0,Male,Student,High School,150000.0,14.0,2.0,260.0,55.0,Push Notification,Fitness; Weather Trends,Hyderabad,Telangana,India
+HW0271,39.0,Male,Marketing Manager,Bachelor's,1566000.0,28.0,16.0,3107.0,83.0,,Outdoor Sports; Fitness,Mumbai,Maharashtra,India
+HW0005,63.0,Female,Doctor,Bachelor's,460000.0,4.0,8.0,1334.0,71.0,Email,Elderly Care; Family Safety,Hyderabad,Telangana,India
+HW0403,43.0,Male,School Administrator,Master's,1618000.0,3.0,3.0,4680.0,69.0,LinkedIn,Reports; Heat Action Plans,Lucknow,Uttar Pradesh,India
+HW0315,59.0,Female,Retired,Bachelor's,968000.0,4.0,7.0,1632.0,62.0,WhatsApp,Family Safety; Home Cooling,Mumbai,Maharashtra,India
+HW0563,23.0, m,Intern,Bachelor's,158000.0,8.0,2.0,223.0,37.0,Instagram,Travel; Fitness,Delhi,Delhi,India
+HW0407,20.0,Male,Student,High School,113000.0,9.0,3.0,277.0,41.0,YouTube,Fitness; Travel,Hyderabad,Telangana,India
+HW0323,36.0,Male,Construction Worker,High School,338000.0,27.0,9.0,327.0,44.0,SMS,Hydration; Heat Alerts,Delhi,Delhi,India
+HW0398,61.0,M,Teacher,Master's,726000.0,7.0,10.0,1778.0,74.0,WhatsApp,Home Cooling; Elderly Care,Pune,Maharashtra,India
+HW0117,55.0,Male,Government Employee,Bachelor's,1345000.0,7.0,4.0,1755.0,76.0,Email,Hydration; Elderly Care,Ahmedabad,Gujarat,India
+HW0132,53.0,Male,Doctor,Bachelor's,982000.0,12.0,6.0,1424.0,65.0,WhatsApp,Elderly Care; Home Cooling,Mumbai,Maharashtra,India
+HW0382,24.0,Female,Intern,High School,163000.0,3.0,3.0,222.0,56.0,YouTube,Weather Trends; Gadgets,Mumbai,Maharashtra,India
+HW0028,23.0,Female,Student,High School,60000.0,14.0,3.0,191.0,55.0,WhatsApp,Gadgets; Weather Trends,mumbai ,Maharashtra,India
+HW0618,51.0,Female,Retired,Master's,1305000.0,14.0,5.0,,71.0,Email,Health Advisories; Family Safety,Mumbai,Maharashtra,India
+HW0564,22.0,Female,Intern,High School,189000.0,20.0,4.0,100.0,61.0,Push Notification,Travel; Weather Trends,Nagpur,Maharashtra,India
+HW0044,42.0,Male,City Planner,Bachelor's,650000.0,7.0,3.0,2504.0,72.0,Email,Climate Data; Reports,Mumbai,Maharashtra,India
+HW0131,43.0,Male,School Administrator,Master's,1221000.0,7.0,1.0,6549.0,75.0,Email,,Jaipur,Rajasthan,India
+HW0031,45.0,Female,Doctor,Bachelor's,1089000.0,14.0,8.0,1834.0,56.0,WhatsApp,Health Advisories; Hydration,Pune,Maharashtra,India
+HW0351,20.0,Male,Student,Bachelor's,164000.0,12.0,4.0,297.0,40.0,WhatsApp,Weather Trends; Campus Life,Delhi,Delhi,India
+HW0115,51.0,M,Homemaker,Bachelor's,973000.0,8.0,3.0,1368.0,66.0,Facebook,Elderly Care; Family Safety,Mumbai,Maharashtra,India
+HW0295,22.0,Male,Intern,High School,155000.0,10.0,5.0,176.0,43.0,Instagram,Gadgets; Travel,Nagpur,Maharashtra,India
+HW0289,21.0,Female,Student,High School,117000.0,12.0,4.0,210.0,51.0,Push Notification,Weather Trends; Travel,Jaipur,Rajasthan,India
+HW0538,31.0,Female,Software Engineer,Bachelor's,1676000.0,27.0,18.0,2778.0,80.0,Email,Running; Fitness,Pune,Maharashtra,India
+HW0260,54.0,Male,Teacher,Master's,1015000.0,8.0,7.0,1130.0,50.0,Email,Health Advisories; Hydration,Mumbai,Maharashtra,India
+HW0491,26.0,Female,Intern,High School,101000.0,13.0,4.0,228.0,47.0,WhatsApp,Campus Life; Gadgets,Hyderabad,Telangana,India
+HW0603,29.0,Male,Construction Worker,Diploma,,31.0,6.0,420.0,45.0,WhatsApp,Heat Alerts; Cooling Gear,Mumbai,Maharashtra,India
+HW0225,35.0,Male,Construction Worker,High School,215000.0,31.0,5.0,353.0,34.0,Push Notification,Work Safety; Cooling Gear,Mumbai,Maharashtra,India
+HW0363,24.0,Male,Cab Driver,High School,276000.0,15.0,10.0,365.0,47.0,WhatsApp,Heat Alerts; Work Safety,Mumbai,Maharashtra,India
+HW0122,71.0,Male,Retired,Bachelor's,990000.0,9.0,6.0,1394.0,55.0,WhatsApp,Home Cooling; Elderly Care,Hyderabad,Telangana,India
+HW0473,48.0,Female,Retired,Bachelor's,826000.0,8.0,10.0,1297.0,72.0,Email,Hydration; Elderly Care,Delhi,Delhi,India
+HW0602,19.0,F,Intern,High School,78000.0,16.0,3.0,272.0,34.0,Push Notification,Travel; Fitness,Chennai,Tamil Nadu,India
+HW0600,47.0,Male,Doctor,Master's,1161000.0,8.0,4.0,1411.0,67.0,Email,Elderly Care; Hydration,Pune,Maharashtra,India
+HW0029,27.0,Male,Cab Driver,High School,276000.0,21.0,10.0,386.0,40.0,SMS,Cooling Gear; Heat Alerts,Chennai,Tamil Nadu,India
+HW0130,45.0,f ,Retired,Master's,748000.0,8.0,4.0,1629.0,82.0,Email,Family Safety; Elderly Care,Hyderabad,Telangana,India
+HW0307,19.0,Male,Student,High School,113000.0,18.0,8.0,293.0,36.0,Instagram,Gadgets; Weather Trends,Jaipur,Rajasthan,India
+HW0643,42.0,Female,Government Employee,Master's,675000.0,11.0,6.0,1404.0,56.0,WhatsApp,Health Advisories; Home Cooling,Nagpur,Maharashtra,India
+HW0469,33.0,F,Event Organiser,Bachelor's,863000.0,3.0,2.0,3434.0,71.0,Google Search,Public Health; Heat Action Plans,Ahmedabad,Gujarat,India
+HW0211,38.0,Female,Construction Worker,Diploma,234000.0,24.0,9.0,257.0,23.0,Push Notification,Cooling Gear; Work Safety,Nagpur,Maharashtra,India
+HW0441,42.0,Female,Doctor,Master's,605000.0,9.0,2.0,1678.0,68.0,Email,Health Advisories; Hydration,Jaipur,Rajasthan,India
+HW0625,34.0,Male,Delivery Partner,High School,357000.0,19.0,9.0,401.0,45.0,Push Notification,Work Safety; Hydration,Mumbai,Maharashtra,India
+HW0041,21.0,male,Student,High School,102000.0,15.0,6.0,249.0,38.0,Instagram,Campus Life; Fitness,Mumbai,Maharashtra,India
+HW0554,26.0,Male,Street Vendor,High School,296000.0,13.0,14.0,316.0,56.0,Push Notification,Work Safety; Heat Alerts,Mumbai,Maharashtra,India
+HW0205,33.0,Male,Traffic Police,High School,470000.0,24.0,8.0,316.0,49.0,SMS,Work Safety; Hydration,Jaipur,Rajasthan,India
+HW0009,22.0,Male,Student,High School,60000.0,21.0,2.0,252.0,54.0,Instagram,Gadgets; Campus Life,Bangalore,Karnataka,India
+HW0447,34.0,Male,Delivery Partner,Diploma,293000.0,26.0,12.0,457.0,40.0,Push Notification,Heat Alerts; Work Safety,Pune,Maharashtra,India
+HW0488,66.0,Female,Retired,Master's,641000.0,11.0,8.0,1613.0,54.0,Facebook,Hydration; Home Cooling,Nagpur,Maharashtra,India
+HW0396,27.0,Male,City Planner,Bachelor's,1487000.0,4.0,3.0,3889.0,71.0,LinkedIn,Climate Data; Reports,Chennai,Tamil Nadu,India
+HW0387,57.0,Male,Teacher,Bachelor's,1359000.0,9.0,6.0,1413.0,52.0,Email,Health Advisories; Elderly Care,Bengaluru,Karnataka,India
+HW0461,51.0,FEMALE,Teacher,Bachelor's,663000.0,5.0,5.0,1564.0,66.0,SMS,Hydration; Home Cooling,Pune,Maharashtra,India
+HW0562,38.0,Female,Facility Manager,Master's,986000.0,5.0,2.0,,68.0,LinkedIn,Reports; Climate Data,Mumbai,Maharashtra,India
+HW0394,21.0,Female,Intern,High School,119000.0,10.0,3.0,220.0,63.0,Instagram,Travel; Fitness,Bengaluru,Karnataka,India
+HW0348,33.0,M,Cab Driver,High School,214000.0,17.0,7.0,182.0,30.0,push notification,Cooling Gear; Heat Alerts,Delhi,Delhi,India
+HW0094,19.0,Male,Student,High School,103000.0,12.0,5.0,260.0,38.0,Instagram,Campus Life; Fitness,Mumbai,Maharashtra,India
+HW0318,40.0,Male,Construction Worker,Diploma,215000.0,24.0,8.0,246.0,25.0,sms,Work Safety; Cooling Gear,Mumbai,Maharashtra,India
+HW0080,22.0,Female,Student,High School,60000.0,8.0,5.0,263.0,41.0,Push Notification,Travel; Gadgets,Ahmedabad,Gujarat,India
+HW0347,57.0,Male,City Planner,Master's,1748000.0,14.0,2.0,4554.0,57.0,,Heat Action Plans; Public Health,Delhi,Delhi,India
+HW0050,36.0,Female,Street Vendor,High School,211000.0,22.0,5.0,417.0,27.0,WhatsApp,Heat Alerts; Hydration,Delhi,Delhi,India
+HW0251,29.0,Male,Traffic Police,Diploma,331000.0,26.0,10.0,410.0,11.0,SMS,Heat Alerts; Work Safety,Ahmedabad,Gujarat,India
+HW0148,51.0,Female,City Planner,Bachelor's,1441000.0,7.0,1.0,4181.0,67.0,Email,Event Planning; Climate Data,Chennai,Tamil Nadu,India
+HW0704,33.0,Male,Event Organiser,Bachelor's,1057000.0,6.0,3.0,6031.0,65.0,Email,Heat Action Plans; Event Planning,Nagpur,Maharashtra,India
+HW0058,22.0,Female,Intern,High School,60000.0,12.0,6.0,168.0,42.0,Push Notification,Campus Life; Travel,Mumbai,Maharashtra,India
+HW0353,18.0,F,Intern,High School,185000.0,11.0,5.0,182.0,40.0,YouTube,Fitness; Travel,Mumbai,Maharashtra,India
+HW0527,46.0,Female,City Planner,Master's,1338000.0,8.0,3.0,,64.0,LinkedIn,Reports; Climate Data,Ahmedabad,Gujarat,India
+HW0056,21.0,Male,Student,Bachelor's,193000.0,18.0,2.0,280.0,46.0,Instagram,Campus Life; Fitness,Hyderabad,Telangana,India
+HW0401,33.0,Male,Fitness Trainer,Master's,1413000.0,18.0,19.0,3211.0,82.0,Google Search,Fitness; Outdoor Sports,Hyderabad,Telangana,India
+HW0693,52.0,Male,Homemaker,Master's,114000.0,10.0,6.0,1681.0,63.0,Email,Elderly Care; Hydration,Hyderabad,Telangana,India
+HW0495,25.0,Male,Cab Driver,Diploma,214000.0,23.0,3.0,422.0,43.0,SMS,Hydration; Cooling Gear,Delhi,Delhi,India
+HW0457,50.0,Female,Teacher,Master's,1061000.0,1.0,5.0,1402.0,65.0,facebook,Health Advisories; Hydration,Delhi,Delhi,India
+HW0585,21.0,Male,Delivery Partner,High School,303000.0,9.0,8.0,348.0,39.0,WhatsApp,Heat Alerts; Cooling Gear,Jaipur,Rajasthan,India
+HW0451,54.0,,Homemaker,Bachelor's,683000.0,15.0,6.0,1545.0,55.0,Email,Health Advisories; Elderly Care,Pune,Maharashtra,India
+HW0026,23.0,Female,Intern,Bachelor's,109000.0,26.0,4.0,229.0,38.0,WhatsApp,,Lucknow,Uttar Pradesh,India
+HW0667,22.0,Male,Intern,Bachelor's,153000.0,4.0,6.0,348.0,42.0,Push Notification,Campus Life; Weather Trends,Hyderabad,Telangana,India
+HW0175,39.0,Male,Delivery Partner,High School,302000.0,27.0,8.0,386.0,41.0,Push Notification,Work Safety; Heat Alerts,BENGALURU,Karnataka,India
+HW0355,21.0,Female,Student,High School,120000.0,15.0,2.0,248.0,33.0,Instagram,Gadgets; Fitness,Ahmedabad,Gujarat,India
+HW0060,19.0,Female,Student,High School,80000.0,6.0,6.0,334.0,62.0,Instagram,Campus Life; Travel,Bengaluru,Karnataka,India
+HW0154,27.0,Male,Delivery Partner,High School,285000.0,18.0,6.0,296.0,59.0,WhatsApp,Work Safety; Hydration,Mumbai,Maharashtra,India
+HW0468,61.0,Male,Homemaker,Bachelor's,810000.0,10.0,3.0,1545.0,53.0,WhatsApp,Hydration; Home Cooling,Lucknow,Uttar Pradesh,India
+HW0162,29.0,Male,Delivery Partner,Diploma,303000.0,23.0,12.0,418.0,18.0,WhatsApp,Hydration; Work Safety,Chennai,Tamil Nadu,India
+HW0245,55.0,Male,Teacher,Master's,889000.0,8.0,5.0,1221.0,65.0,Email,Home Cooling; Hydration,Hyderabad,Telangana,India
+HW0159,66.0,Female,Teacher,Bachelor's,614000.0,5.0,9.0,897.0,65.0,Facebook,Health Advisories; Home Cooling,MUMBAI,Maharashtra,India
+HW0537,48.0,Female,Homemaker,Bachelor's,960000.0,11.0,7.0,2070.0,57.0,Email,Elderly Care; Health Advisories,Ahmedabad,Gujarat,India
+HW0339,33.0, m,Consultant,Bachelor's,1287000.0,20.0,16.0,2651.0,75.0,Email,,Mumbai,Maharashtra,India
+HW0393,18.0,Male,Traffic Police,Diploma,260000.0,27.0,7.0,379.0,32.0,WhatsApp,Work Safety; Heat Alerts,Delhi,Delhi,India
+HW0418,31.0,Male,Street Vendor,Diploma,390000.0,28.0,10.0,432.0,35.0,WhatsApp,Work Safety; Cooling Gear,Mumbai,Maharashtra,India
+HW0685,38.0,Male,NGO Coordinator,Master's,1466000.0,6.0,1.0,6878.0,71.0,Email,Event Planning; Public Health,Ahmedabad,Gujarat,India
+HW0565,18.0,Male,Intern,Bachelor's,145000.0,17.0,9.0,200.0,42.0,YouTube,Fitness; Campus Life,Hyderabad,Telangana,India
+HW0639,21.0,Male,Student,High School,105000.0,12.0,4.0,100.0,36.0,Instagram,Campus Life; Weather Trends,Delhi,Delhi,India
+HW0055,19.0,Male,Cab Driver,High School,283000.0,25.0,7.0,335.0,35.0,,Work Safety; Heat Alerts,Ahmedabad,Gujarat,India
+HW0568,22.0,Female,Intern,Bachelor's,135000.0,10.0,8.0,215.0,42.0,WhatsApp,Fitness; Travel,Mumbai,Maharashtra,India
+HW0324,57.0,Male,Teacher,Bachelor's,788000.0,3.0,6.0,1371.0,52.0,WhatsApp,Health Advisories; Hydration,Jaipur,Rajasthan,India
+HW0169,23.0,Male,Student,High School,88000.0,14.0,4.0,186.0,67.0,instagram,Fitness; Campus Life,Nagpur,Maharashtra,India
+HW0390,37.0,Female,Entrepreneur,Bachelor's,1899000.0,19.0,21.0,3488.0,100.0,Google Search,Running; Travel,Mumbai,Maharashtra,India
+HW0627,34.0,FEMALE,Traffic Police,High School,296000.0,19.0,11.0,460.0,24.0,WhatsApp,Cooling Gear; Hydration,Ahmedabad,Gujarat,India
+HW0400,33.0,Female,Marketing Manager,Bachelor's,1849000.0,23.0,15.0,2715.0,85.0,,Travel; Wearable Tech,Hyderabad,Telangana,India
+HW0327,27.0,Male,Street Vendor,Diploma,385000.0,21.0,7.0,234.0,36.0,Push Notification,Cooling Gear; Work Safety,Delhi,Delhi,India
+HW0025,,Male,Teacher,Bachelor's,879000.0,2.0,5.0,1287.0,77.0,Email,Elderly Care; Health Advisories,Chennai,Tamil Nadu,India
+HW0557,50.0,Female,Teacher,Master's,1148000.0,10.0,4.0,1807.0,63.0,Email,Home Cooling; Health Advisories,Pune,Maharashtra,India
+HW0609,62.0,Male,Government Employee,Bachelor's,626000.0,10.0,4.0,659.0,65.0,WhatsApp,Home Cooling; Hydration,Mumbai,Maharashtra,India
+HW0583,29.0,Male,Construction Worker,High School,286000.0,18.0,6.0,551.0,37.0,WhatsApp,Heat Alerts; Hydration,Delhi,Delhi,India
+HW0019,19.0,Male,Student,Bachelor's,101000.0,19.0,3.0,218.0,49.0,Push Notification,Gadgets; Weather Trends,delhi ,Delhi,India
+HW0580,33.0,Male,Software Engineer,Bachelor's,1721000.0,28.0,15.0,3445.0,88.0,Email,Travel; Fitness,Ahmedabad,Gujarat,India
+HW0313,48.0,Female,Government Employee,Master's,1098000.0,4.0,4.0,1166.0,64.0,WhatsApp,Family Safety; Home Cooling,Mumbai,Maharashtra,India
+HW0255,20.0,Female,Student,Bachelor's,171000.0,15.0,4.0,225.0,45.0,WhatsApp,Fitness; Weather Trends,bengaluru ,Karnataka,India
+HW0492,32.0,Female,Marketing Manager,Master's,1317000.0,10.0,13.0,2235.0,78.0,Google Search,Running; Wearable Tech,mumbai ,Maharashtra,India
+HW0088,21.0,Female,Intern,High School,112000.0,14.0,4.0,291.0,65.0,Instagram,Gadgets; Weather Trends,Nagpur,Maharashtra,India
+HW0573,54.0,Male,Homemaker,Bachelor's,744000.0,4.0,5.0,1966.0,55.0,WhatsApp,Home Cooling; Elderly Care,Hyderabad,Telangana,India
+HW0391,30.0,Male,Consultant,Bachelor's,2234000.0,16.0,20.0,3934.0,92.0,Email,Travel; Running,Delhi,Delhi,India
+HW0547,23.0,Male,Entrepreneur,Master's,1890000.0,15.0,16.0,2994.0,76.0,Google Search,Outdoor Sports; Wearable Tech,Mumbai,Maharashtra,India
+HW0223,29.0,Male,Cab Driver,Diploma,280000.0,20.0,9.0,373.0,47.0,SMS,Hydration; Cooling Gear,Ahmedabad,Gujarat,India
+HW0478,67.0,Female,Teacher,Bachelor's,811000.0,8.0,2.0,1033.0,71.0,Email,Home Cooling; Elderly Care,Chennai,Tamil Nadu,India
+HW0219,37.0,Male,School Administrator,Master's,1456000.0,6.0,2.0,4287.0,56.0,Google Search,Climate Data; Heat Action Plans,Mumbai,Maharashtra,India
+HW0591,33.0,Male,Delivery Partner,High School,365000.0,22.0,9.0,284.0,50.0,SMS,Heat Alerts; Hydration,Nagpur,Maharashtra,India
+HW0413,58.0,Female,Retired,Bachelor's,744000.0,11.0,8.0,1197.0,68.0,WhatsApp,Home Cooling; Health Advisories,Pune,Maharashtra,India
+HW0386,21.0,Male,Student,Bachelor's,69000.0,12.0,5.0,229.0,44.0,Instagram,Campus Life; Fitness,Lucknow,Uttar Pradesh,India
+HW0709,21.0,male,Intern,Bachelor's,85000.0,13.0,5.0,129.0,46.0,YouTube,Travel; Fitness,Ahmedabad,Gujarat,India
+HW0660,53.0,Female,Retired,Bachelor's,722000.0,12.0,3.0,1155.0,78.0,WhatsApp,Hydration; Family Safety,Mumbai,Maharashtra,India
+HW0194,23.0,Male,Delivery Partner,High School,278000.0,26.0,12.0,268.0,37.0,SMS,Work Safety; Hydration,Bengaluru,Karnataka,India
+HW0720,22.0,Female,Construction Worker,High School,287000.0,19.0,9.0,522.0,34.0,SMS,Heat Alerts; Hydration,Pune,Maharashtra,India
+HW0493,30.0,Female,Consultant,Master's,1678000.0,19.0,16.0,2727.0,89.0,Google Search,Running; Wearable Tech,Jaipur,Rajasthan,India
+HW0067,39.0,M,NGO Coordinator,Master's,1247000.0,6.0,4.0,3949.0,81.0,Email,Event Planning; Public Health,Mumbai,Maharashtra,India
+HW0575,52.0,Female,NGO Coordinator,Master's,1328000.0,7.0,2.0,3355.0,60.0,Google Search,Event Planning; Climate Data,Bengaluru,Karnataka,India
+HW0072,59.0,Female,Teacher,Bachelor's,1016000.0,10.0,8.0,1525.0,66.0,WhatsApp,Hydration; Elderly Care,Mumbai,Maharashtra,India
+HW0448,35.0,Female,Government Employee,Master's,663000.0,9.0,6.0,1072.0,67.0,SMS,Family Safety; Health Advisories,Bangalore,Karnataka,India
+HW0671,32.0,Female,Fitness Trainer,Bachelor's,2296000.0,18.0,25.0,2097.0,82.0,Email,Fitness; Running,DELHI,Delhi,India
+HW0611,38.0,Male,Delivery Partner,High School,280000.0,25.0,9.0,355.0,51.0,SMS,Hydration; Heat Alerts,Delhi,Delhi,India
+HW0016,25.0,Male,Student,Bachelor's,154000.0,24.0,3.0,193.0,28.0,Instagram,Weather Trends; Travel,Hyderabad,Telangana,India
+HW0676,37.0,Female,Event Organiser,Bachelor's,1032000.0,9.0,2.0,3464.0,59.0,LinkedIn,Public Health; Heat Action Plans,Hyderabad,Telangana,India
+HW0686,66.0,Male,Teacher,Master's,524000.0,11.0,7.0,1015.0,54.0,WhatsApp,Elderly Care; Home Cooling,Lucknow,Uttar Pradesh,India
+HW0405,53.0,Male,Teacher,Bachelor's,947000.0,10.0,8.0,1857.0,63.0,Facebook,Elderly Care; Family Safety,Delhi,Delhi,India
+HW0544,41.0,Male,School Administrator,Master's,1199000.0,8.0,1.0,5497.0,60.0,Google Search,Public Health; Climate Data,Pune,Maharashtra,India
+HW0428,34.0,Male,Street Vendor,Diploma,201000.0,6.0,7.0,424.0,41.0,SMS,Cooling Gear; Heat Alerts,bengaluru ,Karnataka,India
+HW0136,31.0,Male,City Planner,Master's,1431000.0,5.0,2.0,4017.0,68.0,Google Search,Public Health; Heat Action Plans,Delhi,Delhi,India
+HW0594,33.0,male,Entrepreneur,Master's,1374000.0,10.0,15.0,3241.0,83.0,Instagram,Running; Wearable Tech,Bangalore,Karnataka,India
+HW0030,28.0,Male,Construction Worker,High School,162000.0,20.0,6.0,358.0,32.0,WhatsApp,Hydration; Cooling Gear,Delhi,Delhi,India
+HW0182,19.0,Female,Intern,Bachelor's,,14.0,3.0,122.0,54.0,YouTube,Fitness; Campus Life,Chennai,Tamil Nadu,India
+HW0228,41.0,Male,Construction Worker,Diploma,260000.0,17.0,12.0,216.0,41.0,Email,Cooling Gear; Work Safety,Mumbai,Maharashtra,India
+HW0691,33.0,Male,Cab Driver,Diploma,318000.0,32.0,10.0,384.0,51.0,WhatsApp,Work Safety; Heat Alerts,Hyderabad,Telangana,India
+HW0105,23.0,Female,Student,Bachelor's,159000.0,18.0,4.0,205.0,57.0,YouTube,Fitness; Campus Life,Jaipur,Rajasthan,India
+HW0322,32.0,Male,Marketing Manager,Master's,1825000.0,23.0,16.0,4045.0,66.0,YouTube,Running; Travel,Bengaluru,Karnataka,India
+HW0269,48.0,Female,School Administrator,Bachelor's,1308000.0,7.0,1.0,4578.0,67.0,Email,Heat Action Plans; Reports,ahmedabad ,Gujarat,India
+HW0599,61.0,Female,Doctor,Bachelor's,1011000.0,8.0,8.0,1757.0,49.0,email,Health Advisories; Family Safety,Nagpur,Maharashtra,India
+HW0459,48.0,Male,Teacher,Bachelor's,,5.0,4.0,2140.0,70.0,WhatsApp,Elderly Care; Home Cooling,Delhi,Delhi,India
+HW0440,34.0,Male,Consultant,Master's,1701000.0,18.0,14.0,1971.0,81.0,Instagram,Wearable Tech; Outdoor Sports,Delhi,Delhi,India
+HW0540,65.0,Male,Doctor,Master's,1090000.0,9.0,5.0,1412.0,68.0,Email,Hydration; Family Safety,Ahmedabad,Gujarat,India
+HW0242,23.0,Male,Student,Bachelor's,117000.0,14.0,6.0,210.0,42.0,WhatsApp,Travel; Gadgets,Lucknow,Uttar Pradesh,India
+HW0487,37.0,,Traffic Police,High School,283000.0,26.0,10.0,530.0,54.0,WhatsApp,Heat Alerts; Work Safety,Pune,Maharashtra,India
+HW0714,32.0,Male,Traffic Police,High School,324000.0,30.0,10.0,316.0,25.0,WhatsApp,Cooling Gear; Heat Alerts,Lucknow,Uttar Pradesh,India
+HW0204,32.0,male,Entrepreneur,Bachelor's,1431000.0,16.0,14.0,2481.0,73.0,Email,Wearable Tech; Running,Nagpur,Maharashtra,India
+HW0656,31.0,Male,Software Engineer,Bachelor's,1296000.0,19.0,16.0,2209.0,82.0,YouTube,Outdoor Sports; Fitness,Chennai,Tamil Nadu,India
+HW0084,18.0,Male,Intern,High School,113000.0,11.0,4.0,203.0,44.0,Instagram,Weather Trends; Travel,Nagpur,Maharashtra,India
+HW0119,36.0,Female,Fitness Trainer,Master's,2103000.0,30.0,19.0,2645.0,83.0,Instagram,Travel; Wearable Tech,Delhi,Delhi,India
+HW0097,38.0,Male,Street Vendor,High School,296000.0,22.0,3.0,339.0,44.0,SMS,Hydration; Work Safety,Chennai,Tamil Nadu,India
+HW0167,28.0,Female,Student,Bachelor's,67000.0,18.0,3.0,247.0,43.0,YouTube,Travel; Fitness,Mumbai,Maharashtra,India
+HW0452,19.0,Female,Construction Worker,High School,242000.0,19.0,12.0,473.0,37.0,SMS,Work Safety; Heat Alerts,Pune,Maharashtra,India
+HW0190,67.0,Female,Teacher,Master's,196000.0,6.0,7.0,1776.0,67.0,WhatsApp,Hydration; Elderly Care,Nagpur,Maharashtra,India
+HW0668,27.0,Male,Intern,Bachelor's,122000.0,24.0,5.0,319.0,41.0,Instagram,Travel; Gadgets,Jaipur,Rajasthan,India
+HW0613,32.0,Male,Street Vendor,Diploma,279000.0,21.0,4.0,462.0,31.0,Email,Cooling Gear; Hydration,Jaipur,Rajasthan,India
+HW0093,21.0,,Intern,Bachelor's,92000.0,20.0,3.0,354.0,61.0,WhatsApp,Fitness; Travel,Hyderabad,Telangana,India
+HW0367,64.0,Female,Government Employee,Master's,1120000.0,9.0,7.0,1285.0,52.0,Email,Hydration; Elderly Care,Delhi,Delhi,India
+HW0316,19.0,Female,Intern,High School,93000.0,22.0,1.0,276.0,70.0,YouTube,Campus Life; Weather Trends,Bangalore,Karnataka,India
+HW0262,18.0,Female,Student,Bachelor's,131000.0,13.0,6.0,289.0,54.0,YouTube,Fitness; Weather Trends,Mumbai,Maharashtra,India
+HW0362,32.0,Male,Traffic Police,Diploma,303000.0,23.0,13.0,331.0,25.0,Push Notification,Work Safety; Hydration,Mumbai,Maharashtra,India
+HW0139,19.0,Male,Intern,High School,125000.0,14.0,3.0,245.0,58.0,YouTube,Gadgets; Fitness,Hyderabad,Telangana,India
+HW0652,33.0,Male,Consultant,Bachelor's,1972000.0,26.0,13.0,3185.0,79.0,Instagram,Travel; Running,Mumbai,Maharashtra,India
+HW0277,59.0,Female,Government Employee,Master's,937000.0,9.0,6.0,1058.0,76.0,Facebook,Hydration; Elderly Care,Mumbai,Maharashtra,India
+HW0385,22.0,Female,Student,Bachelor's,142000.0,8.0,1.0,178.0,40.0,Instagram,Weather Trends; Gadgets,nagpur ,Maharashtra,India
+HW0057,23.0,Male,Student,High School,125000.0,16.0,5.0,331.0,58.0,YouTube,Fitness; Campus Life,Mumbai,Maharashtra,India
+HW0588,23.0,Male,Fitness Trainer,Master's,1196000.0,7.0,16.0,2183.0,77.0,Email,Running; Outdoor Sports,Delhi,Delhi,India
+HW0438,19.0,Female,Student,High School,119000.0,14.0,8.0,225.0,62.0,Instagram,Campus Life; Travel,Pune,Maharashtra,India
+HW0089,59.0,Male,Retired,Bachelor's,978000.0,12.0,8.0,1976.0,55.0,SMS,Family Safety; Home Cooling,Delhi,Delhi,India
+HW0590,54.0,Male,City Planner,Bachelor's,1804000.0,8.0,1.0,5239.0,69.0,LinkedIn,Reports; Public Health,Bengaluru,Karnataka,India
+HW0502,18.0,Male,Intern,Bachelor's,143000.0,14.0,5.0,127.0,54.0,Push Notification,Gadgets; Campus Life,Pune,Maharashtra,India
+HW0281,27.0,Male,Delivery Partner,High School,342000.0,24.0,7.0,413.0,27.0,SMS,Heat Alerts; Hydration,Pune,Maharashtra,India
+HW0371,44.0,Male,Facility Manager,Bachelor's,,6.0,1.0,5006.0,71.0,Email,Public Health; Heat Action Plans,Delhi,Delhi,India
+HW0140,22.0,Male,Cab Driver,Diploma,266000.0,31.0,8.0,551.0,17.0,Push Notification,Cooling Gear; Heat Alerts,Lucknow,Uttar Pradesh,India
+HW0361,34.0,Female,Consultant,Master's,1663000.0,25.0,19.0,2248.0,92.0,Instagram,Outdoor Sports; Running,Ahmedabad,Gujarat,India
+HW0430,19.0,Female,Student,Bachelor's,148000.0,23.0,6.0,302.0,28.0,Instagram,Weather Trends; Travel,Mumbai,Maharashtra,India
+HW0288,22.0,Male,Intern,Bachelor's,166000.0,15.0,5.0,231.0,37.0,Instagram,Travel; Weather Trends,Ahmedabad,Gujarat,India
+HW0647,36.0,Male,Delivery Partner,High School,375000.0,16.0,8.0,463.0,32.0,Push Notification,Work Safety; Heat Alerts,Jaipur,Rajasthan,India
+HW0710,25.0,Female,Student,High School,171000.0,12.0,4.0,218.0,46.0,Instagram,Campus Life; Fitness,Ahmedabad,Gujarat,India
+HW0513,33.0,Female,Entrepreneur,Master's,1148000.0,16.0,20.0,3185.0,80.0,Google Search,Running; Travel,mumbai ,Maharashtra,India
+HW0341,38.0,Female,City Planner,Bachelor's,1517000.0,4.0,3.0,6194.0,75.0,Google Search,Heat Action Plans; Public Health,Chennai,Tamil Nadu,India
+HW0366,18.0,female,Student,High School,110000.0,14.0,6.0,132.0,49.0,Instagram,Campus Life; Fitness,Mumbai,Maharashtra,India
+HW0024,38.0,Male,Facility Manager,Bachelor's,1645000.0,6.0,3.0,4008.0,66.0,Google Search,Heat Action Plans; Event Planning,Jaipur,Rajasthan,India
+HW0346,20.0,Male,Student,Bachelor's,147000.0,10.0,6.0,298.0,75.0,Push Notification,Fitness; Campus Life,Bengaluru,Karnataka,India
+HW0165,33.0,F,Software Engineer,Master's,1129000.0,14.0,15.0,2530.0,79.0,Instagram,Outdoor Sports; Running,Mumbai,Maharashtra,India
+HW0692,20.0,Male,Intern,High School,117000.0,22.0,3.0,210.0,47.0,WhatsApp,Fitness; Campus Life,Mumbai,Maharashtra,India
+HW0335,43.0,Female,NGO Coordinator,Master's,1471000.0,5.0,4.0,4064.0,66.0,Email,Public Health; Heat Action Plans,Bengaluru,Karnataka,India
+HW0311,54.0,Female,Government Employee,Master's,1100000.0,9.0,6.0,1681.0,42.0,WhatsApp,Home Cooling; Elderly Care,Nagpur,Maharashtra,India
+HW0670,20.0,Male,Intern,Bachelor's,102000.0,21.0,1.0,209.0,38.0,Instagram,Campus Life; Gadgets,Bengaluru,Karnataka,India
+HW0129,34.0,Male,Entrepreneur,Master's,1578000.0,16.0,17.0,4072.0,77.0,Instagram,Travel; Wearable Tech,Delhi,Delhi,India
+HW0354,31.0,Male,Entrepreneur,Master's,1790000.0,17.0,16.0,2197.0,65.0,Instagram,Running; Wearable Tech,Nagpur,Maharashtra,India
+HW0507,38.0,Female,Fitness Trainer,Bachelor's,1814000.0,13.0,20.0,2452.0,88.0,Email,Fitness; Wearable Tech,Mumbai,Maharashtra,India
+HW0707,25.0,Male,Cab Driver,High School,119000.0,28.0,8.0,331.0,39.0,SMS,Hydration; Work Safety,Hyderabad,Telangana,India
+HW0241,28.0,Male,Construction Worker,High School,,26.0,7.0,517.0,42.0,SMS,Cooling Gear; Hydration,Nagpur,Maharashtra,India
+HW0467,,f ,Retired,Master's,1195000.0,6.0,7.0,1697.0,55.0,Email,Home Cooling; Elderly Care,Jaipur,Rajasthan,India
+HW0319,19.0,Female,Intern,Bachelor's,103000.0,1.0,2.0,227.0,29.0,YouTube,Gadgets; Weather Trends,Delhi,Delhi,India
+HW0549,41.0,Male,NGO Coordinator,Master's,1828000.0,6.0,1.0,3564.0,76.0,Email,Event Planning; Reports,Hyderabad,Telangana,India
+HW0263,63.0,Female,Doctor,Master's,886000.0,10.0,6.0,1435.0,70.0,SMS,Elderly Care; Home Cooling,Bengaluru,Karnataka,India
+HW0099,36.0,Male,Fitness Trainer,Bachelor's,1581000.0,19.0,15.0,2899.0,83.0,Email,Wearable Tech; Fitness,Jaipur,Rajasthan,India
+HW0553,36.0,Female,Homemaker,Bachelor's,937000.0,7.0,5.0,,60.0,WhatsApp,Home Cooling; Hydration,Bengaluru,Karnataka,India
+HW0570,37.0,Female,Marketing Manager,Bachelor's,2346000.0,17.0,14.0,3175.0,80.0,Email,Fitness; Running,Mumbai,Maharashtra,India
+HW0645,22.0,Male,Student,High School,60000.0,13.0,5.0,313.0,50.0,Instagram,Fitness; Travel,Hyderabad,Telangana,India
+HW0090,52.0,Female,City Planner,Bachelor's,1101000.0,9.0,4.0,4163.0,83.0,Google Search,Reports; Climate Data,Mumbai,Maharashtra,India
+HW0203,24.0,Male,Intern,High School,99000.0,26.0,2.0,166.0,50.0,Push Notification,Campus Life; Travel,Delhi,Delhi,India
+HW0004,21.0,Female,Intern,Bachelor's,,9.0,1.0,236.0,58.0,Instagram,Weather Trends; Travel,Bengaluru,Karnataka,India
+HW0256,22.0,Male,Student,Bachelor's,158000.0,19.0,6.0,230.0,54.0,Instagram,Fitness; Travel,Delhi,Delhi,India
+HW0332,20.0,Female,Intern,High School,86000.0,15.0,4.0,327.0,54.0,Instagram,Fitness; Weather Trends,Pune,Maharashtra,India
+HW0386,21.0,Male,Student,Bachelor's,69000.0,12.0,5.0,229.0,44.0,Instagram,Campus Life; Fitness,Lucknow,Uttar Pradesh,India
+HW0353,18.0,F,Intern,High School,185000.0,11.0,5.0,182.0,40.0,YouTube,Fitness; Travel,Mumbai,Maharashtra,India
+HW0543,20.0,Female,Intern,High School,105000.0,11.0,2.0,294.0,48.0,Instagram,Gadgets; Travel,Nagpur,Maharashtra,India
+HW0147,37.0,Male,Street Vendor,High School,258000.0,26.0,13.0,316.0,43.0,WhatsApp,Hydration; Heat Alerts,Lucknow,Uttar Pradesh,India
+HW0454,18.0,Male,Student,High School,109000.0,22.0,5.0,247.0,22.0,Instagram,Travel; Weather Trends,Ahmedabad,Gujarat,India
+HW0020,18.0,Female,Intern,Bachelor's,110000.0,15.0,2.0,336.0,48.0,Push Notification,Campus Life; Travel,Mumbai,Maharashtra,India
+HW0329,39.0,,NGO Coordinator,Bachelor's,1322000.0,4.0,2.0,6522.0,61.0,Email,Event Planning; Heat Action Plans,DELHI,Delhi,India
+HW0559,29.0,Female,Consultant,Bachelor's,1566000.0,19.0,19.0,3030.0,92.0,Google Search,Travel; Running,Mumbai,Maharashtra,India
+HW0261,21.0,Male,Student,Bachelor's,124000.0,12.0,3.0,150.0,55.0,YouTube,Travel; Gadgets,Nagpur,Maharashtra,India
+HW0299,21.0,Male,Intern,High School,189000.0,4.0,5.0,307.0,25.0,YouTube,Weather Trends; Fitness,Mumbai,Maharashtra,India
+HW0306,18.0,Female,Intern,High School,60000.0,8.0,7.0,251.0,49.0,Push Notification,Fitness; Gadgets,Ahmedabad,Gujarat,India
+HW0365,21.0,Male,Student,Bachelor's,76000.0,19.0,2.0,312.0,53.0,YouTube,Gadgets; Weather Trends,Mumbai,Maharashtra,India
+HW0291,36.0,Female,Entrepreneur,Bachelor's,1654000.0,18.0,18.0,3031.0,100.0,Email,Outdoor Sports; Fitness,delhi ,Delhi,India
+HW0191,25.0,Female,Student,Bachelor's,77000.0,13.0,6.0,342.0,26.0,Push Notification,Campus Life; Fitness,Pune,Maharashtra,India
+HW0622,48.0,Female,Entrepreneur,Master's,1579000.0,30.0,13.0,2886.0,78.0,Google Search,Travel; Fitness,Chennai,Tamil Nadu,India
+HW0689,30.0,Male,Marketing Manager,Master's,1616000.0,19.0,21.0,2317.0,85.0,email,Travel; Outdoor Sports,Pune,Maharashtra,India
+HW0197,23.0,Male,Traffic Police,High School,403000.0,25.0,9.0,273.0,23.0,WhatsApp,Work Safety; Cooling Gear,Pune,Maharashtra,India
+HW0141,18.0,Male,Street Vendor,Diploma,203000.0,38.0,4.0,440.0,46.0,WhatsApp,Hydration; Work Safety,Mumbai,Maharashtra,India
+HW0083,21.0,Female,Student,High School,104000.0,17.0,5.0,100.0,61.0,Push Notification,Weather Trends; Gadgets,Jaipur,Rajasthan,India
+HW0123,38.0,Male,Consultant,Bachelor's,692000.0,13.0,10.0,3302.0,70.0,Email,Running; Fitness,Delhi,Delhi,India
+HW0662,58.0,Female,Teacher,Bachelor's,508000.0,1.0,4.0,1318.0,73.0,Email,Hydration; Health Advisories,Mumbai,Maharashtra,India
+HW0111,,MALE,Traffic Police,High School,221000.0,30.0,6.0,214.0,36.0,Push Notification,Cooling Gear; Heat Alerts,Mumbai,Maharashtra,India
+HW0085,24.0,Male,Construction Worker,High School,361000.0,30.0,8.0,422.0,34.0,WhatsApp,Cooling Gear; Work Safety,Delhi,Delhi,India
+HW0587,22.0,Female,Intern,High School,177000.0,11.0,4.0,289.0,58.0,WhatsApp,Weather Trends; Travel,LUCKNOW,Uttar Pradesh,India
+HW0688,47.0,Female,Homemaker,Master's,1147000.0,8.0,3.0,1404.0,53.0,WhatsApp,Family Safety; Elderly Care,pune ,Maharashtra,India
+HW0180,,Male,City Planner,Master's,2083000.0,4.0,1.0,4253.0,59.0,Google Search,Reports; Climate Data,Nagpur,Maharashtra,India
+HW0572,18.0,Female,Student,Bachelor's,131000.0,22.0,4.0,241.0,37.0,YouTube,Gadgets; Travel,Bengaluru,Karnataka,India
+HW0514,45.0,Male,Homemaker,Master's,1121000.0,7.0,7.0,1439.0,80.0,Facebook,Hydration; Home Cooling,Bengaluru,Karnataka,India
+HW0100,32.0,Male,Cab Driver,High School,250000.0,26.0,12.0,432.0,41.0,whatsapp,Hydration; Cooling Gear,Hyderabad,Telangana,India
+HW0530,,Male,Student,Bachelor's,190000.0,11.0,3.0,227.0,31.0,YouTube,Campus Life; Weather Trends,Mumbai,Maharashtra,India
+HW0075,35.0,M,Traffic Police,High School,230000.0,23.0,8.0,456.0,38.0,WhatsApp,Heat Alerts; Work Safety,Nagpur,Maharashtra,India
+HW0008,31.0,Male,Traffic Police,High School,254000.0,26.0,8.0,334.0,39.0,WhatsApp,Hydration; Heat Alerts,Hyderabad,Telangana,India
+HW0690,23.0,Female,Student,High School,83000.0,18.0,4.0,297.0,50.0,Instagram,Weather Trends; Fitness,Delhi,Delhi,India
+HW0694,30.0,Male,Traffic Police,Diploma,271000.0,23.0,13.0,209.0,43.0,WhatsApp,Cooling Gear; Hydration,Hyderabad,Telangana,India
+HW0274,35.0,Male,Street Vendor,High School,226000.0,26.0,5.0,558.0,40.0,WhatsApp,Work Safety; Hydration,Bengaluru,Karnataka,India
+HW0280,19.0,Male,Intern,Bachelor's,96000.0,15.0,3.0,126.0,35.0,Instagram,Travel; Fitness,Chennai,Tamil Nadu,India
+HW0397,67.0,Female,Teacher,Master's,1043000.0,9.0,1.0,1480.0,55.0,Email,Health Advisories; Home Cooling,Jaipur,Rajasthan,India
+HW0155,32.0,Female,Consultant,Bachelor's,1261000.0,22.0,18.0,2968.0,85.0,Instagram,Running; Fitness,Lucknow,Uttar Pradesh,India
+HW0531,61.0,Female,Doctor,Master's,290000.0,12.0,9.0,1264.0,74.0,WhatsApp,Family Safety; Elderly Care,hyderabad ,Telangana,India
+HW0192,21.0,Female,Intern,High School,74000.0,3.0,6.0,261.0,58.0,Instagram,Travel; Campus Life,Pune,Maharashtra,India
+HW0659,34.0,Male,Construction Worker,High School,214000.0,26.0,12.0,231.0,59.0,SMS,Heat Alerts; Hydration,Pune,Maharashtra,India
+HW0683,21.0,Female,Student,High School,62000.0,29.0,4.0,379.0,28.0,Instagram,Campus Life; Gadgets,Hyderabad,Telangana,India
+HW0188,20.0,Male,Intern,High School,73000.0,10.0,5.0,252.0,64.0,Instagram,Weather Trends; Travel,Bangalore,Karnataka,India
+HW0051,72.0,Female,Retired,Master's,901000.0,8.0,8.0,1167.0,73.0,WhatsApp,Elderly Care; Health Advisories,Ahmedabad,Gujarat,India
+HW0039,24.0,Female,Entrepreneur,Bachelor's,1493000.0,17.0,13.0,3827.0,82.0,Email,Travel; Fitness,Delhi,Delhi,India
+HW0450,38.0,Female,Doctor,Bachelor's,,13.0,5.0,1962.0,71.0,WhatsApp,Home Cooling; Elderly Care,Hyderabad,Telangana,India
+HW0419,19.0,Female,Intern,High School,,24.0,3.0,263.0,35.0,Push Notification,Campus Life; Weather Trends,Pune,Maharashtra,India
+HW0653,59.0,Male,Retired,Master's,131000.0,8.0,6.0,1716.0,47.0,Email,Hydration; Health Advisories,Hyderabad,Telangana,India
+HW0209,39.0,Female,NGO Coordinator,Bachelor's,861000.0,9.0,2.0,5709.0,44.0,LinkedIn,Event Planning; Reports,Mumbai,Maharashtra,India
+HW0376,19.0,Male,Intern,Bachelor's,99000.0,11.0,5.0,142.0,57.0,instagram,Travel; Weather Trends,Hyderabad,Telangana,India
+HW0464,24.0,Male,Consultant,Bachelor's,1262000.0,15.0,13.0,3233.0,85.0,Google Search,Travel; Outdoor Sports,Delhi,Delhi,India
+HW0471,36.0,Male,Delivery Partner,Diploma,255000.0,17.0,9.0,376.0,41.0,WhatsApp,Heat Alerts; Hydration,Bengaluru,Karnataka,India
+HW0006,34.0,Male,Delivery Partner,Diploma,205000.0,22.0,8.0,384.0,26.0,SMS,Work Safety; Hydration,Delhi,Delhi,India
+HW0076,31.0,Female,Entrepreneur,Master's,1426000.0,20.0,14.0,3386.0,80.0,Email,Travel; Wearable Tech,Jaipur,Rajasthan,India
+HW0602,19.0,F,Intern,High School,78000.0,16.0,3.0,272.0,34.0,Push Notification,Travel; Fitness,Chennai,Tamil Nadu,India
+HW0249,35.0,Male,Cab Driver,High School,366000.0,31.0,8.0,253.0,32.0,WhatsApp,Work Safety; Cooling Gear,Delhi,Delhi,India
+HW0048,38.0,f ,Entrepreneur,Master's,1343000.0,21.0,17.0,2566.0,90.0,Google Search,Fitness; Travel,Pune,Maharashtra,India
+HW0303,37.0,Male,Delivery Partner,High School,163000.0,24.0,13.0,462.0,30.0,,Hydration; Cooling Gear,Mumbai,Maharashtra,India
+HW0071,36.0,Male,City Planner,Bachelor's,1530000.0,9.0,2.0,4038.0,71.0,LinkedIn,Climate Data; Public Health,Chennai,Tamil Nadu,India
+HW0388,46.0,Female,School Administrator,Master's,1172000.0,6.0,1.0,2782.0,70.0,Google Search,Heat Action Plans; Reports,Mumbai,Maharashtra,India
+HW0597,35.0,Male,Software Engineer,Bachelor's,1214000.0,19.0,13.0,2611.0,87.0,Google Search,Running; Fitness,Chennai,Tamil Nadu,India
+HW0706,50.0,Female,Government Employee,Bachelor's,695000.0,11.0,6.0,740.0,52.0,Email,Hydration; Home Cooling,Ahmedabad,Gujarat,India
+HW0226,35.0,Male,Entrepreneur,Bachelor's,1025000.0,30.0,16.0,2653.0,88.0,Google Search,Wearable Tech; Outdoor Sports,Jaipur,Rajasthan,India
+HW0287,20.0,Female,Intern,High School,106000.0,10.0,9.0,276.0,29.0,Instagram,Campus Life; Fitness,Mumbai,Maharashtra,India
+HW0012,46.0,Female,Teacher,Master's,997000.0,4.0,10.0,1114.0,61.0,Email,Hydration; Health Advisories,Jaipur,Rajasthan,India
+HW0555,21.0,Female,Student,High School,136000.0,20.0,6.0,289.0,43.0,Instagram,Gadgets; Weather Trends,Mumbai,Maharashtra,India
+HW0151,59.0,Female,Teacher,Master's,746000.0,11.0,7.0,902.0,66.0,Email,Home Cooling; Hydration,Nagpur,Maharashtra,India
+HW0486,45.0,Female,Fitness Trainer,Bachelor's,1377000.0,18.0,19.0,2592.0,75.0,YouTube,Wearable Tech; Travel,Lucknow,Uttar Pradesh,India
+HW0463,,Female,Intern,Bachelor's,154000.0,11.0,2.0,294.0,42.0,Instagram,Weather Trends; Fitness,Pune,Maharashtra,India
+HW0699,57.0,Female,Doctor,Bachelor's,1363000.0,13.0,5.0,1401.0,76.0,WhatsApp,Family Safety; Hydration,ahmedabad ,Gujarat,India
+HW0116,,Female,Student,Bachelor's,158000.0,17.0,6.0,316.0,74.0,WhatsApp,Weather Trends; Gadgets,Nagpur,Maharashtra,India
+HW0282,30.0,Male,Cab Driver,High School,294000.0,26.0,13.0,207.0,28.0,WhatsApp,Hydration; Cooling Gear,Delhi,Delhi,India
+HW0254,20.0,Male,Student,Bachelor's,149000.0,20.0,4.0,177.0,52.0,youtube,Fitness; Gadgets,Pune,Maharashtra,India
+HW0595,57.0,Female,Government Employee,Bachelor's,639000.0,12.0,2.0,1330.0,57.0,Email,Home Cooling; Health Advisories,Delhi,Delhi,India
+HW0196,36.0,Female,Facility Manager,Bachelor's,1451000.0,7.0,1.0,5019.0,76.0,Email,Event Planning; Public Health,Mumbai,Maharashtra,India
+HW0222,30.0,Male,Traffic Police,High School,294000.0,31.0,8.0,426.0,38.0,SMS,Work Safety; Heat Alerts,Hyderabad,Telangana,India
+HW0536,27.0,female,Intern,High School,127000.0,10.0,5.0,121.0,36.0,YouTube,Gadgets; Travel,Jaipur,Rajasthan,India
+HW0681,30.0,Female,Entrepreneur,Bachelor's,1542000.0,19.0,14.0,2805.0,89.0,Email,Wearable Tech; Running,Hyderabad,Telangana,India
+HW0066,33.0,Male,Traffic Police,Diploma,259000.0,26.0,10.0,340.0,21.0,WhatsApp,Cooling Gear; Hydration,Mumbai,Maharashtra,India
+HW0534,20.0,female,Student,Bachelor's,182000.0,7.0,4.0,327.0,19.0,Instagram,Campus Life; Weather Trends,Mumbai,Maharashtra,India
+HW0302,23.0,Male,Intern,Bachelor's,60000.0,13.0,5.0,316.0,57.0,Instagram,Fitness; Travel,Mumbai,Maharashtra,India
+HW0220,34.0,Male,Delivery Partner,High School,213000.0,25.0,10.0,,31.0,Push Notification,Heat Alerts; Cooling Gear,Mumbai,Maharashtra,India
+HW0455,,Female,Government Employee,Master's,751000.0,9.0,7.0,2181.0,68.0,Email,Hydration; Home Cooling,Jaipur,Rajasthan,India
+HW0426,24.0,Female,Intern,High School,167000.0,10.0,6.0,227.0,48.0,YouTube,Gadgets; Campus Life,PUNE,Maharashtra,India
+HW0370,36.0,Male,Traffic Police,Diploma,244000.0,28.0,15.0,376.0,43.0,SMS,Cooling Gear; Work Safety,Hyderabad,Telangana,India
+HW0624,21.0,Male,Delivery Partner,Diploma,293000.0,18.0,9.0,290.0,34.0,Push Notification,Hydration; Heat Alerts,Delhi,Delhi,India
+HW0070,29.0,Male,Software Engineer,Bachelor's,1544000.0,25.0,15.0,2765.0,76.0,Email,Running; Travel,Chennai,Tamil Nadu,India
+HW0022,23.0,Male,Intern,Bachelor's,163000.0,13.0,2.0,254.0,65.0,Instagram,Fitness; Campus Life,Hyderabad,Telangana,India
+HW0078,22.0,Male,Intern,High School,150000.0,16.0,8.0,261.0,49.0,YouTube,Weather Trends; Gadgets,Chennai,Tamil Nadu,India
+HW0281,27.0,Male,Delivery Partner,High School,342000.0,24.0,7.0,413.0,27.0,SMS,Heat Alerts; Hydration,Pune,Maharashtra,India
+HW0702,49.0,f ,Facility Manager,Master's,1743000.0,3.0,3.0,6342.0,87.0,Google Search,,Ahmedabad,Gujarat,India
+HW0126,31.0,Male,Street Vendor,High School,295000.0,25.0,10.0,348.0,32.0,WhatsApp,Hydration; Heat Alerts,Hyderabad,Telangana,India
+HW0229,29.0,Male,Delivery Partner,High School,402000.0,21.0,9.0,310.0,23.0,WhatsApp,Cooling Gear; Work Safety,Mumbai,Maharashtra,India
+HW0043,32.0,Male,Street Vendor,Diploma,204000.0,25.0,8.0,162.0,48.0,SMS,Cooling Gear; Hydration,Hyderabad,Telangana,India
+HW0517,60.0,Male,Doctor,Master's,967000.0,11.0,4.0,2449.0,42.0,Email,Elderly Care; Health Advisories,Delhi,Delhi,India
+HW0375,56.0,Female,Homemaker,Bachelor's,1009000.0,2.0,4.0,1144.0,58.0,Email,Home Cooling; Hydration,Jaipur,Rajasthan,India
+HW0206,30.0,MALE,Traffic Police,High School,300000.0,13.0,6.0,249.0,45.0,Push Notification,Work Safety; Heat Alerts,Hyderabad,Telangana,India
+HW0719,53.0,Male,Doctor,Bachelor's,794000.0,8.0,9.0,931.0,79.0,Email,Health Advisories; Family Safety,Bengaluru,Karnataka,India
+HW0007,41.0,Male,Construction Worker,Diploma,345000.0,19.0,11.0,515.0,31.0,Push Notification,Hydration; Heat Alerts,DELHI,Delhi,India
+HW0494,18.0,Male,Student,Bachelor's,143000.0,10.0,5.0,255.0,44.0,WhatsApp,Travel; Campus Life,Lucknow,Uttar Pradesh,India
+HW0700,26.0,Female,Intern,High School,151000.0,19.0,6.0,326.0,37.0,Instagram,Campus Life; Travel,Mumbai,Maharashtra,India
+HW0550,53.0,Female,Retired,Bachelor's,579000.0,12.0,3.0,739.0,82.0,Email,Hydration; Family Safety,Delhi,Delhi,India
+HW0260,54.0,Male,Teacher,Master's,1015000.0,8.0,7.0,1130.0,50.0,Email,Health Advisories; Hydration,Mumbai,Maharashtra,India
+HW0283,19.0,Male,Student,Bachelor's,139000.0,19.0,3.0,148.0,43.0,Push Notification,Gadgets; Campus Life,Mumbai,Maharashtra,India
+HW0658,21.0,female,Student,High School,138000.0,16.0,6.0,218.0,45.0,YouTube,Travel; Campus Life,Delhi,Delhi,India
+HW0497,80.0,Male,Teacher,Bachelor's,869000.0,8.0,7.0,2121.0,73.0,WhatsApp,Health Advisories; Home Cooling,Jaipur,Rajasthan,India
+HW0456,18.0,Female,Student,High School,123000.0,14.0,2.0,404.0,29.0,YouTube,Fitness; Travel,Ahmedabad,Gujarat,India
+HW0321,51.0,Male,NGO Coordinator,Master's,1654000.0,11.0,2.0,,57.0,Email,Reports; Heat Action Plans,Delhi,Delhi,India
+HW0435,38.0,Male,Marketing Manager,Bachelor's,1774000.0,14.0,13.0,2794.0,88.0,Email,Travel; Outdoor Sports,Ahmedabad,Gujarat,India
+HW0300,59.0,Male,Doctor,Master's,714000.0,4.0,9.0,1065.0,79.0,Email,Health Advisories; Family Safety,Jaipur,Rajasthan,India
+HW0437,33.0,FEMALE,Entrepreneur,Bachelor's,1846000.0,17.0,15.0,3130.0,84.0,Google Search,Running; Fitness,Hyderabad,Telangana,India
+HW0669,23.0,Male,Street Vendor,High School,348000.0,33.0,12.0,340.0,37.0,Push Notification,Work Safety; Hydration,Delhi,Delhi,India
+HW0439,35.0,Female,Software Engineer,Master's,,21.0,12.0,,90.0,Instagram,Running; Fitness,Lucknow,Uttar Pradesh,India
+HW0326,19.0,Male,Student,Bachelor's,78000.0,10.0,1.0,172.0,58.0,YouTube,Weather Trends; Travel,Jaipur,Rajasthan,India
+HW0404,32.0,Male,Cab Driver,High School,267000.0,35.0,9.0,290.0,26.0,WhatsApp,Heat Alerts; Hydration,Ahmedabad,Gujarat,India
+HW0266,31.0,Female,Delivery Partner,Diploma,300000.0,26.0,6.0,294.0,37.0,SMS,Work Safety; Heat Alerts,Delhi,Delhi,India
+HW0607,27.0,Male,Entrepreneur,Master's,1631000.0,15.0,13.0,3284.0,87.0,Instagram,Travel; Fitness,Jaipur,Rajasthan,India
+HW0279,18.0, m,Consultant,Bachelor's,1736000.0,20.0,14.0,2821.0,74.0,Instagram,Travel; Running,Mumbai,Maharashtra,India
+HW0566,62.0,F,Homemaker,Master's,989000.0,6.0,4.0,1382.0,68.0,SMS,Health Advisories; Elderly Care,Delhi,Delhi,India
+HW0677,73.0,Female,Homemaker,Master's,810000.0,7.0,6.0,396.0,54.0,Email,Home Cooling; Health Advisories,Jaipur,Rajasthan,India
+HW0187,34.0,Male,Software Engineer,Bachelor's,1878000.0,10.0,16.0,2814.0,85.0,Email,Outdoor Sports; Fitness,Pune,Maharashtra,India
+HW0232,22.0,,Intern,High School,171000.0,21.0,2.0,138.0,68.0,Instagram,Gadgets; Travel,Chennai,Tamil Nadu,India
+HW0246,38.0,Male,Entrepreneur,Master's,1627000.0,25.0,13.0,2691.0,67.0,Google Search,Wearable Tech; Fitness,Jaipur,Rajasthan,India
+HW0168,38.0,Male,Software Engineer,Bachelor's,,21.0,16.0,1196.0,91.0,Instagram,Wearable Tech; Travel,Delhi,Delhi,India
+HW0503,41.0,Male,Doctor,Bachelor's,936000.0,10.0,5.0,1211.0,63.0,WhatsApp,Family Safety; Home Cooling,Mumbai,Maharashtra,India
+HW0333,22.0,Male,Intern,High School,138000.0,11.0,5.0,173.0,52.0,Instagram,Travel; Campus Life,Mumbai,Maharashtra,India
+HW0427,22.0,Male,Intern,Bachelor's,167000.0,11.0,6.0,328.0,31.0,Instagram,Weather Trends; Gadgets,Hyderabad,Telangana,India
+HW0542,28.0,Female,Marketing Manager,Bachelor's,1846000.0,25.0,19.0,2294.0,85.0,Email,Wearable Tech; Fitness,Delhi,Delhi,India
+HW0163,30.0,Female,Facility Manager,Master's,1162000.0,2.0,1.0,3382.0,72.0,Google Search,Climate Data; Reports,Chennai,Tamil Nadu,India
+HW0150,34.0,Male,Construction Worker,Diploma,303000.0,23.0,12.0,312.0,49.0,SMS,Work Safety; Cooling Gear,Lucknow,Uttar Pradesh,India
+HW0227,44.0,Male,Marketing Manager,Master's,1726000.0,13.0,15.0,2199.0,91.0,,Running; Travel,Pune,Maharashtra,India
+HW0095,18.0,Male,Intern,Bachelor's,131000.0,18.0,6.0,320.0,39.0,WhatsApp,Fitness; Weather Trends,Jaipur,Rajasthan,India
+HW0222,30.0,Male,Traffic Police,High School,294000.0,31.0,8.0,426.0,38.0,SMS,Work Safety; Heat Alerts,Hyderabad,Telangana,India
+HW0474,41.0,Male,School Administrator,Bachelor's,1382000.0,4.0,1.0,3833.0,83.0,Email,Reports; Climate Data,Mumbai,Maharashtra,India
+HW0610,18.0,Male,Traffic Police,Diploma,270000.0,26.0,4.0,263.0,22.0,Push Notification,Work Safety; Hydration,Delhi,Delhi,India
+HW0615,42.0,Male,Entrepreneur,Master's,1119000.0,19.0,22.0,2192.0,91.0,Email,Travel; Fitness,Delhi,Delhi,India
+HW0035,35.0,Male,Marketing Manager,Master's,,24.0,21.0,3734.0,83.0,Instagram,Running; Wearable Tech,Mumbai,Maharashtra,India
+HW0218,25.0,male,Software Engineer,Bachelor's,1459000.0,17.0,10.0,2263.0,79.0,Email,Outdoor Sports; Fitness,Chennai,Tamil Nadu,India
+HW0073,31.0,Male,Delivery Partner,High School,153000.0,31.0,5.0,374.0,41.0,SMS,Heat Alerts; Work Safety,Delhi,Delhi,India
+HW0221,40.0,Male,Cab Driver,High School,383000.0,25.0,13.0,457.0,35.0,WhatsApp,Heat Alerts; Work Safety,Delhi,Delhi,India
+HW0214,24.0,Female,Consultant,Bachelor's,,27.0,19.0,3409.0,88.0,Google Search,Running; Travel,Delhi,Delhi,India
+HW0718,23.0,Female,Intern,Bachelor's,160000.0,13.0,3.0,133.0,42.0,YouTube,Travel; Gadgets,Pune,Maharashtra,India
+HW0395,21.0,Male,Student,Bachelor's,225000.0,16.0,1.0,201.0,22.0,YouTube,Travel; Gadgets,Pune,Maharashtra,India
+HW0368,19.0,FEMALE,Intern,High School,161000.0,22.0,6.0,271.0,64.0,Instagram,Gadgets; Weather Trends,Mumbai,Maharashtra,India
+HW0013,28.0,Male,Traffic Police,Diploma,275000.0,26.0,9.0,310.0,31.0,Push Notification,Cooling Gear; Hydration,Jaipur,Rajasthan,India
+HW0632,36.0,Male,Delivery Partner,High School,308000.0,31.0,11.0,349.0,18.0,SMS,Hydration; Cooling Gear,Ahmedabad,Gujarat,India
+HW0344,38.0,Male,School Administrator,Master's,1773000.0,5.0,1.0,4451.0,81.0,Email,Climate Data; Reports,Mumbai,Maharashtra,India
+HW0199,29.0,Male,Marketing Manager,Bachelor's,1224000.0,18.0,19.0,1842.0,84.0,,Running; Fitness,Nagpur,Maharashtra,India
+HW0235,57.0,Male,Government Employee,Master's,1397000.0,1.0,4.0,1568.0,76.0,WhatsApp,Home Cooling; Family Safety,Mumbai,Maharashtra,India
+HW0421,22.0,Male,Intern,Bachelor's,85000.0,18.0,5.0,262.0,52.0,WhatsApp,Fitness; Campus Life,Delhi,Delhi,India
+HW0713,36.0,Male,Fitness Trainer,Bachelor's,1851000.0,20.0,13.0,2040.0,83.0,Email,Running; Fitness,Pune,Maharashtra,India
+HW0608,59.0,Female,Government Employee,Bachelor's,1222000.0,9.0,6.0,1324.0,66.0,WhatsApp,Hydration; Elderly Care,Mumbai,Maharashtra,India
+HW0298,39.0,Female,Facility Manager,Bachelor's,1580000.0,10.0,1.0,4856.0,77.0,LinkedIn,Event Planning; Climate Data,Ahmedabad,Gujarat,India
+HW0064,58.0,Female,Teacher,Master's,874000.0,9.0,7.0,1547.0,66.0,SMS,Home Cooling; Elderly Care,Hyderabad,Telangana,India
+HW0014,35.0,Male,Street Vendor,High School,274000.0,16.0,11.0,382.0,36.0,WhatsApp,Cooling Gear; Heat Alerts,nagpur ,Maharashtra,India
+HW0436,36.0,Male,Street Vendor,High School,277000.0,27.0,10.0,483.0,42.0,SMS,Cooling Gear; Heat Alerts,Bengaluru,Karnataka,India
+HW0018,34.0,Male,Entrepreneur,Bachelor's,1315000.0,19.0,21.0,3855.0,91.0,Email,Fitness; Wearable Tech,Nagpur,Maharashtra,India
+HW0615,42.0,Male,Entrepreneur,Master's,1119000.0,19.0,22.0,2192.0,91.0,Email,Travel; Fitness,Delhi,Delhi,India
+HW0349,34.0,Male,Cab Driver,Diploma,209000.0,36.0,11.0,392.0,28.0,SMS,Cooling Gear; Work Safety,Chennai,Tamil Nadu,India
+HW0208,19.0,Male,Intern,Bachelor's,60000.0,17.0,2.0,141.0,54.0,Push Notification,Gadgets; Fitness,Pune,Maharashtra,India
+HW0091,23.0,Male,Student,Bachelor's,,8.0,1.0,169.0,52.0,YouTube,Weather Trends; Fitness,Delhi,Delhi,India
+HW0308,49.0,Male,City Planner,Master's,654000.0,2.0,3.0,5874.0,65.0,Google Search,Reports; Climate Data,Mumbai,Maharashtra,India
+HW0342,45.0,Male,Government Employee,Master's,911000.0,18.0,8.0,1176.0,55.0,Email,Elderly Care; Hydration,Mumbai,Maharashtra,India
+HW0381,18.0, m,Intern,Bachelor's,139000.0,19.0,7.0,285.0,57.0,Instagram,Weather Trends; Fitness,Pune,Maharashtra,India
+HW0345,43.0,Female,Government Employee,Master's,990000.0,13.0,5.0,1334.0,51.0,Email,Health Advisories; Home Cooling,Ahmedabad,Gujarat,India
+HW0472,33.0,F,Construction Worker,Diploma,305000.0,24.0,7.0,470.0,23.0,Push Notification,Hydration; Cooling Gear,Delhi,Delhi,India
+HW0598,23.0,Female,Intern,Bachelor's,169000.0,16.0,3.0,389.0,39.0,,Travel; Campus Life,Mumbai,Maharashtra,India
+HW0552,55.0,Male,Doctor,Master's,1582000.0,9.0,7.0,1069.0,47.0,WhatsApp,Home Cooling; Family Safety,Mumbai,Maharashtra,India
+HW0033,19.0,Male,Student,High School,94000.0,26.0,4.0,100.0,53.0,Instagram,Gadgets; Weather Trends,Mumbai,Maharashtra,India
+HW0695,19.0,M,Student,Bachelor's,135000.0,8.0,5.0,255.0,36.0,Instagram,Campus Life; Fitness,Mumbai,Maharashtra,India
+HW0173,30.0,Male,Software Engineer,Master's,1412000.0,23.0,18.0,3691.0,82.0,Email,Travel; Outdoor Sports,Nagpur,Maharashtra,India
+HW0634,39.0,Male,Government Employee,Master's,703000.0,3.0,8.0,944.0,69.0,WhatsApp,Family Safety; Health Advisories,Jaipur,Rajasthan,India
+HW0635,63.0, m,Doctor,Bachelor's,989000.0,12.0,8.0,1650.0,63.0,Email,Elderly Care; Health Advisories,Bengaluru,Karnataka,India
+HW0409,30.0,Male,Delivery Partner,Diploma,235000.0,32.0,7.0,355.0,39.0,Push Notification,Cooling Gear; Heat Alerts,Delhi,Delhi,India
+HW0620,57.0,Female,Government Employee,Bachelor's,1117000.0,7.0,6.0,1414.0,60.0,Email,Hydration; Health Advisories,Lucknow,Uttar Pradesh,India
+HW0684,,,Homemaker,Bachelor's,1006000.0,9.0,8.0,1405.0,65.0,Facebook,Family Safety; Elderly Care,Delhi,Delhi,India
+HW0201,28.0,MALE,Fitness Trainer,Bachelor's,2166000.0,22.0,18.0,3908.0,84.0,Google Search,Running; Wearable Tech,Hyderabad,Telangana,India
+HW0293,39.0,Male,Construction Worker,Diploma,255000.0,21.0,7.0,366.0,31.0,Email,Hydration; Heat Alerts,Lucknow,Uttar Pradesh,India
+HW0584,62.0,Female,Government Employee,Bachelor's,777000.0,11.0,8.0,1372.0,64.0,Facebook,Hydration; Home Cooling,Delhi,Delhi,India
+HW0646,21.0,Male,Student,Bachelor's,134000.0,3.0,2.0,159.0,52.0,Instagram,Campus Life; Gadgets,Mumbai,Maharashtra,India
+HW0511,31.0,Female,Marketing Manager,Master's,1092000.0,19.0,14.0,2411.0,84.0,Instagram,Fitness; Wearable Tech,Delhi,Delhi,India
+HW0680,22.0,Female,Student,Bachelor's,126000.0,23.0,4.0,196.0,44.0,Instagram,Weather Trends; Fitness,Hyderabad,Telangana,India
+HW0629,58.0,Female,Teacher,Bachelor's,876000.0,7.0,5.0,1888.0,71.0,WhatsApp,Hydration; Health Advisories,Pune,Maharashtra,India
+HW0657,22.0,female,Construction Worker,Diploma,210000.0,33.0,8.0,429.0,50.0,Email,Heat Alerts; Hydration,Ahmedabad,Gujarat,India
+HW0321,51.0,Male,NGO Coordinator,Master's,1654000.0,11.0,2.0,,57.0,Email,Reports; Heat Action Plans,Delhi,Delhi,India
+HW0490,22.0,Male,Intern,Bachelor's,113000.0,15.0,5.0,255.0,29.0,Instagram,Campus Life; Fitness,Bengaluru,Karnataka,India
+HW0654,42.0, m,Cab Driver,Diploma,168000.0,21.0,9.0,377.0,51.0,Push Notification,Work Safety; Cooling Gear,LUCKNOW,Uttar Pradesh,India
+HW0650,55.0,Female,Retired,Bachelor's,787000.0,9.0,1.0,922.0,86.0,Facebook,Health Advisories; Elderly Care,Ahmedabad,Gujarat,India
+HW0134,,Male,Marketing Manager,Master's,1790000.0,27.0,15.0,1699.0,96.0,Instagram,Travel; Outdoor Sports,Hyderabad,Telangana,India
+HW0061,33.0,Male,Fitness Trainer,Bachelor's,1798000.0,25.0,11.0,3969.0,94.0,Instagram,Outdoor Sports; Wearable Tech,Mumbai,Maharashtra,India
+HW0027,24.0,Female,Student,Bachelor's,193000.0,7.0,3.0,196.0,27.0,,Weather Trends; Campus Life,NAGPUR,Maharashtra,India
+HW0101,22.0,Female,Student,Bachelor's,92000.0,6.0,5.0,147.0,65.0,Instagram,Weather Trends; Fitness,Jaipur,Rajasthan,India
+HW0532,32.0,Female,Street Vendor,Diploma,238000.0,21.0,7.0,348.0,50.0,WhatsApp,Cooling Gear; Work Safety,Ahmedabad,Gujarat,India
+HW0589,23.0,Female,Software Engineer,Bachelor's,,27.0,18.0,2758.0,92.0,Email,Travel; Running,Mumbai,Maharashtra,India
+HW0521,53.0,Female,Retired,Master's,1279000.0,9.0,5.0,1460.0,47.0,WhatsApp,Health Advisories; Home Cooling,Mumbai,Maharashtra,India
+HW0364,32.0,F,Consultant,Bachelor's,,20.0,20.0,2687.0,72.0,Instagram,Running; Fitness,Nagpur,Maharashtra,India
+HW0310,63.0,Female,Doctor,Master's,785000.0,4.0,6.0,1827.0,59.0,SMS,Health Advisories; Elderly Care,Mumbai,Maharashtra,India
+HW0605,34.0, m,Fitness Trainer,Bachelor's,1116000.0,16.0,14.0,2944.0,93.0,Google Search,Fitness; Travel,Delhi,Delhi,India
+HW0253,50.0,Female,Doctor,Master's,916000.0,6.0,5.0,1765.0,67.0,WhatsApp,Hydration; Family Safety,MUMBAI,Maharashtra,India
+HW0545,23.0,Male,Marketing Manager,Master's,1231000.0,7.0,21.0,1897.0,89.0,Email,Outdoor Sports; Travel,Hyderabad,Telangana,India
+HW0482,69.0,Female,Retired,Bachelor's,,15.0,3.0,1249.0,65.0,WhatsApp,Elderly Care; Health Advisories,Bengaluru,Karnataka,India
+HW0442,37.0,FEMALE,City Planner,Bachelor's,1747000.0,6.0,3.0,4963.0,51.0,Email,Public Health; Heat Action Plans,Mumbai,Maharashtra,India
+HW0477,32.0,Male,Traffic Police,High School,282000.0,30.0,9.0,306.0,38.0,WhatsApp,Hydration; Heat Alerts,Jaipur,Rajasthan,India
+HW0023,33.0,Male,Delivery Partner,Diploma,292000.0,22.0,9.0,373.0,37.0,SMS,Cooling Gear; Hydration,Mumbai,Maharashtra,India
+HW0063,42.0,FEMALE,Construction Worker,High School,251000.0,28.0,6.0,181.0,33.0,SMS,Work Safety; Heat Alerts,Mumbai,Maharashtra,India
+HW0149,36.0,Male,Construction Worker,High School,341000.0,29.0,9.0,100.0,34.0,Push Notification,Hydration; Work Safety,Ahmedabad,Gujarat,India
+HW0484,23.0,Female,Entrepreneur,Master's,1102000.0,14.0,19.0,1983.0,82.0,Email,Wearable Tech; Fitness,Mumbai,Maharashtra,India
+HW0672,47.0,Male,Teacher,Master's,1025000.0,10.0,7.0,656.0,45.0,Email,Family Safety; Elderly Care,Lucknow,Uttar Pradesh,India
+HW0258,59.0,Male,Doctor,Bachelor's,1530000.0,11.0,3.0,811.0,77.0,WhatsApp,Home Cooling; Elderly Care,Mumbai,Maharashtra,India
+HW0053,57.0,F,Homemaker,Bachelor's,762000.0,8.0,5.0,1578.0,70.0,SMS,Health Advisories; Family Safety,Ahmedabad,Gujarat,India
+HW0243,63.0,Male,Retired,Bachelor's,1041000.0,13.0,3.0,1230.0,72.0,WhatsApp,Health Advisories; Hydration,Jaipur,Rajasthan,India
+HW0174,67.0,Female,Doctor,Bachelor's,995000.0,3.0,5.0,1173.0,70.0,Facebook,Hydration; Family Safety,Delhi,Delhi,India
+HW0036,40.0,Female,Software Engineer,Master's,1360000.0,21.0,12.0,2743.0,63.0,YouTube,Running; Outdoor Sports,Hyderabad,Telangana,India
+HW0179,22.0,Female,Intern,High School,60000.0,10.0,1.0,189.0,59.0,Push Notification,Travel; Weather Trends,Chennai,Tamil Nadu,India
+HW0121,29.0,Male,Street Vendor,High School,245000.0,16.0,11.0,300.0,38.0,Email,Heat Alerts; Work Safety,Mumbai,Maharashtra,India
+HW0276,19.0,male,Student,Bachelor's,150000.0,15.0,1.0,168.0,52.0,YouTube,Weather Trends; Campus Life,Jaipur,Rajasthan,India
+HW0045,61.0,Female,Doctor,Master's,826000.0,5.0,4.0,1303.0,82.0,WhatsApp,Family Safety; Home Cooling,Mumbai,Maharashtra,India
+HW0301,24.0,Female,Student,Bachelor's,149000.0,12.0,5.0,220.0,37.0,YouTube,Campus Life; Fitness,Jaipur,Rajasthan,India
+HW0077,34.0,Female,Consultant,Master's,1494000.0,25.0,17.0,2486.0,68.0,google search,Wearable Tech; Fitness,Lucknow,Uttar Pradesh,India
+HW0369,30.0,Male,Delivery Partner,High School,239000.0,19.0,9.0,373.0,38.0,WhatsApp,Work Safety; Heat Alerts,Ahmedabad,Gujarat,India
+HW0213,24.0,Male,Delivery Partner,High School,373000.0,20.0,4.0,389.0,43.0,WhatsApp,Work Safety; Heat Alerts,Bengaluru,Karnataka,India
+HW0268,18.0,Male,Fitness Trainer,Bachelor's,829000.0,24.0,14.0,2844.0,88.0,Instagram,Outdoor Sports; Fitness,Delhi,Delhi,India
+HW0312,31.0,Female,School Administrator,Bachelor's,1512000.0,6.0,3.0,5013.0,84.0,linkedin,Climate Data; Event Planning,Bengaluru,Karnataka,India
+HW0445,21.0,Female,Consultant,Bachelor's,1181000.0,20.0,18.0,3237.0,73.0,Instagram,Wearable Tech; Fitness,Ahmedabad,Gujarat,India
+HW0504,47.0,female,Government Employee,Bachelor's,1286000.0,10.0,7.0,1383.0,46.0,Email,Family Safety; Home Cooling,Lucknow,Uttar Pradesh,India
+HW0496,33.0,Male,Construction Worker,Diploma,281000.0,27.0,11.0,428.0,28.0,Email,Heat Alerts; Work Safety,Mumbai,Maharashtra,India
+HW0034,64.0,Female,Teacher,Bachelor's,727000.0,12.0,3.0,1838.0,65.0,WhatsApp,Family Safety; Health Advisories,Bengaluru,Karnataka,India
+HW0010,38.0,,Teacher,Master's,944000.0,6.0,9.0,1033.0,52.0,Email,Elderly Care; Home Cooling,Delhi,Delhi,India
+HW0161,24.0,Male,Cab Driver,Diploma,168000.0,23.0,7.0,387.0,36.0,WhatsApp,Heat Alerts; Work Safety,Bengaluru,Karnataka,India
+HW0286,47.0,Male,Retired,Bachelor's,1026000.0,11.0,8.0,658.0,62.0,WhatsApp,Family Safety; Hydration,Lucknow,Uttar Pradesh,India
+HW0296,,Female,Intern,High School,117000.0,14.0,7.0,236.0,37.0,Instagram,Travel; Fitness,Lucknow,Uttar Pradesh,India
+HW0617,65.0,Female,Homemaker,Master's,1226000.0,8.0,7.0,1955.0,63.0,WhatsApp,Health Advisories; Home Cooling,Mumbai,Maharashtra,India
+HW0626,58.0,Male,Homemaker,Master's,942000.0,7.0,5.0,1492.0,71.0,Email,Elderly Care; Home Cooling,Nagpur,Maharashtra,India
+HW0278,21.0,Male,Intern,Bachelor's,112000.0,12.0,3.0,180.0,42.0,Push Notification,Fitness; Travel,Mumbai,Maharashtra,India
+HW0674,27.0,Male,Cab Driver,High School,284000.0,21.0,9.0,437.0,29.0,Push Notification,Work Safety; Heat Alerts,CHENNAI,Tamil Nadu,India
+HW0604,47.0,Male,City Planner,Bachelor's,1206000.0,7.0,2.0,6333.0,58.0,Google Search,Event Planning; Public Health,Delhi,Delhi,India
+HW0485,30.0,Male,Traffic Police,High School,280000.0,22.0,8.0,440.0,36.0,SMS,Cooling Gear; Heat Alerts,Jaipur,Rajasthan,India
+HW0497,80.0,Male,Teacher,Bachelor's,869000.0,8.0,7.0,2121.0,73.0,WhatsApp,Health Advisories; Home Cooling,Jaipur,Rajasthan,India
+HW0183,44.0,Male,Homemaker,Bachelor's,885000.0,15.0,5.0,1568.0,53.0,WhatsApp,Elderly Care; Health Advisories,Delhi,Delhi,India
+HW0705,19.0,Male,Cab Driver,High School,282000.0,31.0,11.0,401.0,13.0,WhatsApp,Cooling Gear; Work Safety,Ahmedabad,Gujarat,India
+HW0037,41.0,Female,City Planner,Bachelor's,1588000.0,8.0,3.0,6292.0,69.0,Email,Reports; Event Planning,Hyderabad,Telangana,India
+HW0157,41.0,Male,Entrepreneur,Master's,1812000.0,16.0,18.0,1730.0,81.0,Email,Fitness; Running,Delhi,Delhi,India
+HW0003,41.0, m,Traffic Police,High School,339000.0,23.0,9.0,260.0,57.0,Push Notification,Cooling Gear; Work Safety,Pune,Maharashtra,India
+HW0509,40.0,Female,Facility Manager,Master's,1629000.0,5.0,1.0,3686.0,57.0,LinkedIn,Reports; Climate Data,Delhi,Delhi,India
+HW0498,64.0,Female,Retired,Bachelor's,446000.0,11.0,5.0,1379.0,63.0,Email,Health Advisories; Elderly Care,Nagpur,Maharashtra,India
+HW0309,18.0,Male,Street Vendor,High School,354000.0,25.0,11.0,404.0,28.0,Push Notification,Hydration; Heat Alerts,Mumbai,Maharashtra,India
+HW0290,31.0, m,Traffic Police,High School,303000.0,24.0,6.0,278.0,39.0,WhatsApp,Cooling Gear; Heat Alerts,Pune,Maharashtra,India
+HW0561,49.0,Female,Homemaker,Bachelor's,1275000.0,5.0,4.0,1712.0,59.0,Email,Home Cooling; Hydration,Delhi,Delhi,India
+HW0415,21.0,M,Intern,Bachelor's,179000.0,17.0,1.0,164.0,44.0,WhatsApp,Weather Trends; Travel,Bengaluru,Karnataka,India
+HW0422,30.0,Male,Cab Driver,Diploma,203000.0,29.0,12.0,383.0,35.0,WhatsApp,Work Safety; Heat Alerts,Ahmedabad,Gujarat,India
+HW0142,24.0,Female,Student,Bachelor's,139000.0,5.0,6.0,220.0,52.0,WhatsApp,Weather Trends; Fitness,chennai ,Tamil Nadu,India
+HW0224,24.0,Male,Street Vendor,Diploma,298000.0,27.0,9.0,437.0,28.0,Email,Hydration; Heat Alerts,Pune,Maharashtra,India
+HW0184,29.0,Male,Event Organiser,Master's,1119000.0,7.0,1.0,5744.0,68.0,LinkedIn,Public Health; Climate Data,Ahmedabad,Gujarat,India
+HW0696,21.0,Female,Intern,High School,124000.0,8.0,4.0,282.0,70.0,Instagram,Fitness; Weather Trends,Bengaluru,Karnataka,India
+HW0673,23.0,Female,Student,High School,101000.0,16.0,4.0,264.0,58.0,Instagram,Travel; Fitness,Mumbai,Maharashtra,India
+HW0512,22.0,Male,Intern,Bachelor's,80000.0,16.0,6.0,259.0,43.0,Instagram,Fitness; Campus Life,Jaipur,Rajasthan,India
+HW0612,23.0,Male,Student,High School,110000.0,15.0,7.0,100.0,29.0,Instagram,Travel; Campus Life,Jaipur,Rajasthan,India
+HW0118,29.0,Male,Construction Worker,High School,300000.0,25.0,4.0,289.0,39.0,WhatsApp,Hydration; Heat Alerts,Mumbai,Maharashtra,India
+HW0002,21.0,Male,Student,Bachelor's,98000.0,14.0,3.0,289.0,62.0,instagram,Weather Trends; Gadgets,Hyderabad,Telangana,India
+HW0114,27.0,Male,Cab Driver,Diploma,212000.0,22.0,9.0,390.0,46.0,Push Notification,Cooling Gear; Hydration,Bengaluru,Karnataka,India
+HW0708,42.0,Female,Retired,Master's,600000.0,6.0,10.0,1605.0,44.0,Email,Home Cooling; Health Advisories,Delhi,Delhi,India
+HW0687,31.0,Male,Traffic Police,High School,229000.0,23.0,13.0,244.0,42.0,SMS,Heat Alerts; Work Safety,Chennai,Tamil Nadu,India
+HW0166,28.0,Female,Intern,Bachelor's,72000.0,9.0,2.0,100.0,42.0,YouTube,Campus Life; Travel,Delhi,Delhi,India
+HW0185,48.0,Female,Teacher,Bachelor's,765000.0,5.0,9.0,1712.0,47.0,Email,Home Cooling; Hydration,Jaipur,Rajasthan,India
+HW0678,34.0,Male,Facility Manager,Bachelor's,1127000.0,5.0,2.0,4230.0,51.0,LinkedIn,Event Planning; Climate Data,Ahmedabad,Gujarat,India
+HW0373,20.0,Male,Intern,High School,60000.0,14.0,5.0,100.0,46.0,Instagram,Travel; Fitness,Delhi,Delhi,India
+HW0275,41.0,Female,Software Engineer,Bachelor's,1867000.0,25.0,16.0,3173.0,79.0,Google Search,Running; Fitness,Bengaluru,Karnataka,India
+HW0001,22.0,Female,Intern,High School,120000.0,19.0,6.0,162.0,23.0,Push Notification,Fitness; Campus Life,Ahmedabad,Gujarat,India
+HW0567,61.0,Male,Doctor,Master's,716000.0,6.0,7.0,1111.0,57.0,Email,Home Cooling; Hydration,Nagpur,Maharashtra,India
+HW0541,52.0,Female,NGO Coordinator,Bachelor's,936000.0,6.0,4.0,3851.0,60.0,LinkedIn,Climate Data; Public Health,Mumbai,Maharashtra,India
+HW0501,34.0,Female,Software Engineer,Bachelor's,1518000.0,20.0,19.0,2478.0,86.0,Email,Fitness; Running,Lucknow,Uttar Pradesh,India
+HW0384,37.0,Male,Facility Manager,Bachelor's,1314000.0,6.0,1.0,4694.0,74.0,LinkedIn,Public Health; Event Planning,Delhi,Delhi,India
+HW0406,30.0,Male,Software Engineer,Bachelor's,1085000.0,21.0,15.0,4339.0,84.0,Google Search,Running; Wearable Tech,Pune,Maharashtra,India
+HW0562,38.0,Female,Facility Manager,Master's,986000.0,5.0,2.0,,68.0,LinkedIn,Reports; Climate Data,Mumbai,Maharashtra,India
+HW0021,67.0,Female,Government Employee,Master's,1111000.0,10.0,4.0,1353.0,67.0,WhatsApp,Home Cooling; Health Advisories,Pune,Maharashtra,India
+HW0177,57.0,,Government Employee,Bachelor's,744000.0,6.0,7.0,,54.0,WhatsApp,Elderly Care; Health Advisories,Hyderabad,Telangana,India
+HW0336,32.0,Male,Cab Driver,High School,246000.0,31.0,6.0,321.0,36.0,SMS,Cooling Gear; Heat Alerts,Mumbai,Maharashtra,India
+HW0380,32.0,Female,School Administrator,Master's,1345000.0,7.0,4.0,4612.0,68.0,Email,Heat Action Plans; Reports,delhi ,Delhi,India
+HW0546,49.0,Male,City Planner,Master's,1117000.0,2.0,2.0,3978.0,95.0,LinkedIn,Event Planning; Heat Action Plans,Nagpur,Maharashtra,India
+HW0172,52.0,Male,Government Employee,Bachelor's,1310000.0,8.0,3.0,1452.0,69.0,Email,Elderly Care; Home Cooling,Nagpur,Maharashtra,India
+HW0520,25.0,Female,Intern,High School,147000.0,16.0,1.0,335.0,34.0,Push Notification,Travel; Fitness,Bengaluru,Karnataka,India
+HW0508,37.0,Male,Doctor,Bachelor's,649000.0,5.0,3.0,2209.0,50.0,WhatsApp,Home Cooling; Health Advisories,Mumbai,Maharashtra,India
+HW0153,31.0,Female,Fitness Trainer,Bachelor's,732000.0,22.0,16.0,3857.0,82.0,YouTube,Running; Wearable Tech,Bengaluru,Karnataka,India
+HW0619,,Female,Intern,High School,98000.0,16.0,5.0,267.0,30.0,Instagram,Weather Trends; Campus Life,Pune,Maharashtra,India
+HW0414,72.0,Female,Doctor,Bachelor's,1047000.0,9.0,4.0,1042.0,64.0,email,Elderly Care; Hydration,Chennai,Tamil Nadu,India
+HW0610,18.0,Male,Traffic Police,Diploma,270000.0,26.0,4.0,263.0,22.0,Push Notification,Work Safety; Hydration,Delhi,Delhi,India
+HW0623,73.0,Male,Homemaker,Master's,1230000.0,7.0,8.0,1094.0,73.0,Email,Hydration; Health Advisories,Pune,Maharashtra,India
+HW0582,20.0, m,Student,Bachelor's,124000.0,22.0,3.0,237.0,50.0,Instagram,Weather Trends; Gadgets,Nagpur,Maharashtra,India
+HW0642,44.0,Female,Retired,Bachelor's,,8.0,7.0,1152.0,58.0,SMS,Home Cooling; Hydration,Jaipur,Rajasthan,India
+HW0317,18.0,Male,Student,High School,135000.0,7.0,5.0,244.0,49.0,Instagram,Weather Trends; Campus Life,Jaipur,Rajasthan,India
+HW0259,21.0,Male,Student,High School,218000.0,12.0,5.0,164.0,55.0,YouTube,Gadgets; Weather Trends,Bengaluru,Karnataka,India
+HW0663,21.0,Male,Intern,Bachelor's,113000.0,20.0,6.0,409.0,26.0,Push Notification,Fitness; Weather Trends,Delhi,Delhi,India
+HW0475,40.0,M,Cab Driver,High School,193000.0,25.0,8.0,425.0,46.0,WhatsApp,Heat Alerts; Hydration,Hyderabad,Telangana,India
+HW0338,23.0,Female,Software Engineer,Bachelor's,1002000.0,21.0,16.0,2310.0,90.0,Instagram,Wearable Tech; Outdoor Sports,Nagpur,Maharashtra,India
+HW0539,45.0,Male,Cab Driver,High School,219000.0,29.0,8.0,100.0,31.0,WhatsApp,Cooling Gear; Heat Alerts,Mumbai,Maharashtra,India
+HW0505,36.0,Female,Construction Worker,Diploma,255000.0,22.0,6.0,332.0,41.0,WhatsApp,Cooling Gear; Heat Alerts,Mumbai,Maharashtra,India
+HW0399,47.0,Male,Doctor,Bachelor's,494000.0,8.0,7.0,1336.0,54.0,WhatsApp,Health Advisories; Home Cooling,Delhi,Delhi,India
+HW0424,20.0,Female,Student,High School,110000.0,21.0,6.0,289.0,41.0,Push Notification,Weather Trends; Campus Life,Jaipur,Rajasthan,India
+HW0606,41.0,male,Street Vendor,High School,394000.0,18.0,6.0,327.0,27.0,SMS,Work Safety; Heat Alerts,Delhi,Delhi,India
+HW0661,57.0,Female,Government Employee,Master's,871000.0,13.0,3.0,1649.0,73.0,,Hydration; Health Advisories,Mumbai,Maharashtra,India
+HW0481,46.0,Female,Retired,Master's,1098000.0,8.0,7.0,1134.0,59.0,Email,Home Cooling; Hydration,Ahmedabad,Gujarat,India
+HW0423,38.0,Male,School Administrator,Master's,1337000.0,9.0,2.0,4580.0,58.0,google search,Event Planning; Public Health,Mumbai,Maharashtra,India
+HW0120,26.0,Male,Street Vendor,High School,295000.0,26.0,6.0,169.0,37.0,SMS,Work Safety; Cooling Gear,Mumbai,Maharashtra,India
+HW0651,36.0,Male,Cab Driver,High School,331000.0,23.0,10.0,304.0,36.0,WhatsApp,Work Safety; Heat Alerts,Mumbai,Maharashtra,India
+HW0682,39.0,Male,Consultant,Bachelor's,1257000.0,13.0,15.0,3513.0,77.0,Google Search,Wearable Tech; Outdoor Sports,Pune,Maharashtra,India
+HW0715,37.0,f ,School Administrator,Bachelor's,758000.0,12.0,1.0,4797.0,63.0,LinkedIn,Heat Action Plans; Climate Data,Mumbai,Maharashtra,India
+HW0660,53.0,Female,Retired,Bachelor's,722000.0,12.0,3.0,1155.0,78.0,WhatsApp,Hydration; Family Safety,Mumbai,Maharashtra,India
+HW0257,65.0,Female,Government Employee,Bachelor's,1005000.0,6.0,6.0,1616.0,50.0,whatsapp,Health Advisories; Hydration,Chennai,Tamil Nadu,India
+HW0644,43.0,Female,Facility Manager,Master's,1190000.0,9.0,1.0,4521.0,63.0,Email,Public Health; Climate Data,Bengaluru,Karnataka,India
+HW0250,31.0, m,Cab Driver,Diploma,172000.0,27.0,11.0,352.0,41.0,WhatsApp,Cooling Gear; Work Safety,Bengaluru,Karnataka,India
+HW0665,18.0,Female,Student,Bachelor's,,15.0,2.0,221.0,39.0,Instagram,Campus Life; Weather Trends,Lucknow,Uttar Pradesh,India
