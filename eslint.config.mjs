@@ -12,6 +12,10 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Not part of the Next.js app (other course project, Go/Python services, local notes).
+    "digital-marketing/**",
+    "services/**",
+    ".local/**",
   ]),
 ]);
 
