@@ -1,0 +1,176 @@
+# Heatwave Monitor — the whole system.
+#
+# Run from the repository root (build contexts are relative to it):
+#   docker compose -f deploy/docker-compose.yml --project-directory . up --build
+# or just `make up`. Settings come from .env (copy .env.example).
+#
+# Only the frontend and the gateway are published, and only on localhost. Every
+# backend service is reachable solely from inside the compose network.
+
+name: heatwave-monitor
+
+x-hardened: &hardened
+  restart: unless-stopped
+  read_only: true                       # the root filesystem is immutable...
+  tmpfs: [/tmp]
+  cap_drop: [ALL]                       # ...no Linux capabilities...
+  security_opt: ["no-new-privileges:true"]   # ...and no privilege escalation
+  networks: [backend]
+  logging:
+    driver: json-file
+    options: {max-size: "10m", max-file: "3"}
+
+x-go-build: &go-build
+  context: services
+  args:
+    REVISION: ${REVISION:-dev}
+
+services:
+  # ---- data pipeline: weather -> processing -> prediction -> risk -> alert ----
+
+  weather:
+    <<: *hardened
+    image: heatwave-monitor/weather:${TAG:-dev}
+    build:
+      <<: *go-build
+      args: {SERVICE: weather, REVISION: "${REVISION:-dev}"}
+    environment:
+      PORT: "8081"
+      DB_PATH: /data/weather.db
+      WEATHER_SOURCE: ${WEATHER_SOURCE:-openmeteo}       # "openmeteo" (live) or "simulated" (no network)
+      SIMULATED_SCENARIO: ${SIMULATED_SCENARIO:-normal}
+      SIMULATED_NULL_RATE: ${SIMULATED_NULL_RATE:-0}
+      POLL_INTERVAL: ${POLL_INTERVAL:-15m}
+      PROCESSING_URL: http://processing:8082/internal/events
+    volumes: [weather-data:/data]
+    mem_limit: 128m
+
+  processing:
+    <<: *hardened
+    image: heatwave-monitor/processing:${TAG:-dev}
+    build:
+      <<: *go-build
+      args: {SERVICE: processing, REVISION: "${REVISION:-dev}"}
+    environment:
+      PORT: "8082"
+      DB_PATH: /data/processing.db
+      PREDICTION_URL: http://prediction:8083/internal/events
+    volumes: [processing-data:/data]
+    mem_limit: 128m
+
+  prediction:
+    <<: *hardened
+    image: heatwave-monitor/prediction:${TAG:-dev}
+    build:
+      context: services/prediction
+      args: {REVISION: "${REVISION:-dev}"}
+    environment:
+      PORT: "8083"
+      DB_PATH: /data/prediction.db
+      RISK_URL: http://risk:8084/internal/events
+    volumes: [prediction-data:/data]
+    mem_limit: 256m
+
+  risk:
+    <<: *hardened
+    image: heatwave-monitor/risk:${TAG:-dev}
+    build:
+      <<: *go-build
+      args: {SERVICE: risk, REVISION: "${REVISION:-dev}"}
+    environment:
+      PORT: "8084"
+      DB_PATH: /data/risk.db
+      ALERT_URL: http://alert:8085/internal/events
+    volumes: [risk-data:/data]
+    mem_limit: 128m
+
+  alert:
+    <<: *hardened
+    image: heatwave-monitor/alert:${TAG:-dev}
+    build:
+      <<: *go-build
+      args: {SERVICE: alert, REVISION: "${REVISION:-dev}"}
+    environment:
+      PORT: "8085"
+      DB_PATH: /data/alert.db
+      OPEN_LEVEL: ${OPEN_LEVEL:-danger}
+      RESOLVE_AFTER: ${RESOLVE_AFTER:-1h}
+      COOLDOWN: ${COOLDOWN:-2h}
+      DEFAULT_LOG_SUBSCRIPTION: ${DEFAULT_LOG_SUBSCRIPTION:-true}
+      WEBHOOK_ALLOWED_HOSTS: ${WEBHOOK_ALLOWED_HOSTS:-}
+    volumes: [alert-data:/data]
+    mem_limit: 128m
+
+  # ---- entry points ----
+
+  gateway:
+    <<: *hardened
+    image: heatwave-monitor/gateway:${TAG:-dev}
+    build:
+      <<: *go-build
+      args: {SERVICE: gateway, REVISION: "${REVISION:-dev}"}
+    depends_on:
+      weather: {condition: service_healthy}
+      processing: {condition: service_healthy}
+      prediction: {condition: service_healthy}
+      risk: {condition: service_healthy}
+      alert: {condition: service_healthy}
+    environment:
+      PORT: "8080"
+      WEATHER_BASE_URL: http://weather:8081
+      PROCESSING_BASE_URL: http://processing:8082
+      PREDICTION_BASE_URL: http://prediction:8083
+      RISK_BASE_URL: http://risk:8084
+      ALERT_BASE_URL: http://alert:8085
+      ADMIN_TOKEN: ${ADMIN_TOKEN:-}          # empty = admin endpoints stay closed
+      CORS_ORIGINS: ${CORS_ORIGINS:-}
+      TRUST_PROXY: ${TRUST_PROXY:-false}
+      RATE_LIMIT_PER_MIN: ${RATE_LIMIT_PER_MIN:-240}
+      WRITE_RATE_LIMIT_PER_MIN: ${WRITE_RATE_LIMIT_PER_MIN:-10}
+      WRITE_RATE_LIMIT_BURST: ${WRITE_RATE_LIMIT_BURST:-5}
+    ports: ["127.0.0.1:${GATEWAY_PORT:-8088}:8080"]
+    mem_limit: 128m
+
+  frontend:
+    <<: *hardened
+    image: heatwave-monitor/frontend:${TAG:-dev}
+    build:
+      context: .
+      args: {REVISION: "${REVISION:-dev}"}
+    depends_on:
+      gateway: {condition: service_healthy}
+    ports: ["127.0.0.1:${FRONTEND_PORT:-3000}:3000"]
+    mem_limit: 256m
+
+  # ---- end-to-end smoke test (only with --profile smoke; see scripts/smoke.sh) ----
+
+  smoke:
+    profiles: [smoke]
+    image: python:3.13-slim
+    networks:
+      backend:
+        aliases: [smoke]      # the alert service reaches the test's webhook receiver by this name
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: ["no-new-privileges:true"]
+    depends_on:
+      gateway: {condition: service_healthy}
+      frontend: {condition: service_healthy}
+    environment:
+      GATEWAY_URL: http://gateway:8080
+      FRONTEND_URL: http://frontend:3000
+      ADMIN_TOKEN: ${ADMIN_TOKEN:-}
+      RESOLVE_AFTER: ${RESOLVE_AFTER:-1h}
+      PYTHONDONTWRITEBYTECODE: "1"
+    volumes: ["./scripts/smoke_test.py:/smoke_test.py:ro"]
+    command: ["python", "/smoke_test.py", "pipeline"]
+
+networks:
+  backend: {}
+
+volumes:
+  weather-data: {}
+  processing-data: {}
+  prediction-data: {}
+  risk-data: {}
+  alert-data: {}

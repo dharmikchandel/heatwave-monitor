@@ -1,0 +1,14 @@
+# Keep the frontend build context small and free of anything private or unrelated.
+node_modules
+.next
+.git
+.gitignore
+.env*
+tsconfig.tsbuildinfo
+
+# Not part of the frontend image
+services
+deploy
+digital-marketing
+.local
+*.md
