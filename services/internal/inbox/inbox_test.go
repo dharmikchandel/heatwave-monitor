@@ -120,3 +120,26 @@ func TestHTTPHandler(t *testing.T) {
 		t.Errorf("handler error = %d, want 500 so the producer retries", rec.Code)
 	}
 }
+
+func TestHandlerAfterRunsOnlyForNewEventsAfterCommit(t *testing.T) {
+	db := newDB(t)
+	calls, committedAtCall := 0, -1
+	h := HandlerAfter(db, insert, func() {
+		calls++
+		committedAtCall = count(db) // the handler's write must already be visible
+	})
+
+	body, _ := json.Marshal(event("a1"))
+	post(t, h, string(body))
+	post(t, h, string(body)) // duplicate: no hook
+	if calls != 1 || committedAtCall != 1 {
+		t.Errorf("hook calls = %d, rows visible at call = %d; want 1 and 1", calls, committedAtCall)
+	}
+
+	failing := HandlerAfter(db, func(context.Context, *sql.Tx, events.Event) error { return errors.New("x") }, func() { calls++ })
+	fb, _ := json.Marshal(event("a2"))
+	post(t, failing, string(fb))
+	if calls != 1 {
+		t.Error("hook ran although the handler failed")
+	}
+}

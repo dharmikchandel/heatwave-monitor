@@ -205,3 +205,20 @@ func TestListenAndServeStopsOnCancel(t *testing.T) {
 		t.Fatal("server did not shut down")
 	}
 }
+
+func TestPathID(t *testing.T) {
+	a := New("test")
+	a.Mux.HandleFunc("GET /x/{id}", func(w http.ResponseWriter, r *http.Request) {
+		if id, ok := PathID(w, r, "id"); ok {
+			WriteJSON(w, 200, map[string]int64{"id": id})
+		}
+	})
+	if rec := serve(a, "GET", "/x/42", "", nil); rec.Code != 200 || !strings.Contains(rec.Body.String(), "42") {
+		t.Errorf("valid id = %d %s", rec.Code, rec.Body)
+	}
+	for _, bad := range []string{"abc", "0", "-1", "1.5", "99999999999999999999"} {
+		if rec := serve(a, "GET", "/x/"+bad, "", nil); rec.Code != 400 || !strings.Contains(rec.Body.String(), "invalid_id") {
+			t.Errorf("id %q = %d %s, want 400 invalid_id", bad, rec.Code, rec.Body)
+		}
+	}
+}

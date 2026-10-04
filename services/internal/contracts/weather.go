@@ -11,9 +11,11 @@ import (
 
 // Event types and the outbox target names used to route them.
 const (
-	EventWeatherUpdated = "weather.updated"
+	EventWeatherUpdated   = "weather.updated"
+	EventWeatherProcessed = "weather.processed"
 
 	TargetProcessing = "processing"
+	TargetPrediction = "prediction"
 )
 
 // Location identifies a watched place. It travels inside events so downstream

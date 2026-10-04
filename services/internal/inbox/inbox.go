@@ -52,6 +52,13 @@ func Receive(ctx context.Context, db *sql.DB, ev events.Event, handle HandlerFun
 // the event is processed (or recognised as a duplicate), 400 for a malformed
 // envelope, and 500 when processing fails so the producer retries.
 func Handler(db *sql.DB, handle HandlerFunc) http.Handler {
+	return HandlerAfter(db, handle, nil)
+}
+
+// HandlerAfter is Handler with a hook that runs after a new event's transaction
+// has committed (not for duplicates). Use it to wake the outbox dispatcher: the
+// events the handler queued are only visible to it once the commit is done.
+func HandlerAfter(db *sql.DB, handle HandlerFunc, after func()) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		var ev events.Event
 		body, err := io.ReadAll(io.LimitReader(r.Body, 4<<20))
@@ -73,6 +80,9 @@ func Handler(db *sql.DB, handle HandlerFunc) http.Handler {
 			httpx.Logger(r.Context()).Error("event handling failed", "event_id", ev.ID, "type", ev.Type, "err", err)
 			httpx.WriteError(w, r, http.StatusInternalServerError, "event_failed", "event could not be processed")
 			return
+		}
+		if processed && after != nil {
+			after()
 		}
 		httpx.WriteJSON(w, http.StatusAccepted, map[string]any{"event_id": ev.ID, "duplicate": !processed})
 	})

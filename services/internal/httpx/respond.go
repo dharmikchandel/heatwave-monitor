@@ -12,6 +12,7 @@ import (
 	"log/slog"
 	"net/http"
 	"os"
+	"strconv"
 )
 
 type ctxKey int
@@ -98,4 +99,15 @@ func DecodeJSON(w http.ResponseWriter, r *http.Request, v any) error {
 		return err
 	}
 	return nil
+}
+
+// PathID parses a positive integer path parameter (e.g. "id" in "/x/{id}"). On
+// failure it writes the 400 response itself and returns ok=false.
+func PathID(w http.ResponseWriter, r *http.Request, name string) (int64, bool) {
+	id, err := strconv.ParseInt(r.PathValue(name), 10, 64)
+	if err != nil || id <= 0 {
+		WriteError(w, r, http.StatusBadRequest, "invalid_id", name+" must be a positive integer")
+		return 0, false
+	}
+	return id, true
 }
