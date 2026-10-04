@@ -33,3 +33,22 @@ func Duration(key string, fallback time.Duration) time.Duration {
 	}
 	return v
 }
+
+// Float returns the variable parsed as a float64, or fallback when unset or invalid.
+func Float(key string, fallback float64) float64 {
+	v, err := strconv.ParseFloat(os.Getenv(key), 64)
+	if err != nil {
+		return fallback
+	}
+	return v
+}
+
+// Bool returns the variable parsed with strconv.ParseBool ("true", "0", ...),
+// or fallback when unset or invalid.
+func Bool(key string, fallback bool) bool {
+	v, err := strconv.ParseBool(os.Getenv(key))
+	if err != nil {
+		return fallback
+	}
+	return v
+}

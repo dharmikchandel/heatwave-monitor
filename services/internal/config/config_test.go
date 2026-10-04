@@ -31,3 +31,16 @@ func TestDuration(t *testing.T) {
 		t.Error("Duration did not honour value/fallback")
 	}
 }
+
+func TestFloatAndBool(t *testing.T) {
+	t.Setenv("X_FLOAT", "0.25")
+	t.Setenv("X_BAD_FLOAT", "lots")
+	if Float("X_FLOAT", 1) != 0.25 || Float("X_BAD_FLOAT", 2) != 2 || Float("X_UNSET_FLOAT", 3) != 3 {
+		t.Error("Float did not honour value/fallback")
+	}
+	t.Setenv("X_BOOL", "false")
+	t.Setenv("X_BAD_BOOL", "maybe")
+	if Bool("X_BOOL", true) || !Bool("X_BAD_BOOL", true) || Bool("X_UNSET_BOOL", false) {
+		t.Error("Bool did not honour value/fallback")
+	}
+}
