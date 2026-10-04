@@ -42,3 +42,24 @@ next-env.d.ts
 
 # local config
 /.local
+
+# docs: README.md is the only public document
+/AGENTS.md
+/CLAUDE.md
+/SUGGESTION.md
+
+# env (keep the template tracked)
+!.env.example
+
+# sqlite databases and runtime data
+*.db
+*.db-wal
+*.db-shm
+*.db-journal
+/data/
+
+# go / python build artifacts
+/services/bin/
+__pycache__/
+*.pyc
+.venv/
