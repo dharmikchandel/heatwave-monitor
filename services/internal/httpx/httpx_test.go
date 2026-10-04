@@ -222,3 +222,27 @@ func TestPathID(t *testing.T) {
 		}
 	}
 }
+
+func TestWrapDecoratesTheMuxInsideTheSharedMiddleware(t *testing.T) {
+	a := New("test")
+	a.Mux.HandleFunc("GET /x", func(w http.ResponseWriter, r *http.Request) { WriteJSON(w, 200, map[string]string{"ok": "1"}) })
+	var sawRequestID string
+	a.Wrap = func(next http.Handler) http.Handler {
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			sawRequestID = RequestID(r.Context()) // set by the middleware outside the wrapper
+			w.Header().Set("X-Wrapped", "yes")
+			next.ServeHTTP(w, r)
+		})
+	}
+	rec := serve(a, "GET", "/x", "", nil)
+	if rec.Code != 200 || rec.Header().Get("X-Wrapped") != "yes" {
+		t.Fatalf("wrapper not applied: %d %v", rec.Code, rec.Header())
+	}
+	if sawRequestID == "" || sawRequestID != rec.Header().Get(RequestIDHeader) {
+		t.Errorf("the wrapper must run inside the middleware (request id %q vs header %q)", sawRequestID, rec.Header().Get(RequestIDHeader))
+	}
+	// The route label must still be the mux pattern, not "unmatched", despite the wrapper.
+	if out := serve(a, "GET", "/metrics", "", nil).Body.String(); !strings.Contains(out, `route="GET /x"`) {
+		t.Errorf("metrics lost the route pattern when a wrapper is present:\n%s", out)
+	}
+}

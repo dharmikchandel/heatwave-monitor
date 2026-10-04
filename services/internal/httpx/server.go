@@ -18,6 +18,9 @@ type App struct {
 	Log     *slog.Logger
 	Mux     *http.ServeMux
 	Metrics *Metrics
+	// Wrap, if set, decorates the mux inside the shared middleware (the gateway uses
+	// it to turn the router's plain-text 404/405 into JSON errors).
+	Wrap func(http.Handler) http.Handler
 
 	checks map[string]func(context.Context) error
 }
@@ -45,7 +48,13 @@ func (a *App) AddCheck(name string, fn func(context.Context) error) { a.checks[n
 func (a *App) CheckDB(db *sql.DB) { a.AddCheck("database", db.PingContext) }
 
 // Handler returns the mux wrapped in the shared middleware.
-func (a *App) Handler() http.Handler { return Middleware(a.Log, a.Metrics, a.Mux) }
+func (a *App) Handler() http.Handler {
+	var inner http.Handler = a.Mux
+	if a.Wrap != nil {
+		inner = a.Wrap(inner)
+	}
+	return Middleware(a.Log, a.Metrics, inner)
+}
 
 func (a *App) healthz(w http.ResponseWriter, _ *http.Request) {
 	WriteJSON(w, http.StatusOK, map[string]string{"status": "ok", "service": a.Name})
