@@ -63,3 +63,8 @@ next-env.d.ts
 __pycache__/
 *.pyc
 .venv/
+
+# training data cache and test caches
+/scripts/train/.cache/
+.pytest_cache/
+.ruff_cache/

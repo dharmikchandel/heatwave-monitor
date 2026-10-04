@@ -1,0 +1,150 @@
+{
+ "observationId": 42,
+ "location": {
+  "id": 1,
+  "name": "Mumbai",
+  "country": "India",
+  "admin1": "Maharashtra",
+  "latitude": 19.076,
+  "longitude": 72.8777,
+  "timezone": "Asia/Kolkata"
+ },
+ "source": "simulated",
+ "fetchedAt": "2026-05-01T09:00:00Z",
+ "processedAt": "2026-05-01T09:00:01Z",
+ "current": {
+  "time": "2026-05-01T14:30",
+  "temperatureC": 39.1,
+  "humidity": 31,
+  "apparentTemperatureC": 41.8,
+  "heatIndexC": 41.83,
+  "windSpeed": 5.2,
+  "weatherCode": 0,
+  "directNormalIrradiance": 634.7
+ },
+ "days": [
+  {
+   "date": "2026-04-28",
+   "forecast": false,
+   "tempMaxC": 33.1,
+   "tempMinC": 24.1,
+   "apparentTempMaxC": 32.3,
+   "heatIndexMaxC": 32.27,
+   "uvIndexMax": 10,
+   "precipitationSumMm": 0,
+   "estimated": false
+  },
+  {
+   "date": "2026-04-29",
+   "forecast": false,
+   "tempMaxC": 35.1,
+   "tempMinC": 26.1,
+   "apparentTempMaxC": 35,
+   "heatIndexMaxC": 35.03,
+   "uvIndexMax": 10,
+   "precipitationSumMm": 0,
+   "estimated": false
+  },
+  {
+   "date": "2026-04-30",
+   "forecast": false,
+   "tempMaxC": 37.1,
+   "tempMinC": 28.1,
+   "apparentTempMaxC": 38.2,
+   "heatIndexMaxC": 38.22,
+   "uvIndexMax": 10,
+   "precipitationSumMm": 0,
+   "estimated": false
+  },
+  {
+   "date": "2026-05-01",
+   "forecast": true,
+   "tempMaxC": 39.1,
+   "tempMinC": 30.1,
+   "apparentTempMaxC": 41.8,
+   "heatIndexMaxC": 41.83,
+   "uvIndexMax": 10,
+   "precipitationSumMm": 0,
+   "estimated": false
+  },
+  {
+   "date": "2026-05-02",
+   "forecast": true,
+   "tempMaxC": 41.1,
+   "tempMinC": 32.1,
+   "apparentTempMaxC": 45.9,
+   "heatIndexMaxC": 45.85,
+   "uvIndexMax": 10,
+   "precipitationSumMm": 0,
+   "estimated": false
+  },
+  {
+   "date": "2026-05-03",
+   "forecast": true,
+   "tempMaxC": 43.1,
+   "tempMinC": 34.1,
+   "apparentTempMaxC": 50.3,
+   "heatIndexMaxC": 50.31,
+   "uvIndexMax": 10,
+   "precipitationSumMm": 0,
+   "estimated": false
+  },
+  {
+   "date": "2026-05-04",
+   "forecast": true,
+   "tempMaxC": 44.1,
+   "tempMinC": 35.1,
+   "apparentTempMaxC": 52.7,
+   "heatIndexMaxC": 52.69,
+   "uvIndexMax": 10,
+   "precipitationSumMm": 0,
+   "estimated": false
+  },
+  {
+   "date": "2026-05-05",
+   "forecast": true,
+   "tempMaxC": 45.1,
+   "tempMinC": 36.1,
+   "apparentTempMaxC": 55.2,
+   "heatIndexMaxC": 55.18,
+   "uvIndexMax": 10,
+   "precipitationSumMm": 0,
+   "estimated": false
+  },
+  {
+   "date": "2026-05-06",
+   "forecast": true,
+   "tempMaxC": 43.1,
+   "tempMinC": 34.1,
+   "apparentTempMaxC": 50.3,
+   "heatIndexMaxC": 50.31,
+   "uvIndexMax": 10,
+   "precipitationSumMm": 0,
+   "estimated": false
+  },
+  {
+   "date": "2026-05-07",
+   "forecast": true,
+   "tempMaxC": 41.1,
+   "tempMinC": 32.1,
+   "apparentTempMaxC": 45.9,
+   "heatIndexMaxC": 45.85,
+   "uvIndexMax": 10,
+   "precipitationSumMm": 0,
+   "estimated": false
+  }
+ ],
+ "trend": {
+  "isRising": false,
+  "anomalyC": -1.5
+ },
+ "quality": {
+  "score": 1,
+  "hourlyTotal": 240,
+  "hourlyEstimated": 0,
+  "dailyTotal": 10,
+  "dailyEstimated": 0,
+  "currentEstimated": [],
+  "outOfRange": 0
+ }
+}

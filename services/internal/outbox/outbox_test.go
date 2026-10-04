@@ -257,3 +257,39 @@ func TestRunDeliversOnNotifyAndStopsOnCancel(t *testing.T) {
 		t.Fatal("Run did not stop after cancel")
 	}
 }
+
+// Events enqueued in the same millisecond must still be delivered in the order
+// they were enqueued: IDs are time-prefixed but random within a millisecond, so
+// ordering by ID alone would shuffle them.
+func TestSameMillisecondEventsKeepEnqueueOrder(t *testing.T) {
+	db := newDB(t)
+	rc := &receiver{}
+	srv := httptest.NewServer(rc)
+	defer srv.Close()
+
+	tx, err := db.Begin()
+	if err != nil {
+		t.Fatal(err)
+	}
+	const n = 50
+	for i := 0; i < n; i++ {
+		if _, err := Enqueue(context.Background(), tx, "t", "e", i); err != nil {
+			t.Fatal(err)
+		}
+	}
+	if err := tx.Commit(); err != nil {
+		t.Fatal(err)
+	}
+
+	d := &Dispatcher{DB: db, Source: "s", Targets: map[string]string{"t": srv.URL}}
+	if delivered, err := d.DispatchOnce(context.Background()); err != nil || delivered != n {
+		t.Fatalf("DispatchOnce = %d, %v", delivered, err)
+	}
+	for i, ev := range rc.events() {
+		var got int
+		ev.Decode(&got)
+		if got != i {
+			t.Fatalf("event %d arrived as #%d: order was not preserved", i, got)
+		}
+	}
+}

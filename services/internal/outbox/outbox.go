@@ -158,11 +158,13 @@ func (d *Dispatcher) DispatchOnce(ctx context.Context) (int, error) {
 // due loads the oldest pending rows whose retry time has arrived. Rows are read
 // fully before any delivery so the single DB connection is free again.
 func (d *Dispatcher) due(ctx context.Context) ([]row, error) {
-	// Fetch all pending rows' heads per target ordering, but only act on those due.
-	// A not-yet-due row blocks later rows for its target, to preserve ordering.
+	// Oldest first by rowid, i.e. in the order events were enqueued. (created_at and
+	// id only have millisecond resolution, so they cannot order events enqueued
+	// within the same millisecond.) A not-yet-due row blocks later rows for its
+	// target, to preserve that order.
 	res, err := d.DB.QueryContext(ctx,
 		`SELECT id, target, type, payload, created_at, attempts, next_attempt_at
-		   FROM outbox WHERE delivered_at IS NULL ORDER BY created_at, id LIMIT ?`, d.BatchSize)
+		   FROM outbox WHERE delivered_at IS NULL ORDER BY rowid LIMIT ?`, d.BatchSize)
 	if err != nil {
 		return nil, fmt.Errorf("outbox: query pending: %w", err)
 	}
