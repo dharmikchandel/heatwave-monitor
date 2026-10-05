@@ -9,11 +9,12 @@ import Forecast7Day from "@/components/Forecast7Day";
 import HeatwaveRiskCard from "@/components/HeatwaveRiskCard";
 import MetricsGrid from "@/components/MetricsGrid";
 import SafetyAdvisory from "@/components/SafetyAdvisory";
+import SourceBadge from "@/components/SourceBadge";
 import { useClimate } from "@/lib/ClimateContext";
 import { cn, FOCUS_RING } from "@/lib/utils";
 
 export default function Home() {
-  const { location, climateData, dailyForecast, assessment, unit, isLoading, error, retry } = useClimate();
+  const { location, climateData, dailyForecast, assessment, unit, isLoading, error, retry, insight } = useClimate();
   const [isExportOpen, setIsExportOpen] = useState(false);
 
   const locationLabel = location
@@ -48,11 +49,14 @@ export default function Home() {
           <AlertBanner assessment={assessment} dailyForecast={dailyForecast} locationName={location?.name ?? "your area"} />
 
           <div className="grid grid-cols-1 gap-5 lg:grid-cols-[320px_1fr]">
-            <HeatwaveRiskCard assessment={assessment} unit={unit} />
+            <HeatwaveRiskCard assessment={assessment} unit={unit} insight={insight} />
 
             <div className="flex flex-col gap-5">
               <div className="flex items-center justify-between">
-                <h2 className="text-sm font-bold uppercase tracking-wide text-muted">{locationLabel || "Current Conditions"}</h2>
+                <div className="flex flex-wrap items-center gap-2">
+                  <h2 className="text-sm font-bold uppercase tracking-wide text-muted">{locationLabel || "Current Conditions"}</h2>
+                  <SourceBadge />
+                </div>
                 <button
                   type="button"
                   onClick={() => setIsExportOpen(true)}
@@ -69,7 +73,7 @@ export default function Home() {
           </div>
 
           <AnalyticsChart climateData={climateData} unit={unit} />
-          <Forecast7Day dailyForecast={dailyForecast} unit={unit} />
+          <Forecast7Day dailyForecast={dailyForecast} unit={unit} probabilities={insight?.probabilityByDate} />
           <SafetyAdvisory riskLevel={assessment.riskLevel} />
 
           <ExportReportModal

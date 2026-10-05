@@ -9,15 +9,19 @@ import { celsiusToUnit, cn, formatDayLabel, RISK_LEVEL_BG_CLASS, RISK_LEVEL_COLO
 interface Forecast7DayProps {
   dailyForecast: DailyRiskForecast[];
   unit: "C" | "F";
+  /** Chance each day is a heatwave-warning day, by date (from the backend). */
+  probabilities?: Record<string, number>;
 }
 
-export default function Forecast7Day({ dailyForecast, unit }: Forecast7DayProps) {
+export default function Forecast7Day({ dailyForecast, unit, probabilities }: Forecast7DayProps) {
   return (
     <div className="glass-card rounded-2xl p-4 sm:p-6">
       <h2 className="mb-4 text-sm font-bold uppercase tracking-wide text-muted">7-Day Heatwave Outlook</h2>
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-7">
         {dailyForecast.map((day, i) => {
           const dayLabel = formatDayLabel(day.date, i);
+          const probability = probabilities?.[day.date];
+          const percent = probability === undefined ? null : Math.round(probability * 100);
           return (
             <motion.div
               key={day.date}
@@ -25,7 +29,7 @@ export default function Forecast7Day({ dailyForecast, unit }: Forecast7DayProps)
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.3, delay: i * 0.05 }}
               role="group"
-              aria-label={`${dayLabel}: high ${Math.round(celsiusToUnit(day.tempMax, unit))}, low ${Math.round(celsiusToUnit(day.tempMin, unit))} degrees ${unit === "C" ? "Celsius" : "Fahrenheit"}, risk ${RISK_LEVEL_LABEL[day.riskLevel]}, UV index ${day.uvIndexMax.toFixed(1)}`}
+              aria-label={`${dayLabel}: high ${Math.round(celsiusToUnit(day.tempMax, unit))}, low ${Math.round(celsiusToUnit(day.tempMin, unit))} degrees ${unit === "C" ? "Celsius" : "Fahrenheit"}, risk ${RISK_LEVEL_LABEL[day.riskLevel]}, UV index ${day.uvIndexMax.toFixed(1)}${percent === null ? "" : `, ${percent} percent chance of a heatwave warning`}`}
               className={cn("flex flex-col items-center gap-2 rounded-xl border p-3 text-center", RISK_LEVEL_BG_CLASS[day.riskLevel])}
             >
               <p className="text-xs font-bold">{dayLabel}</p>
@@ -46,6 +50,11 @@ export default function Forecast7Day({ dailyForecast, unit }: Forecast7DayProps)
               <span className="text-[10px] text-muted" aria-hidden="true">
                 UV {day.uvIndexMax.toFixed(1)}
               </span>
+              {percent !== null && (
+                <span className="text-[10px] font-semibold" style={{ color: RISK_LEVEL_COLOR[day.riskLevel] }} aria-hidden="true">
+                  {percent}% warning
+                </span>
+              )}
             </motion.div>
           );
         })}

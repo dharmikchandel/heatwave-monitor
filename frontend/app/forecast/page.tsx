@@ -9,7 +9,7 @@ import { useClimate } from "@/lib/ClimateContext";
 import { celsiusToUnit, findHourlyIndex, formatHourLabel } from "@/lib/utils";
 
 export default function ForecastPage() {
-  const { location, climateData, dailyForecast, unit, isLoading, error, retry } = useClimate();
+  const { location, climateData, dailyForecast, unit, isLoading, error, retry, insight } = useClimate();
 
   return (
     <>
@@ -49,7 +49,7 @@ export default function ForecastPage() {
         <>
           <TrendAnomalyCard dailyTempMax={climateData.daily.temperature2mMax} unit={unit} />
           <AnalyticsChart climateData={climateData} unit={unit} />
-          <Forecast7Day dailyForecast={dailyForecast} unit={unit} />
+          <Forecast7Day dailyForecast={dailyForecast} unit={unit} probabilities={insight?.probabilityByDate} />
           <HourlyTable climateData={climateData} unit={unit} />
         </>
       )}

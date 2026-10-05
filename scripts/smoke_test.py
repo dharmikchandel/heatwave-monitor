@@ -145,6 +145,9 @@ def pipeline() -> None:
 
     status, page = http("GET", FRONTEND + "/")
     check(status == 200 and "Heatwave" in str(page), "the frontend serves its page", status)
+    status, via_frontend = http("GET", FRONTEND + "/api/v1/status")
+    check(status == 200 and isinstance(via_frontend, dict) and via_frontend.get("status") == "ok",
+          "the frontend proxies /api/v1 to the gateway (what the browser uses)", (status, via_frontend))
 
     # Security basics at the public door.
     check(api("PUT", "/simulation", {"scenario": "extreme"})[0] == 401, "admin route without a token is refused (401)")
@@ -161,6 +164,9 @@ def pipeline() -> None:
         status, c = climate(mid)
         return c if status == 200 and c.get("status") == "ok" else None
     c = wait_for(settled_normal, "Mumbai's climate is complete (weather, prediction, risk, alerts)", timeout=90)
+    status, via_frontend = http("GET", f"{FRONTEND}/api/v1/locations/{mid}/climate")
+    check(status == 200 and via_frontend.get("status") == "ok" and via_frontend["weather"]["hourly"],
+          "the same composed climate, with its hourly series, arrives through the frontend's proxy", status)
     check(c["risk"]["alertLevel"] == "normal", "normal weather gives a Normal risk level", c["risk"]["alertLevel"])
     check(c["prediction"]["method"] == "model" and c["prediction"]["peak"]["probability"] < 0.05, "the trained model sees no heatwave coming", c["prediction"]["peak"])
     check(c["weather"]["quality"]["score"] >= 0.95, "the cleaned weather data is high quality", c["weather"]["quality"])

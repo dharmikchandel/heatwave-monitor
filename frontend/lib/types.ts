@@ -70,3 +70,45 @@ export interface HeatwaveAssessment {
   isHeatwaveWarning: boolean;
   message: string;
 }
+
+/** Where the data on screen came from. */
+export type DataSource = "backend" | "local";
+
+export interface BackendAlert {
+  id: number;
+  locationId: number;
+  locationName: string;
+  status: "open" | "resolved";
+  currentLevel: HeatRiskLevel;
+  peakLevel: HeatRiskLevel;
+  headline: string;
+  summary: string;
+  openedAt: string;
+}
+
+/**
+ * What the backend knows beyond the numbers the dashboard already shows: heatwave
+ * probabilities from the trained model, the reasoning behind the risk level, and
+ * open alerts. Present only when the data came from the backend.
+ */
+export interface BackendInsight {
+  locationId: number;
+  /** "ok", "partial" (something missing) or "warming" (new location). */
+  status: string;
+  /** True when a backend service is failing (not merely without data yet). */
+  degraded: boolean;
+  /** "model" (trained) or "rules"; null when no prediction was available. */
+  method: string | null;
+  modelVersion: string | null;
+  /** Chance that each forecast day is a heatwave-warning day, keyed by date. */
+  probabilityByDate: Record<string, number>;
+  peak: { date: string; probability: number } | null;
+  rationale: string[];
+  /** The most severe tier now or expected in the forecast. */
+  alertLevel: HeatRiskLevel | null;
+  heatwaveExpected: boolean;
+  openAlerts: BackendAlert[];
+  /** 0-1: how much of the weather data was real rather than repaired. */
+  dataQuality: number | null;
+  generatedAt: string;
+}

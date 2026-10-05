@@ -1,9 +1,10 @@
 "use client";
 
-import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from "react";
+import { createContext, useCallback, useContext, useEffect, useRef, useState, type ReactNode } from "react";
 import { ApiError, climateCacheKey, fetchClimateData, readCache, writeCache } from "./api";
+import { backend, climateFromBackend, insightFromBackend, riskFromBackend, type BackendFailure } from "./backend";
 import { assessHeatwave, buildDailyRiskForecast } from "./heatwaveEngine";
-import type { ClimateData, DailyRiskForecast, GeoLocation, HeatwaveAssessment } from "./types";
+import type { BackendInsight, ClimateData, DailyRiskForecast, DataSource, GeoLocation, HeatwaveAssessment } from "./types";
 
 const DEFAULT_LOCATION: GeoLocation = {
   id: 0,
@@ -37,6 +38,12 @@ interface ClimateContextValue {
   isLocating: boolean;
   error: string | null;
   lastUpdated: Date | null;
+  /** Where the data came from: the backend, or computed in the browser from Open-Meteo. */
+  dataSource: DataSource | null;
+  /** Probabilities, explanations and alerts from the backend (null in local mode). */
+  insight: BackendInsight | null;
+  /** Why the backend was not used, when it was not. */
+  fallbackReason: BackendFailure | null;
   selectLocation: (location: GeoLocation) => void;
   locateDevice: () => void;
   retry: () => void;
@@ -65,6 +72,11 @@ export function ClimateProvider({ children }: { children: ReactNode }) {
   const [isLocating, setIsLocating] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
+  const [dataSource, setDataSource] = useState<DataSource | null>(null);
+  const [insight, setInsight] = useState<BackendInsight | null>(null);
+  const [backendRisk, setBackendRisk] = useState<ReturnType<typeof riskFromBackend>>(null);
+  const [fallbackReason, setFallbackReason] = useState<BackendFailure | null>(null);
+  const latestRequest = useRef(0); // ignore answers for a location the user has already left
 
   const locateDevice = useCallback(() => {
     if (typeof navigator === "undefined" || !navigator.geolocation) {
@@ -100,8 +112,41 @@ export function ClimateProvider({ children }: { children: ReactNode }) {
   }, [locateDevice]);
 
   const loadClimateData = useCallback(async (loc: GeoLocation) => {
+    const requestId = ++latestRequest.current;
+    const isCurrent = () => requestId === latestRequest.current;
     setIsLoading(true);
     setError(null);
+
+    // 1. The backend: cleaned data, a trained heatwave model, risk reasoning and alerts.
+    let reason: BackendFailure = "unavailable";
+    try {
+      const result = await backend.fetchClimate(loc);
+      if (!isCurrent()) return;
+      if (result.ok) {
+        const data = climateFromBackend(result.climate);
+        if (data) {
+          setClimateData(data);
+          setBackendRisk(riskFromBackend(result.climate));
+          setInsight(insightFromBackend(result.climate, result.locationId));
+          setDataSource("backend");
+          setFallbackReason(null);
+          setLastUpdated(new Date(result.climate.weather.fetchedAt));
+          setIsLoading(false);
+          return;
+        }
+        reason = "bad_response";
+      } else {
+        reason = result.reason;
+      }
+    } catch {
+      if (!isCurrent()) return;
+    }
+
+    // 2. Fallback: fetch Open-Meteo directly and compute everything in the browser, as before.
+    setDataSource("local");
+    setInsight(null);
+    setBackendRisk(null);
+    setFallbackReason(reason);
 
     const cacheKey = climateCacheKey(loc.latitude, loc.longitude);
     const cached = readCache<ClimateData>(cacheKey);
@@ -113,13 +158,14 @@ export function ClimateProvider({ children }: { children: ReactNode }) {
 
     try {
       const data = await fetchClimateData(loc.latitude, loc.longitude);
+      if (!isCurrent()) return;
       setClimateData(data);
       setLastUpdated(new Date());
       writeCache(cacheKey, data);
     } catch (err) {
-      if (!cached) setError(describeError(err));
+      if (isCurrent() && !cached) setError(describeError(err));
     } finally {
-      setIsLoading(false);
+      if (isCurrent()) setIsLoading(false);
     }
   }, []);
 
@@ -144,19 +190,23 @@ export function ClimateProvider({ children }: { children: ReactNode }) {
   }
 
   function retry() {
+    backend.reset(); // an explicit retry should really try the backend again
     if (location) loadClimateData(location);
   }
 
-  const dailyForecast = climateData ? buildDailyRiskForecast(climateData.daily) : [];
+  // The backend's verdict (which also knows yesterday and the heatwave probability) wins when present;
+  // otherwise the same engine as always computes it here.
+  const dailyForecast = climateData ? (backendRisk?.dailyForecast ?? buildDailyRiskForecast(climateData.daily)) : [];
 
-  const assessment = climateData
-    ? assessHeatwave(
+  const assessment = !climateData
+    ? null
+    : (backendRisk?.assessment ??
+      assessHeatwave(
         climateData.current.temperature2m,
         climateData.current.apparentTemperature,
         climateData.current.relativeHumidity2m,
         dailyForecast.map((d) => d.apparentTempMax),
-      )
-    : null;
+      ));
 
   const value: ClimateContextValue = {
     location,
@@ -169,6 +219,9 @@ export function ClimateProvider({ children }: { children: ReactNode }) {
     isLocating,
     error,
     lastUpdated,
+    dataSource,
+    insight,
+    fallbackReason,
     selectLocation,
     locateDevice,
     retry,

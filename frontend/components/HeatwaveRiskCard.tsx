@@ -4,13 +4,15 @@ import { motion, useReducedMotion } from "framer-motion";
 import { AlertTriangle, Flame, ShieldAlert, ShieldCheck, ShieldQuestion } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { HEAT_RISK_THRESHOLDS_C, RISK_LEVEL_LABEL, RISK_LEVEL_ORDER } from "@/lib/heatwaveEngine";
-import type { HeatRiskLevel, HeatwaveAssessment } from "@/lib/types";
-import { celsiusToUnit, cn, RISK_LEVEL_COLOR, RISK_LEVEL_TEXT_CLASS } from "@/lib/utils";
+import type { BackendInsight, HeatRiskLevel, HeatwaveAssessment } from "@/lib/types";
+import { celsiusToUnit, cn, formatDateLong, RISK_LEVEL_COLOR, RISK_LEVEL_TEXT_CLASS } from "@/lib/utils";
 import AnimatedNumber from "./AnimatedNumber";
 
 interface HeatwaveRiskCardProps {
   assessment: HeatwaveAssessment;
   unit: "C" | "F";
+  /** From the backend; adds the heatwave-warning probability. Absent in local mode. */
+  insight?: BackendInsight | null;
 }
 
 const RISK_ICON: Record<HeatRiskLevel, LucideIcon> = {
@@ -27,7 +29,7 @@ const GAUGE_MAX = HEAT_RISK_THRESHOLDS_C.extremeDanger;
 const RADIUS = 76;
 const CIRCUMFERENCE = 2 * Math.PI * RADIUS;
 
-export default function HeatwaveRiskCard({ assessment, unit }: HeatwaveRiskCardProps) {
+export default function HeatwaveRiskCard({ assessment, unit, insight }: HeatwaveRiskCardProps) {
   const { riskLevel, heatIndexC, message } = assessment;
   const color = RISK_LEVEL_COLOR[riskLevel];
   const Icon = RISK_ICON[riskLevel];
@@ -37,12 +39,15 @@ export default function HeatwaveRiskCard({ assessment, unit }: HeatwaveRiskCardP
   const dashOffset = CIRCUMFERENCE * (1 - percent);
   const isSevere = riskLevel === "danger" || riskLevel === "extreme-danger";
   const heatIndexValue = celsiusToUnit(heatIndexC, unit);
+  const peak = insight?.peak ?? null;
+  const peakPercent = peak ? Math.round(peak.probability * 100) : 0;
+  const peakSentence = peak ? ` Chance of a heatwave warning peaks at ${peakPercent} percent on ${formatDateLong(peak.date)}.` : "";
 
   return (
     <div
       className="glass-card flex flex-col items-center gap-5 rounded-2xl p-6 text-center"
       role="img"
-      aria-label={`Current heat risk: ${RISK_LEVEL_LABEL[riskLevel]}. Heat index ${Math.round(heatIndexValue)} degrees ${unit === "C" ? "Celsius" : "Fahrenheit"}. ${message}`}
+      aria-label={`Current heat risk: ${RISK_LEVEL_LABEL[riskLevel]}. Heat index ${Math.round(heatIndexValue)} degrees ${unit === "C" ? "Celsius" : "Fahrenheit"}. ${message}${peakSentence}`}
     >
       <div className="flex w-full items-center justify-between" aria-hidden="true">
         <h2 className="text-sm font-bold uppercase tracking-wide text-muted">Current Heat Risk</h2>
@@ -89,6 +94,23 @@ export default function HeatwaveRiskCard({ assessment, unit }: HeatwaveRiskCardP
       <p className="text-sm leading-relaxed text-muted" aria-hidden="true">
         {message}
       </p>
+
+      {peak && (
+        <div className="w-full text-left" aria-hidden="true">
+          <div className="mb-1 flex items-baseline justify-between text-[11px]">
+            <span className="font-semibold uppercase tracking-wide text-muted">Heatwave-warning chance</span>
+            <span className="font-bold">
+              {peakPercent}% <span className="font-medium text-muted">peak · {formatDateLong(peak.date)}</span>
+            </span>
+          </div>
+          <div className="h-1.5 w-full overflow-hidden rounded-full bg-[var(--grid-line)]">
+            <div className="h-full rounded-full" style={{ width: `${peakPercent}%`, backgroundColor: color }} />
+          </div>
+          <p className="mt-1 text-[10px] text-muted">
+            {insight?.method === "model" ? "Trained model; accounts for forecast uncertainty." : "Rule-based estimate."}
+          </p>
+        </div>
+      )}
 
       <div className="flex w-full items-center justify-between gap-1" aria-hidden="true">
         {RISK_LEVEL_ORDER.map((level) => (

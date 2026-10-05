@@ -68,7 +68,7 @@ start_one() {
     alert)      env_vars+=("RESOLVE_AFTER=$RESOLVE_AFTER" "COOLDOWN=$COOLDOWN" "DEFAULT_LOG_SUBSCRIPTION=$DEFAULT_LOG_SUBSCRIPTION"); cmd=("$BIN/alert");;
     gateway)    env_vars+=("WEATHER_BASE_URL=http://127.0.0.1:8081" "PROCESSING_BASE_URL=http://127.0.0.1:8082" "PREDICTION_BASE_URL=http://127.0.0.1:8083"
                            "RISK_BASE_URL=http://127.0.0.1:8084" "ALERT_BASE_URL=http://127.0.0.1:8085" "CORS_ORIGINS=http://localhost:$(port_of frontend)"
-                           "WRITE_RATE_LIMIT_BURST=${WRITE_RATE_LIMIT_BURST:-50}"); cmd=("$BIN/gateway");;
+                           "WRITE_RATE_LIMIT_BURST=${WRITE_RATE_LIMIT_BURST:-50}" "TRUST_PROXY=true"); cmd=("$BIN/gateway");;
     frontend)   env_vars+=("GATEWAY_URL=http://127.0.0.1:$(port_of gateway)"); cmd=(bun run dev);;
   esac
 

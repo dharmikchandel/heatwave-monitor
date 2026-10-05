@@ -124,7 +124,10 @@ services:
       ALERT_BASE_URL: http://alert:8085
       ADMIN_TOKEN: ${ADMIN_TOKEN:-}          # empty = admin endpoints stay closed
       CORS_ORIGINS: ${CORS_ORIGINS:-}
-      TRUST_PROXY: ${TRUST_PROXY:-false}
+      # The frontend proxies browser requests to the gateway, so the real client address arrives in
+      # X-Forwarded-For. Safe here because the gateway is only published on localhost; keep it
+      # false if you expose the gateway directly to the internet.
+      TRUST_PROXY: ${TRUST_PROXY:-true}
       RATE_LIMIT_PER_MIN: ${RATE_LIMIT_PER_MIN:-240}
       WRITE_RATE_LIMIT_PER_MIN: ${WRITE_RATE_LIMIT_PER_MIN:-10}
       WRITE_RATE_LIMIT_BURST: ${WRITE_RATE_LIMIT_BURST:-5}
@@ -140,6 +143,8 @@ services:
       args: {REVISION: "${REVISION:-dev}"}
     depends_on:
       gateway: {condition: service_healthy}
+    environment:
+      GATEWAY_URL: http://gateway:8080       # read at runtime by frontend/proxy.ts; empty = local mode only
     ports: ["127.0.0.1:${FRONTEND_PORT:-3000}:3000"]
     mem_limit: 256m
 
