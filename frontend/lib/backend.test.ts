@@ -131,7 +131,7 @@ test("geoKey rounds like the backend does", () => {
 });
 
 test("every failure has its own explanation", () => {
-  const reasons = ["disabled", "unavailable", "timeout", "rate_limited", "not_ready", "bad_response"] as const;
+  const reasons = ["disabled", "unavailable", "timeout", "rate_limited", "unauthorized", "not_ready", "bad_response"] as const;
   const texts = new Set(reasons.map((r) => describeFallback(r)));
   expect(texts.size).toBe(reasons.length);
   expect(describeFallback(null)).toContain("unreachable");
@@ -319,6 +319,23 @@ describe("backend client: failures fall back and are remembered", () => {
     expect(api.calls.length).toBeGreaterThan(before);
   });
 
+  test("adding a new city needs an account: reported as such, and not remembered, so seeded cities keep using the backend", async () => {
+    const api = new FakeApi({
+      "GET /locations": { status: 200, body: { locations: [{ id: 3, name: "Delhi", latitude: 28.61, longitude: 77.21 }] } },
+      "POST /locations": { status: 401, body: { error: { code: "unauthorized", message: "sign in to do that" } } },
+      "GET /locations/3/climate": okClimate,
+    });
+    const { c } = client(api);
+    expect(await c.fetchClimate(mumbai)).toEqual({ ok: false, reason: "unauthorized" });
+    const before = api.calls.length;
+    const delhi = { name: "Delhi", country: "India", latitude: 28.61, longitude: 77.21 };
+    const res = await c.fetchClimate(delhi); // a city the backend already has still works straight away
+    expect(res.ok).toBe(true);
+    expect(api.calls.length).toBeGreaterThan(before);
+    expect(await c.fetchClimate(mumbai)).toEqual({ ok: false, reason: "unauthorized" });
+    expect(api.count("POST /locations")).toBe(2); // asked again each time: signing in must take effect at once
+  });
+
   test("an HTML 404 means nothing serves /api/v1 here (a plain static deployment): disabled, and not retried for a long while", async () => {
     const api = new FakeApi({}); // every route answers with Next's HTML 404 page
     const { c, clock } = client(api);
@@ -402,6 +419,7 @@ describe("readApi", () => {
   test("classifies failures the same way the climate client does", async () => {
     const reason = async (status: number, body: unknown) => (await readApi("/x", { fetchImpl: reply(status, body) }) as { reason: string }).reason;
     expect(await reason(429, { error: { code: "rate_limited" } })).toBe("rate_limited");
+    expect(await reason(401, { error: { code: "unauthorized" } })).toBe("unauthorized");
     expect(await reason(504, { error: { code: "upstream_timeout" } })).toBe("timeout");
     expect(await reason(503, { error: { code: "backend_not_configured" } })).toBe("disabled");
     expect(await reason(503, { error: { code: "unavailable" } })).toBe("unavailable");

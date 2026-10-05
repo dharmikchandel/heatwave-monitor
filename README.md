@@ -1,210 +1,224 @@
 # Heatwave Monitor
 
-**Climate intelligence for heatwave monitoring, prediction, and early warning.**
+**Heatwave monitoring, prediction and early warning: a live dashboard on top of a small microservices backend.**
 
-Heatwave Monitor is a real-time climate dashboard that fetches live weather data for any city on Earth, runs it through a custom heat-risk prediction engine, and visualizes the result as an interactive, accessible, four-page web app — a current-conditions dashboard, an extended forecast/trend view, a full heat-safety reference guide, and a methodology write-up.
+Heatwave Monitor fetches live weather for any city, estimates the chance of a heatwave warning on each of the next seven days with a trained model, explains the resulting risk level in plain language, opens and resolves alerts, and tells the people who follow a city. People can create accounts, save cities and receive alerts in an in-app inbox; administrators manage accounts and the system.
 
-> Built with Next.js 16 (App Router) + TypeScript, Tailwind CSS v4, Recharts, and Framer Motion.
+The backend is optional. Without it the dashboard still works: it fetches Open-Meteo directly and computes everything in the browser, exactly as the first version did. With it you get cleaned data, probabilities, reasoned risk levels, alerts and accounts.
+
+> Next.js 16 · TypeScript · Tailwind CSS v4 · Go · Python (FastAPI) · SQLite · Docker Compose
 
 ---
 
-## Table of Contents
+## Contents
 
-- [Features](#features)
-- [Pages](#pages)
-- [How It Works](#how-it-works)
-- [The Prediction Engine](#the-prediction-engine)
-- [Tech Stack](#tech-stack)
-- [Project Structure](#project-structure)
-- [Getting Started](#getting-started)
-- [Design System](#design-system)
+- [Quick start](#quick-start)
+- [What it does](#what-it-does)
+- [Architecture](#architecture)
+- [Accounts and security](#accounts-and-security)
+- [API](#api)
+- [Configuration](#configuration)
+- [The prediction model](#the-prediction-model)
+- [Risk levels](#risk-levels)
 - [Accessibility](#accessibility)
-- [Data Source & Attribution](#data-source--attribution)
+- [Testing](#testing)
+- [Project structure](#project-structure)
 - [Deployment](#deployment)
-- [Author](#author)
+- [Limitations](#limitations)
+- [Data source and attribution](#data-source-and-attribution)
 
 ---
 
-## Features
+## Quick start
 
-- **Live current-conditions dashboard** — current temperature, "feels like" temperature, humidity, UV index, and a computed heat index, each with an animated count-up and an hour-over-hour trend indicator.
-- **Animated Heat Risk gauge** — a circular gauge classifying conditions into 5 WMO-aligned tiers (Normal → Caution → Extreme Caution → Danger → Extreme Danger), colored and labeled accordingly.
-- **Early-warning alert banner** — automatically appears when the 7-day forecast contains a Danger or Extreme Danger day, and names exactly which day(s).
-- **Interactive analytics chart** — switchable between an Hourly (24h) view and a 7-Day Forecast view, with gradient-filled temperature and heat-index curves and hover tooltips.
-- **7-day forecast cards** — each day color-coded by its own computed risk tier.
-- **Extended forecast page** — a trend-anomaly indicator (is the forecast trending hotter or cooler than the surrounding baseline?) and an hour-by-hour data table for the next 24 hours.
-- **Full heat-safety reference guide** — every risk tier's thresholds and advisories in one place, plus heat-illness recognition and first-aid guidance, independent of the currently selected city.
-- **Methodology page** — explains the heat index formula and risk thresholds in plain language, including a live, server-computed worked example.
-- **City search** — debounced autosuggest with full keyboard navigation (arrow keys, Enter, Escape) and screen-reader support, or one click to use your device's location.
-- **Unit and theme toggles** — °C/°F and light/dark mode, both remembered between visits.
-- **Shareable report export** — generates a downloadable PNG summary card and a one-click "copy as text" summary.
-- **Responsive across breakpoints** — mobile, tablet, and desktop layouts, tested down to 375px wide.
+Everything is driven by `make`; `make help` lists every command.
 
-## Pages
-
-| Route | Name | Purpose |
-|---|---|---|
-| `/` | **Dashboard** | The live snapshot: alert banner, risk gauge, metric cards, analytics chart, 7-day forecast, and contextual safety advisories for the selected city. |
-| `/forecast` | **Forecast** | A deeper dive: the full analytics chart and 7-day outlook, plus a trend-anomaly card and an hourly detail table. |
-| `/safety` | **Safety** | A standalone reference: all 5 risk tiers explained with their advisories, heat-illness stages (cramps → exhaustion → stroke) with symptoms and response steps, and an emergency-services callout. |
-| `/about` | **About** | The methodology behind the numbers — the heat index formula, the WMO threshold table, the tech stack, and a live worked example. |
-
-All four pages share one header, one navigation bar, and one live data source — selecting a city or switching units/themes on any page carries over to the rest instantly.
-
-## How It Works
-
-1. **A city is selected** — either typed into the search box (which queries Open-Meteo's geocoding API) or resolved from the browser's Geolocation API, defaulting to Mumbai if neither is available.
-2. **Weather data is fetched** — a single request to the Open-Meteo forecast API returns current conditions, 24 hours of hourly data, and a 7-day daily forecast for that location. Results are cached for 10 minutes so switching between pages or quickly reselecting a city doesn't refetch unnecessarily.
-3. **The prediction engine runs** — every metric shown on screen (heat index, risk tier, trend anomaly, safety advisories) is *computed*, not fetched — Open-Meteo returns raw meteorological data, and `lib/heatwaveEngine.ts` turns that into the actual risk assessment.
-4. **State is shared across pages** — a single `ClimateProvider` (React Context, `lib/ClimateContext.tsx`) owns the selected city, the fetched data, and the derived risk assessment, so every route reads from one consistent source of truth instead of re-fetching independently.
-5. **The UI reacts** — components subscribe to that shared state and render accordingly, with Framer Motion handling entrance/pulse animations (respecting `prefers-reduced-motion`) and Recharts rendering the interactive charts.
-
-## The Prediction Engine
-
-All of the logic below lives in `lib/heatwaveEngine.ts` and is pure, deterministic, and independently testable — it takes numbers in and returns a classification out.
-
-**Heat Index** — computed with the NWS/Steadman Rothfusz regression, the same formula used by the US National Weather Service to calculate "feels like" temperature from ambient temperature and relative humidity:
-
-```
-HI = -42.379 + 2.049·T + 10.143·RH - 0.225·T·RH - 0.0068·T² - 0.0548·RH²
-     + 0.00123·T²·RH + 0.00085·T·RH² - 0.0000199·T²·RH²
-```
-
-(T in °F, RH in %, with secondary adjustments at low/high humidity extremes.) Below roughly 27°C/40% RH, where the regression isn't valid, the engine falls back to a simpler average-based approximation per NWS guidance.
-
-**Risk Tiers** — apparent temperature is classified against WMO-aligned thresholds:
-
-| Tier | Threshold |
-|---|---|
-| Normal | below 32°C |
-| Caution | ≥ 32°C |
-| Extreme Caution | ≥ 38°C |
-| Danger | ≥ 41°C, sustained for 2+ consecutive days |
-| Extreme Danger | ≥ 54°C |
-
-Note the **Danger** tier specifically requires two or more consecutive days at or above 41°C — a single hot day is classified as merely "Extreme Caution," which is what makes this a genuine *heatwave* detector rather than a simple thermometer.
-
-**Trend Anomaly** — compares each day's forecast high against the rolling average of the surrounding days in the 7-day window, surfacing whether temperatures are trending upward, downward, or holding steady.
-
-## Tech Stack
-
-| Layer | Choice | Why |
-|---|---|---|
-| Framework | [Next.js 16](https://nextjs.org) (App Router, TypeScript) | File-based routing across 4 pages, React Server Components for the static `/about` page |
-| Styling | [Tailwind CSS v4](https://tailwindcss.com) | CSS-first theming (`@theme`) for the dark/light design system, utility-first for rapid, consistent styling |
-| Charts | [Recharts](https://recharts.org) | Smooth, responsive, accessible-friendly SVG charts with gradient fills and custom tooltips |
-| Animation | [Framer Motion](https://www.framer.com/motion/) | Entrance transitions, gauge fill animation, pulsing alerts — with `useReducedMotion()` support |
-| Icons | [Lucide](https://lucide.dev) | Consistent icon set throughout |
-| Analytics | [Vercel Analytics](https://vercel.com/analytics) | Privacy-respecting page view metrics when deployed on Vercel |
-| State | React Context (`lib/ClimateContext.tsx`) | One shared data pipeline across all 4 routes — no external state library needed |
-| Data source | [Open-Meteo](https://open-meteo.com) | Free, keyless weather and geocoding API |
-
-## Project Structure
-
-```text
-frontend/     the Next.js app described above
-backend/      Go services + the Python prediction service
-deploy/       docker-compose
-scripts/      smoke test, local runner, model training
-testdata/     fixtures shared by the frontend and backend tests
-Makefile      one place for every run/test command: `make help`
-```
-
-Inside `frontend/`:
-
-```text
-app/
-├── layout.tsx          # Root layout — theme bootstrap, ClimateProvider, Header, footer, Analytics
-├── page.tsx             # Dashboard (/)
-├── globals.css          # Design tokens, glassmorphism, scrollbars, reduced-motion rules
-├── forecast/page.tsx     # Extended Forecast (/forecast)
-├── safety/page.tsx       # Heat Safety Guide (/safety)
-└── about/page.tsx        # About This Project (/about)
-
-components/
-├── Header.tsx            # Search, geolocation, unit/theme toggles, page navigation
-├── AlertBanner.tsx        # Early-warning banner
-├── HeatwaveRiskCard.tsx    # Circular risk gauge
-├── MetricsGrid.tsx         # Current-conditions metric cards
-├── AnalyticsChart.tsx      # Hourly / 7-day chart
-├── Forecast7Day.tsx         # 7-day forecast cards
-├── SafetyAdvisory.tsx        # Current-risk advisories (Dashboard)
-├── ExportReportModal.tsx      # PNG/text report export
-├── ThemeToggle.tsx             # Light/dark switch
-└── AnimatedNumber.tsx           # Count-up number primitive
-
-lib/
-├── heatwaveEngine.ts      # Heat index formula, risk classification, advisories, trend anomaly
-├── api.ts                  # Open-Meteo fetchers, error handling, localStorage cache
-├── ClimateContext.tsx        # Shared location/climate-data state across all pages
-├── types.ts                    # Shared domain types
-└── utils.ts                     # Formatting helpers, shared style tokens
-```
-
-## Getting Started
-
-**Prerequisites:** [Bun](https://bun.sh) (or npm/yarn/pnpm — swap the commands below accordingly).
+**With Docker** (the whole system, eight containers):
 
 ```bash
-cd frontend
-
-# Install dependencies
-bun install
-
-# Start the dev server (Turbopack) at http://localhost:3000
-bun run dev
-
-# Type-check
-bunx tsc --noEmit
-
-# Lint
-bun run lint
-
-# Production build
-bun run build
-
-# Run the production build locally
-bun run start
+make demo     # simulated weather, so you can create a heatwave on demand
+# or
+make up       # live Open-Meteo weather
 ```
 
-No environment variables or API keys are required — the weather API used is free and keyless.
+Then open <http://localhost:3000>. The first run creates `.env` with a random administrator password (`make env` does only that); the login is printed once and kept in `.env`.
 
-## Design System
+**Without Docker** (needs Go, [uv](https://docs.astral.sh/uv/) and [Bun](https://bun.sh)):
 
-The **"Solar Thermal"** visual identity transitions from a deep slate background to warm amber, solar orange, and crimson as risk escalates:
+```bash
+make dev      # builds and starts all eight processes locally, simulated weather
+make dev-stop
+```
 
-| Purpose | Color |
+**Frontend only**, no backend at all (local mode):
+
+```bash
+cd frontend && bun install && bun run dev
+```
+
+### Try it
+
+With `make demo` (or `make dev`) running:
+
+1. Open the app and **Create an account**. Search for **Mumbai** (one of the eight starter cities), then press **Save city** and **Alerts off** (it becomes **Alerts on**). Adding a city the backend does not know yet needs an account too; until you sign in, such cities are shown in local mode.
+2. Start a heatwave: `make scenario S=extreme`. Reload the dashboard: Mumbai is at Extreme Danger with a high heatwave probability, an alert is open on **Alerts**, and within a minute the bell in the header shows an unread notification, which is waiting in your **Inbox**.
+3. End it: `make scenario S=normal`. The alert resolves after a short hysteresis window (30 seconds under `make demo`) and you get an all-clear.
+4. Sign in as the administrator (`ADMIN_EMAIL` / `ADMIN_PASSWORD` in `.env`; `admin@heatwave.local` / `dev-admin-password` under `make dev`) to see **Administration**, where accounts can be disabled and enabled.
+5. Break something: `docker compose -f deploy/docker-compose.yml --project-directory . stop risk`. The dashboard keeps working with the risk part marked unavailable, **Status** shows the circuit breaker open, and it all recovers when the service returns.
+
+Handy helpers: `make status`, `make cities`, `make climate ID=1`, `make alerts`, `make users`, `make notifications`, `make logs SVC=risk`.
+
+## What it does
+
+**Dashboard.** Current conditions with an animated heat-risk gauge, an early-warning banner, an hourly and a seven-day chart, per-day risk cards (with the heatwave probability when the backend is connected), and safety advice for the current tier. Search any city or use your location; switch °C/°F and light/dark; export a report as an image or text.
+
+**Forecast, Safety, About.** A trend and hourly-detail view, a standalone heat-safety guide (every tier, heat-illness stages, emergencies) and the methodology.
+
+**Alerts and Status.** Every watched city is assessed continuously. An alert opens when a Danger-level heatwave is under way or forecast, is updated as it escalates, and resolves once the danger has passed, with its reasoning and who was notified. **Status** shows each service's health and circuit breaker, plus the model's evaluation.
+
+**Accounts.** Register and sign in; save cities; choose per city whether to be told at Danger or only at Extreme Danger; read alerts in an inbox with an unread badge; change your password; delete your account (which deletes your data). Administrators list accounts and disable or re-enable them.
+
+A badge on the dashboard always says where the numbers came from (backend or local), and why when it had to fall back.
+
+## Architecture
+
+```text
+Browser ─► Next.js :3000 ──/api/v1/*──► API gateway :8080 ─┬─► weather :8081 ──event──► processing :8082
+          (proxy.ts rewrites)           sessions, limits,   │                              │ event
+                                        breakers, composes  │                              ▼
+                                                            │       alert :8085 ◄─event─ risk :8084 ◄─event─ prediction :8083 (Python)
+                                                            └─► user :8086 (accounts, sessions, watchlists)
+```
+
+| Service | Language | Owns |
+|---|---|---|
+| **weather** | Go | The watched locations; polls Open-Meteo (or a scripted simulator) and emits raw observations |
+| **processing** | Go | Repairs gaps and outliers, computes heat index and daily metrics, scores data quality |
+| **prediction** | Python / FastAPI | Probability of a heatwave-warning day for each of the next seven days (trained model, rule-based fallback) |
+| **risk** | Go | Turns probabilities and temperatures into a risk level with reasons |
+| **alert** | Go | Alert episodes (open, escalate, resolve), subscriptions, in-app inbox, webhook and log notifications |
+| **user** | Go | Accounts, sessions, watchlists |
+| **gateway** | Go | The one public door: routing, sessions, rate limits, circuit breakers, the composed climate endpoint |
+| **frontend** | Next.js | The app; `proxy.ts` forwards `/api/v1/*` to the gateway at runtime (`GATEWAY_URL`) |
+
+Design choices worth knowing:
+
+- **One SQLite file per service**, on its own volume. No database containers, and no service reads another's data.
+- **Events without a broker.** Each service writes its outgoing event to an *outbox* table in the same transaction as its data; a dispatcher pushes it to the next service over HTTP with retries. Receivers keep an *inbox* of event ids so redelivery is harmless. Delivery is at-least-once and ordered, and a stopped service simply catches up when it returns. Bad data is recorded in a `rejections` table and consumed, never retried forever; stale or out-of-order readings are dropped.
+- **Resilience at the gateway.** Per-service timeouts and circuit breakers, a composed `/locations/{id}/climate` answer that degrades gracefully (weather without risk if risk is down), token-bucket rate limits (stricter for writes and for sign-in), and JSON errors with request ids throughout.
+- **Hardened containers.** Read-only root filesystem, all capabilities dropped, no new privileges, non-root user, memory limits; only the frontend and gateway are published, and only on localhost.
+- **Shared contracts.** Go and Python read and write the same fixtures in `testdata/`, and the Go gateway's output is parsed by the frontend's tests, so the services cannot drift apart unnoticed.
+
+## Accounts and security
+
+- **Passwords** are hashed with argon2id (the OWASP minimum profile), with a cap on concurrent hashes so a burst of sign-ins cannot exhaust memory. A password must be 10 to 128 characters and not on a list of common ones. Unknown emails take as long to refuse as known ones, and a wrong password and an unknown email give the same answer.
+- **Sessions** are random 256-bit tokens, stored only as a hash, valid for seven days (`SESSION_TTL`), at most ten per account. The browser holds the token in an `HttpOnly`, `SameSite=Lax` cookie (`Secure` over https), so page scripts can never read it. Changing the password ends every other session; disabling or deleting an account ends all of them at once.
+- **Brute force.** Five wrong passwords lock that email from that address for 15 minutes (so an attacker locks themselves out, not the owner), on top of the gateway's own per-address limits.
+- **Cross-site requests.** A write that carries the session cookie and is marked cross-site by the browser (`Sec-Fetch-Site`) is refused, in addition to `SameSite`. CORS is closed by default.
+- **Roles.** `user` and `admin`. The first administrator is created from `ADMIN_EMAIL` / `ADMIN_PASSWORD` only when none exists. The last administrator can neither be disabled nor deleted, and nobody can disable themselves.
+- **Trust model.** Only the gateway talks to the internal services, and it tells them who the caller is with `X-User-ID` / `X-User-Role` / `X-Client-IP` headers, which it builds from scratch for every call: a client's own copies, cookies and `Authorization` header never reach a backend. Those headers are trustworthy only because the services are reachable solely from the private network, which is how the compose file and the container hardening are set up. **Do not publish the internal ports.**
+- **Command-line access.** Send `X-Return-Token: 1` to `/auth/login` to get the token in the response, then use `Authorization: Bearer <token>`. `scripts/admin_token.sh` does exactly that for the administrator; the `make` helpers use it.
+
+## API
+
+Base path `/api/v1`, JSON, errors shaped `{"error": {"code", "message"}, "request_id"}`. Access: **public**, **user** (signed in), **admin**.
+
+| Access | Routes |
 |---|---|
-| Background (dark / light) | `#0B0F17` / `#F8FAFC` |
-| Normal | Emerald `#10B981` |
-| Caution | Amber `#F59E0B` |
-| Extreme Caution | Orange `#EA580C` |
-| Danger | Red `#DC2626` |
-| Extreme Danger | Deep Red `#991B1B` |
+| public | `GET /locations`, `/locations/{id}`, `/locations/{id}/climate` (weather + prediction + risk + alerts, composed), `/alerts`, `/alerts/{id}`, `/model`, `/status` |
+| accounts | `POST /auth/register`, `/auth/login`, `/auth/logout` · `GET /auth/session` · `POST /auth/password` · `DELETE /auth/account` |
+| user | `POST /locations` · `GET/PUT/DELETE /me/watchlist[/{id}]` · `GET/POST/DELETE /me/subscriptions[/{id}]` · `GET /me/notifications` · `POST /me/notifications/read`, `/me/notifications/{id}/read` |
+| admin | `DELETE /locations/{id}` · `POST /locations/{id}/refresh` · `GET/PUT /simulation` · `POST /alerts/{id}/ack` · `GET/POST/DELETE /subscriptions[/{id}]` (webhook and log) · `GET /notifications` · `GET /rejections/{service}` · `GET /admin/users` · `POST /admin/users/{id}/disable`, `/enable` |
 
-Implemented as CSS custom properties via Tailwind v4's `@theme` directive, switchable at runtime via a `data-theme` attribute with no flash-of-wrong-theme on load. Cards use a glassmorphism treatment (`backdrop-filter: blur` over a translucent surface color).
+Operators can also subscribe a webhook (HMAC-signed with a secret, retried with backoff, restricted to `WEBHOOK_ALLOWED_HOSTS` when set). Every service exposes `/healthz`, `/readyz` and Prometheus-format `/metrics`.
+
+## Configuration
+
+Every setting has a default; `.env.example` documents them all and `make env` turns it into `.env`. The ones you are most likely to touch:
+
+| Variable | Meaning | Default |
+|---|---|---|
+| `WEATHER_SOURCE` | `openmeteo` (live) or `simulated` (scripted scenarios) | `openmeteo` |
+| `ADMIN_EMAIL`, `ADMIN_PASSWORD` | the first administrator (created only if none exists) | random password from `make env` |
+| `OPEN_LEVEL` | lowest level that opens an alert | `danger` |
+| `RESOLVE_AFTER`, `COOLDOWN` | how long risk must stay low to resolve; window in which an alert reopens quietly | `1h`, `2h` |
+| `SESSION_TTL` | how long a sign-in lasts | `168h` |
+| `COOKIE_SECURE` | mark the session cookie `Secure` (set when served over https) | `false` |
+| `TRUST_PROXY` | take client addresses from `X-Forwarded-For` (the frontend proxies to the gateway) | `true` |
+| `GATEWAY_PORT`, `FRONTEND_PORT` | host ports, bound to localhost | `8088`, `3000` |
+
+The frontend reads `GATEWAY_URL` at runtime; unset, it runs in local mode.
+
+## The prediction model
+
+The target is the app's own warning rule: a day is a heatwave-warning day when its apparent temperature reaches 54 °C, or 41 °C on two consecutive days. For each lead time from 0 to 6 days there is a logistic regression over six temperature features (apparent maximum today and on the two previous days, air maximum and minimum, and the gap between them), expanded with degree-2 interactions. It was trained on ERA5 reanalysis for 37 hot-climate and comparison cities (1991 to 2024, about 3.2 million city-days, base rate 5.8 %), with synthetic forecast noise that grows with lead time so the probabilities are honest about uncertainty, and recent years weighted more.
+
+On held-out years (2020 to 2024) the ROC AUC is 0.997 at lead 0 and 0.984 at lead 6, with a Brier score of 0.010 to 0.023 against 0.059 for always predicting the climatological rate; leave-one-city-out AUC stays between 0.991 and 0.998. These numbers are in `model.json` and are shown on **Status**.
+
+Inference is plain Python (`sigmoid(w·x + b)`), so the service image has no ML dependencies. If `model.json` is missing the service falls back to a rule-based estimate and says so. Retrain with `make train` (downloads weather history; slow); training code is in `scripts/train/`.
+
+## Risk levels
+
+Apparent temperature is classified against WMO-aligned thresholds, using the NWS (Rothfusz) heat index for "feels like":
+
+| Level | Threshold |
+|---|---|
+| Normal | below 32 °C |
+| Caution | 32 °C and above |
+| Extreme Caution | 38 °C and above |
+| Danger | 41 °C and above on two or more consecutive days |
+| Extreme Danger | 54 °C and above |
+
+A single hot day is only Extreme Caution: Danger needs persistence, which is what makes it a heatwave detector rather than a thermometer. The rules live in `frontend/lib/heatwaveEngine.ts` and in the Go `engine` package, and a shared set of test vectors generated from the TypeScript version keeps the two identical.
 
 ## Accessibility
 
-- Full keyboard navigation: the city search is a proper ARIA combobox (arrow keys, Enter, Escape), and the export modal has a focus trap with focus save/restore.
-- A shared, keyboard-only (`:focus-visible`) focus ring is applied consistently across every interactive element.
-- ARIA labeling throughout: `role="alert"` on the warning banner, `role="img"` with descriptive summaries on the risk gauge and chart, labeled forecast cards, proper dialog semantics on the modal.
-- Risk-tier text colors meet WCAG AA contrast (4.5:1) in both light and dark themes — decorative and text uses of the same risk color are intentionally split.
-- Respects `prefers-reduced-motion`, disabling looping/pulsing animations for users who request it.
+The city search is a proper ARIA combobox (arrow keys, Enter, Escape) and the export dialog traps and restores focus. Every interactive element shares one `:focus-visible` ring; forms have labelled fields with the right `autocomplete` values, errors are announced, and toggles expose their state with `aria-pressed`. Risk colours meet WCAG AA contrast in both themes, charts and gauges carry text summaries, and `prefers-reduced-motion` switches off looping animation.
 
-## Data Source & Attribution
+## Testing
 
-Weather and geocoding data is provided by the [Open-Meteo API](https://open-meteo.com), used under their free, non-commercial license. All risk classifications, the heat index, and the trend analysis shown on this site are computed by this project's own prediction engine — Open-Meteo supplies the raw meteorological inputs only.
+```bash
+make test     # Go (vet + race detector), Python, and the frontend (tests, lint, types)
+make smoke    # end to end in Docker
+```
+
+`make smoke` builds everything, starts it with simulated weather in its own compose project, and runs three stages: the **pipeline** (a heatwave through every service to a signed webhook and an in-app inbox, accounts, roles, lock-out, cookies through the frontend proxy, account deletion), then **degraded** (one service stopped: the rest keep answering and the circuit opens) and **recovered**. It takes a few minutes the first time.
+
+The unit tests are written to fail when behaviour breaks: security-relevant ones (role checks, ownership, cross-site protection, header spoofing, redirects, token handling) were each checked by deliberately breaking the code and watching a test fail.
+
+## Project structure
+
+```text
+frontend/     Next.js app: app/ (routes), components/, lib/ (engine, backend client, auth)
+backend/      Go module: cmd/ (one binary per service), internal/ (service code, shared packages)
+  prediction/   the Python service
+deploy/       docker-compose.yml
+scripts/      smoke test, local runner (dev.sh), admin_token.sh, model training (train/)
+testdata/     fixtures shared by the Go, Python and TypeScript tests
+Makefile      every run, poke and test command
+.env.example  every setting, documented
+```
 
 ## Deployment
 
-This project deploys cleanly to [Vercel](https://vercel.com) with zero configuration:
+**Docker Compose** is the supported way to run the whole system (`make up`). Compose passes `.env` through; images are tagged `heatwave-monitor/<service>:<TAG>`. Put a TLS-terminating proxy in front of the frontend for anything shared, and set `COOKIE_SECURE=true`.
 
-1. Push this repository to GitHub/GitLab/Bitbucket.
-2. Import it in the [Vercel dashboard](https://vercel.com/new) — Next.js is auto-detected. Set the project's **Root Directory** to `frontend`.
-3. Deploy. No environment variables are required.
-4. To see Web Analytics data, open the project in the Vercel dashboard and enable **Analytics** for it — the `<Analytics />` component is already wired into the app, but Vercel's dashboard toggle is a separate, one-time step.
+**Vercel** hosts the frontend alone, in local mode (no backend): import the repository and set the project's **Root Directory** to `frontend`. To connect it to a backend, set `GATEWAY_URL` to the gateway's origin and make sure it is reachable from Vercel; the browser still only ever talks to the frontend's own origin.
 
-## Author
+CI/CD and Kubernetes manifests are not part of this repository yet.
+
+## Limitations
+
+- **SQLite means one replica per stateful service.** Each service owns a file that only one process may write, so none of them scales horizontally; that is the trade for needing no database server. Moving a service to a networked database later is a local change inside that service.
+- **State kept in memory is lost on restart:** the login lock-out counters, the gateway's rate-limit buckets and its short session cache. Restarting forgives a lock-out; it never grants access.
+- **Delivery is at-least-once.** Receivers deduplicate by event id, and webhooks carry a delivery id so subscribers can too.
+- **The internal network is the security boundary** for the identity headers (see the trust model). Anyone who can reach a backend port directly can impersonate any user.
+- **No email, SMS or push.** Notifications go to the in-app inbox, signed webhooks and the log.
+- **Registration reveals whether an email is taken** (it has to say so), which is limited only by rate limiting, and there is **no password reset or email verification.** Registration only needs an email address nobody has used; an administrator can disable an account but not set its password.
+- **Weather is a single provider** (Open-Meteo). If it is down the backend keeps serving the last readings it has, and local mode has nothing to fall back to.
+
+## Data source and attribution
+
+Weather and geocoding come from the [Open-Meteo API](https://open-meteo.com) (free, non-commercial licence); training data is ERA5 reanalysis served by Open-Meteo's archive. Open-Meteo supplies raw meteorology only: heat index, probabilities, risk levels and alerts are computed by this project.
 
 Built by dharmikchandel.

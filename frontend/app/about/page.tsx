@@ -1,4 +1,4 @@
-import { Code2, Cpu, Database, ShieldCheck } from "lucide-react";
+import { Code2, Cpu, Database, Server } from "lucide-react";
 import { calculateHeatIndex, HEAT_RISK_THRESHOLDS_C, RISK_LEVEL_LABEL, RISK_LEVEL_ORDER } from "@/lib/heatwaveEngine";
 import { RISK_LEVEL_COLOR } from "@/lib/utils";
 
@@ -10,7 +10,12 @@ const STACK = [
   { icon: Code2, title: "Next.js App Router + TypeScript", detail: "Every route in this project is statically typed and server/client-rendered per component, not per page." },
   { icon: Cpu, title: "Recharts + Framer Motion", detail: "Chart rendering and UI motion, tuned to respect prefers-reduced-motion." },
   { icon: Database, title: "Open-Meteo API", detail: "Free, keyless weather API — the only external service this project talks to." },
-  { icon: ShieldCheck, title: "Zero backend", detail: "No servers, databases, or API routes of our own. Every calculation on this site runs in your browser." },
+  {
+    icon: Server,
+    title: "Optional backend",
+    detail:
+      "When connected, small Go and Python services clean the weather, estimate the chance of a heatwave with a trained model, explain each risk level, raise alerts and keep accounts. Without it, every calculation on this site runs in your browser.",
+  },
 ] as const;
 
 export default function AboutPage() {
@@ -19,8 +24,9 @@ export default function AboutPage() {
       <div>
         <h1 className="text-xl font-bold tracking-tight sm:text-2xl">About This Project</h1>
         <p className="mt-1 text-sm text-muted">
-          Heatwave Monitor is a client-side climate intelligence dashboard: it fetches public weather data, runs a
-          heatwave-prediction engine entirely in the browser, and visualizes the result — no backend required.
+          Heatwave Monitor is a climate intelligence dashboard: it fetches public weather data, classifies heat risk with an
+          engine that runs in your browser, and — when its backend is connected — adds a trained heatwave model, alerts
+          and accounts.
         </p>
       </div>
 

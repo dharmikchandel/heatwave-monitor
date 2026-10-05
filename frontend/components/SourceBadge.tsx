@@ -15,7 +15,7 @@ export default function SourceBadge({ className }: { className?: string }) {
   if (!dataSource) return null;
 
   const isBackend = dataSource === "backend";
-  const unexpected = !isBackend && fallbackReason !== null && fallbackReason !== "disabled";
+  const unexpected = !isBackend && fallbackReason !== null && fallbackReason !== "disabled" && fallbackReason !== "unauthorized";
 
   let label: string;
   let detail: string;

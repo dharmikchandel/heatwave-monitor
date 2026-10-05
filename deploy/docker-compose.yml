@@ -5,7 +5,8 @@
 # or just `make up`. Settings come from .env (copy .env.example).
 #
 # Only the frontend and the gateway are published, and only on localhost. Every
-# backend service is reachable solely from inside the compose network.
+# backend service is reachable solely from inside the compose network, which is also what
+# lets them trust the identity headers the gateway adds (see README, "Trust model").
 
 name: heatwave-monitor
 
@@ -27,6 +28,7 @@ x-go-build: &go-build
 
 services:
   # ---- data pipeline: weather -> processing -> prediction -> risk -> alert ----
+  # (accounts live in the separate `user` service below)
 
   weather:
     <<: *hardened
@@ -101,6 +103,26 @@ services:
     volumes: [alert-data:/data]
     mem_limit: 128m
 
+  # ---- accounts ----
+
+  user:
+    <<: *hardened
+    image: heatwave-monitor/user:${TAG:-dev}
+    build:
+      <<: *go-build
+      args: {SERVICE: user, REVISION: "${REVISION:-dev}"}
+    environment:
+      PORT: "8086"
+      DB_PATH: /data/user.db
+      SESSION_TTL: ${SESSION_TTL:-168h}
+      # The first administrator, created only if no administrator exists yet (so changing these
+      # later does nothing). `make env` writes a random password into .env. Without a password
+      # no administrator is created: users can still register, but nobody can use admin pages.
+      ADMIN_EMAIL: ${ADMIN_EMAIL:-admin@heatwave.local}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:-}
+    volumes: [user-data:/data]
+    mem_limit: 256m          # each password check briefly needs ~19 MiB (see HASH_CONCURRENCY)
+
   # ---- entry points ----
 
   gateway:
@@ -115,6 +137,7 @@ services:
       prediction: {condition: service_healthy}
       risk: {condition: service_healthy}
       alert: {condition: service_healthy}
+      user: {condition: service_healthy}
     environment:
       PORT: "8080"
       WEATHER_BASE_URL: http://weather:8081
@@ -122,7 +145,7 @@ services:
       PREDICTION_BASE_URL: http://prediction:8083
       RISK_BASE_URL: http://risk:8084
       ALERT_BASE_URL: http://alert:8085
-      ADMIN_TOKEN: ${ADMIN_TOKEN:-}          # empty = admin endpoints stay closed
+      USER_BASE_URL: http://user:8086
       CORS_ORIGINS: ${CORS_ORIGINS:-}
       # The frontend proxies browser requests to the gateway, so the real client address arrives in
       # X-Forwarded-For. Safe here because the gateway is only published on localhost; keep it
@@ -131,6 +154,9 @@ services:
       RATE_LIMIT_PER_MIN: ${RATE_LIMIT_PER_MIN:-240}
       WRITE_RATE_LIMIT_PER_MIN: ${WRITE_RATE_LIMIT_PER_MIN:-10}
       WRITE_RATE_LIMIT_BURST: ${WRITE_RATE_LIMIT_BURST:-5}
+      AUTH_RATE_LIMIT_PER_MIN: ${AUTH_RATE_LIMIT_PER_MIN:-4}
+      AUTH_RATE_LIMIT_BURST: ${AUTH_RATE_LIMIT_BURST:-8}
+      COOKIE_SECURE: ${COOKIE_SECURE:-false}     # true when the site is served over https
     ports: ["127.0.0.1:${GATEWAY_PORT:-8088}:8080"]
     mem_limit: 128m
 
@@ -165,7 +191,8 @@ services:
     environment:
       GATEWAY_URL: http://gateway:8080
       FRONTEND_URL: http://frontend:3000
-      ADMIN_TOKEN: ${ADMIN_TOKEN:-}
+      ADMIN_EMAIL: ${ADMIN_EMAIL:-}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:-}
       RESOLVE_AFTER: ${RESOLVE_AFTER:-1h}
       PYTHONDONTWRITEBYTECODE: "1"
     volumes: ["./scripts/smoke_test.py:/smoke_test.py:ro"]
@@ -180,3 +207,4 @@ volumes:
   prediction-data: {}
   risk-data: {}
   alert-data: {}
+  user-data: {}

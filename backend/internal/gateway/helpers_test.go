@@ -32,6 +32,7 @@ func newFake(t *testing.T, h http.HandlerFunc) *fake {
 	f := &fake{handler: h}
 	f.Server = httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		body, _ := io.ReadAll(r.Body)
+		r.Body = io.NopCloser(strings.NewReader(string(body))) // so the handler can read it too
 		f.mu.Lock()
 		f.calls = append(f.calls, call{r.Method, r.URL.Path, r.URL.RawQuery, r.Header.Clone(), string(body)})
 		h := f.handler
@@ -71,8 +72,66 @@ const (
 	altJSON  = `{"alerts":[{"id":3,"locationId":7,"status":"open"}]}`
 )
 
+const (
+	userJSON    = `{"id":2,"email":"ada@example.org","displayName":"Ada","role":"user","disabled":false,"createdAt":"2026-05-01T09:00:00Z"}`
+	sessionJSON = `{"user":` + userJSON + `,"token":"fresh-token","expiresAt":"2030-01-02T03:04:05Z"}`
+)
+
+// Tokens the fake user service accepts.
+const (
+	adminToken = "admin-token"
+	userToken  = "user-token"
+)
+
+// userService is a fake user service: it resolves the two known tokens and answers
+// everything else with a plausible success.
+func userService(w http.ResponseWriter, r *http.Request) {
+	switch r.URL.Path {
+	case "/readyz":
+		jsonHandler(200, `{"status":"ready","service":"user","checks":{"database":"ok"}}`)(w, r)
+	case "/sessions/resolve":
+		var in struct{ Token string }
+		json.NewDecoder(r.Body).Decode(&in)
+		switch in.Token {
+		case adminToken:
+			jsonHandler(200, `{"userId":1,"role":"admin","email":"root@example.org"}`)(w, r)
+		case userToken:
+			jsonHandler(200, `{"userId":2,"role":"user","email":"ada@example.org"}`)(w, r)
+		default:
+			jsonHandler(401, `{"error":{"code":"invalid_session","message":"invalid or expired session"}}`)(w, r)
+		}
+	case "/register":
+		jsonHandler(201, sessionJSON)(w, r)
+	case "/login", "/me/password":
+		jsonHandler(200, sessionJSON)(w, r)
+	case "/me":
+		if r.Method == http.MethodDelete {
+			w.WriteHeader(204)
+			return
+		}
+		jsonHandler(200, userJSON)(w, r)
+	case "/logout":
+		w.WriteHeader(204)
+	default:
+		jsonHandler(200, `{}`)(w, r)
+	}
+}
+
+// resolves counts the session lookups the user service has served.
+func (f *fake) resolves() int {
+	f.mu.Lock()
+	defer f.mu.Unlock()
+	n := 0
+	for _, c := range f.calls {
+		if c.path == "/sessions/resolve" {
+			n++
+		}
+	}
+	return n
+}
+
 // backends is the full set of fake services.
-type backends struct{ weather, processing, prediction, risk, alert *fake }
+type backends struct{ weather, processing, prediction, risk, alert, user *fake }
 
 func healthyBackends(t *testing.T) *backends {
 	t.Helper()
@@ -96,16 +155,16 @@ func healthyBackends(t *testing.T) *backends {
 		prediction: newFake(t, route("prediction", jsonHandler(200, predJSON))),
 		risk:       newFake(t, route("risk", jsonHandler(200, riskJSON))),
 		alert:      newFake(t, route("alert", jsonHandler(200, altJSON))),
+		user:       newFake(t, userService),
 	}
 }
 
 func (b *backends) config() Config {
 	return Config{
 		WeatherURL: b.weather.URL, ProcessingURL: b.processing.URL, PredictionURL: b.prediction.URL,
-		RiskURL: b.risk.URL, AlertURL: b.alert.URL,
+		RiskURL: b.risk.URL, AlertURL: b.alert.URL, UserURL: b.user.URL,
 		UpstreamTimeout: time.Second, ClimateTimeout: 2 * time.Second,
 		BreakerFailures: 3, BreakerCooldown: time.Minute,
-		AdminToken: "admin-secret",
 	}
 }
 
@@ -157,6 +216,11 @@ func (g *gw) do(method, path, body string, headers ...string) resp {
 
 func (g *gw) get(path string, headers ...string) resp { return g.do("GET", path, "", headers...) }
 
+// admin and user call as a signed-in administrator or ordinary user (with a Bearer token).
 func (g *gw) admin(method, path, body string) resp {
-	return g.do(method, path, body, "Authorization", "Bearer admin-secret")
+	return g.do(method, path, body, "Authorization", "Bearer "+adminToken)
+}
+
+func (g *gw) user(method, path, body string) resp {
+	return g.do(method, path, body, "Authorization", "Bearer "+userToken)
 }

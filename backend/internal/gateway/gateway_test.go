@@ -57,7 +57,7 @@ func TestPostBodyAndContentTypeAreForwarded(t *testing.T) {
 	g := newGW(t, b.config())
 
 	body := `{"name":"Nagpur","latitude":21.1,"longitude":79.1}`
-	r := g.do("POST", "/api/v1/locations", body, "Content-Type", "application/json")
+	r := g.do("POST", "/api/v1/locations", body, "Content-Type", "application/json", "Authorization", "Bearer "+userToken)
 	if r.Code != 201 {
 		t.Fatalf("POST = %d %s", r.Code, r.Body)
 	}
@@ -67,15 +67,62 @@ func TestPostBodyAndContentTypeAreForwarded(t *testing.T) {
 	}
 }
 
-func TestCredentialsAndCookiesAreNeverForwarded(t *testing.T) {
+func TestClientHeadersNeverReachBackends(t *testing.T) {
 	b := healthyBackends(t)
 	g := newGW(t, b.config())
-	g.admin("GET", "/api/v1/subscriptions", "")
-	g.get("/api/v1/locations", "Cookie", "session=abc", "Authorization", "Bearer something", "X-Custom", "x")
-	for _, f := range []*fake{b.alert, b.weather} {
+	spoof := []string{
+		"Cookie", sessionCookie + "=abc; other=1", "Authorization", "Bearer something", "X-Custom", "x",
+		"X-User-ID", "1", "X-User-Role", "admin", "X-Client-IP", "6.6.6.6",
+	}
+	for _, path := range []string{"/api/v1/locations", "/api/v1/locations/7/climate", "/api/v1/alerts", "/api/v1/model"} {
+		g.get(path, spoof...)
+	}
+	g.do("POST", "/api/v1/auth/login", `{}`, spoof...)
+	g.do("POST", "/api/v1/auth/logout", ``, spoof...)
+	g.get("/api/v1/auth/session", spoof...)
+
+	// And on authenticated routes: the identity is the gateway's, never the client's.
+	g.do("GET", "/api/v1/subscriptions", "", "Authorization", "Bearer "+adminToken, "X-User-ID", "999", "X-User-Role", "user", "X-Client-IP", "6.6.6.6", "Cookie", "a=b", "X-Custom", "x")
+	g.do("GET", "/api/v1/me/watchlist", "", "Authorization", "Bearer "+userToken, "X-User-ID", "1", "X-User-Role", "admin")
+
+	seen := 0
+	for name, f := range map[string]*fake{"weather": b.weather, "processing": b.processing, "prediction": b.prediction, "risk": b.risk, "alert": b.alert, "user": b.user} {
 		for _, c := range f.calls {
-			if c.header.Get("Authorization") != "" || c.header.Get("Cookie") != "" || c.header.Get("X-Custom") != "" {
-				t.Errorf("a client header leaked upstream: %v", c.header)
+			seen++
+			if c.header.Get("Cookie") != "" || c.header.Get("X-Custom") != "" {
+				t.Errorf("%s: a client header leaked upstream: %v", name, c.header)
+			}
+			if c.path == "/sessions/resolve" || c.path == "/readyz" {
+				continue
+			}
+			if ip := c.header.Get("X-Client-IP"); ip != "" && ip != "198.51.100.1" {
+				t.Errorf("%s %s: X-Client-IP = %q, want the real client address, not the one the client claimed", name, c.path, ip)
+			}
+			// Only the user service is ever given a credential, and only to end that very session.
+			if got := c.header.Get("Authorization"); got != "" && !(name == "user" && c.path == "/logout" && got == "Bearer something") {
+				t.Errorf("%s %s: Authorization %q leaked upstream", name, c.path, got)
+			}
+		}
+	}
+	if seen == 0 {
+		t.Fatal("nothing reached the backends")
+	}
+
+	for _, c := range b.alert.calls {
+		if c.path == "/subscriptions" && (c.header.Get("X-User-ID") != "1" || c.header.Get("X-User-Role") != "admin") {
+			t.Errorf("admin route: identity headers = %q/%q, want 1/admin", c.header.Get("X-User-ID"), c.header.Get("X-User-Role"))
+		}
+	}
+	for _, c := range b.user.calls {
+		if c.path == "/watchlist" && (c.header.Get("X-User-ID") != "2" || c.header.Get("X-User-Role") != "user") {
+			t.Errorf("user route: identity headers = %q/%q, want 2/user (a client cannot choose them)", c.header.Get("X-User-ID"), c.header.Get("X-User-Role"))
+		}
+	}
+	// Public routes carry no identity at all, whatever the client claimed.
+	for _, f := range []*fake{b.weather, b.processing, b.prediction, b.risk} {
+		for _, c := range f.calls {
+			if c.header.Get("X-User-ID") != "" || c.header.Get("X-User-Role") != "" {
+				t.Errorf("%s: identity headers present on a public route: %v", c.path, c.header)
 			}
 		}
 	}
@@ -113,7 +160,7 @@ func TestPathIDsCannotSmuggleUpstreamPaths(t *testing.T) {
 func TestOversizedRequestBodiesAreRefused(t *testing.T) {
 	b := healthyBackends(t)
 	g := newGW(t, b.config())
-	r := g.do("POST", "/api/v1/locations", strings.Repeat("x", maxRequestBody+10))
+	r := g.user("POST", "/api/v1/locations", strings.Repeat("x", maxRequestBody+10))
 	if r.Code != http.StatusRequestEntityTooLarge || r.errCode() != "body_too_large" {
 		t.Errorf("= %d %s", r.Code, r.Body)
 	}
@@ -148,7 +195,7 @@ func TestSecurityHeaders(t *testing.T) {
 	}
 }
 
-// ---- admin gate ----
+// ---- access control ----
 
 var adminRoutes = []struct{ method, path string }{
 	{"DELETE", "/api/v1/locations/7"},
@@ -161,54 +208,109 @@ var adminRoutes = []struct{ method, path string }{
 	{"DELETE", "/api/v1/subscriptions/2"},
 	{"GET", "/api/v1/notifications"},
 	{"GET", "/api/v1/rejections/risk"},
+	{"GET", "/api/v1/admin/users"},
+	{"POST", "/api/v1/admin/users/2/disable"},
+	{"POST", "/api/v1/admin/users/2/enable"},
 }
 
-func TestAdminRoutesNeedTheToken(t *testing.T) {
+var userRoutes = []struct{ method, path string }{
+	{"POST", "/api/v1/locations"},
+	{"GET", "/api/v1/me/watchlist"},
+	{"PUT", "/api/v1/me/watchlist/7"},
+	{"DELETE", "/api/v1/me/watchlist/7"},
+	{"GET", "/api/v1/me/subscriptions"},
+	{"POST", "/api/v1/me/subscriptions"},
+	{"DELETE", "/api/v1/me/subscriptions/3"},
+	{"GET", "/api/v1/me/notifications"},
+	{"POST", "/api/v1/me/notifications/read"},
+	{"POST", "/api/v1/me/notifications/5/read"},
+	{"POST", "/api/v1/auth/password"},
+	{"DELETE", "/api/v1/auth/account"},
+}
+
+// nonUserCalls counts calls that reached the services behind the gateway, other than
+// the user service's session lookups and health checks.
+func (b *backends) nonUserCalls() int {
+	n := 0
+	for _, f := range []*fake{b.weather, b.processing, b.prediction, b.risk, b.alert} {
+		n += f.count()
+	}
+	for _, c := range b.user.calls {
+		if c.path != "/sessions/resolve" {
+			n++
+		}
+	}
+	return n
+}
+
+func TestProtectedRoutesNeedASession(t *testing.T) {
 	b := healthyBackends(t)
 	g := newGW(t, b.config())
 
-	for _, rt := range adminRoutes {
+	for _, rt := range append(adminRoutes, userRoutes...) {
 		if r := g.do(rt.method, rt.path, "{}"); r.Code != 401 || r.errCode() != "unauthorized" || r.Header().Get("WWW-Authenticate") == "" {
-			t.Errorf("%s %s without a token = %d %s", rt.method, rt.path, r.Code, r.Body)
+			t.Errorf("%s %s with no credentials = %d %s", rt.method, rt.path, r.Code, r.Body)
 		}
-		for _, bad := range []string{"Bearer wrong", "Bearer ", "Basic admin-secret", "admin-secret", "bearer admin-secret", "Bearer admin-secretX"} {
+		for _, bad := range []string{"Bearer wrong", "Bearer ", "Bearer", "Basic " + userToken, userToken, "bearer " + userToken, "Bearer " + userToken + "X"} {
 			if r := g.do(rt.method, rt.path, "{}", "Authorization", bad); r.Code != 401 {
 				t.Errorf("%s %s with %q = %d, want 401", rt.method, rt.path, bad, r.Code)
 			}
 		}
-	}
-	for _, f := range []*fake{b.weather, b.alert, b.risk, b.processing, b.prediction} {
-		if f.count() != 0 {
-			t.Fatal("a request without credentials reached a backend")
+		if r := g.do(rt.method, rt.path, "{}", "Cookie", sessionCookie+"=wrong"); r.Code != 401 {
+			t.Errorf("%s %s with a bad cookie = %d, want 401", rt.method, rt.path, r.Code)
 		}
 	}
+	if n := b.nonUserCalls(); n != 0 {
+		t.Errorf("%d requests without a valid session reached a backend", n)
+	}
+}
 
+func TestOrdinaryUsersCannotUseAdminRoutes(t *testing.T) {
+	b := healthyBackends(t)
+	g := newGW(t, b.config())
+	for _, rt := range adminRoutes {
+		if r := g.user(rt.method, rt.path, "{}"); r.Code != 403 || r.errCode() != "forbidden" {
+			t.Errorf("%s %s as a user = %d %s, want 403 forbidden", rt.method, rt.path, r.Code, r.Body)
+		}
+	}
+	if n := b.nonUserCalls(); n != 0 {
+		t.Errorf("%d admin requests from an ordinary user reached a backend", n)
+	}
+}
+
+func TestAdminRoutesAndUserRoutesWorkWithTheRightSession(t *testing.T) {
+	g := newGW(t, healthyBackends(t).config())
 	for _, rt := range adminRoutes {
 		if r := g.admin(rt.method, rt.path, "{}"); r.Code == 401 || r.Code == 403 || r.Code >= 500 {
-			t.Errorf("%s %s with the right token = %d %s", rt.method, rt.path, r.Code, r.Body)
+			t.Errorf("%s %s as an admin = %d %s", rt.method, rt.path, r.Code, r.Body)
+		}
+	}
+	for _, rt := range userRoutes {
+		for who, call := range map[string]func(string, string, string) resp{"user": g.user, "admin": g.admin} {
+			if r := call(rt.method, rt.path, "{}"); r.Code == 401 || r.Code == 403 || r.Code >= 500 {
+				t.Errorf("%s %s as %s = %d %s", rt.method, rt.path, who, r.Code, r.Body)
+			}
 		}
 	}
 }
 
-func TestAdminRoutesAreClosedWhenNoTokenIsConfigured(t *testing.T) {
+func TestProtectedRoutesFailClosedWhenTheUserServiceIsDown(t *testing.T) {
 	b := healthyBackends(t)
-	cfg := b.config()
-	cfg.AdminToken = ""
-	g := newGW(t, cfg)
-	for _, rt := range adminRoutes {
-		// Even an empty or guessed bearer must not open them.
-		for _, auth := range []string{"", "Bearer ", "Bearer anything"} {
-			r := g.do(rt.method, rt.path, "{}", "Authorization", auth)
-			if r.Code != 403 || r.errCode() != "admin_disabled" {
-				t.Errorf("%s %s auth=%q = %d %s, want 403 admin_disabled", rt.method, rt.path, auth, r.Code, r.Body)
-			}
+	g := newGW(t, b.config())
+	b.user.Close()
+	for _, rt := range []struct{ method, path string }{{"GET", "/api/v1/subscriptions"}, {"GET", "/api/v1/me/watchlist"}} {
+		if r := g.do(rt.method, rt.path, "", "Authorization", "Bearer "+adminToken); r.Code != 502 && r.Code != 503 {
+			t.Errorf("%s %s = %d %s, want a 5xx (never let anyone through)", rt.method, rt.path, r.Code, r.Body)
 		}
 	}
-	if b.weather.count()+b.alert.count() != 0 {
-		t.Error("an admin request reached a backend with no token configured")
+	if b.alert.count() != 0 {
+		t.Error("a request reached the alert service although the session could not be verified")
 	}
-	if r := g.get("/api/v1/locations"); r.Code != 200 {
-		t.Errorf("public routes must still work: %d", r.Code)
+	// Public pages do not depend on the user service at all.
+	for _, path := range []string{"/api/v1/locations", "/api/v1/locations/7/climate", "/api/v1/alerts"} {
+		if r := g.get(path); r.Code != 200 {
+			t.Errorf("GET %s = %d with the user service down", path, r.Code)
+		}
 	}
 }
 
@@ -220,6 +322,9 @@ func TestAdminRoutesMapToTheRightBackend(t *testing.T) {
 		up           *fake
 		wantPath     string
 	}{
+		{"GET", "/api/v1/admin/users", b.user, "/admin/users"},
+		{"POST", "/api/v1/admin/users/4/disable", b.user, "/admin/users/4/disable"},
+		{"POST", "/api/v1/admin/users/4/enable", b.user, "/admin/users/4/enable"},
 		{"DELETE", "/api/v1/locations/7", b.weather, "/locations/7"},
 		{"POST", "/api/v1/locations/7/refresh", b.weather, "/locations/7/refresh"},
 		{"PUT", "/api/v1/simulation", b.weather, "/simulation"},
@@ -294,7 +399,7 @@ func TestWritesHaveAStricterLimit(t *testing.T) {
 
 	codes := []int{}
 	for i := 0; i < 4; i++ {
-		codes = append(codes, g.do("POST", "/api/v1/locations", `{"name":"x","latitude":1,"longitude":1}`).Code)
+		codes = append(codes, g.user("POST", "/api/v1/locations", `{"name":"x","latitude":1,"longitude":1}`).Code)
 	}
 	if codes[0] != 201 || codes[1] != 201 || codes[2] != 429 || codes[3] != 429 {
 		t.Errorf("POST statuses = %v, want two accepted then limited", codes)

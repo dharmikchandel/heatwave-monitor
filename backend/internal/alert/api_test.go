@@ -294,3 +294,5 @@ func TestAnAssessmentReachesTheWebhookPromptly(t *testing.T) {
 		t.Errorf("payload = %+v, %v", note, err)
 	}
 }
+
+func decode(b []byte, v any) { json.Unmarshal(b, v) }

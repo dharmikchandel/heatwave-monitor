@@ -255,7 +255,7 @@ func (s *Service) resolve(ctx context.Context, tx *sql.Tx, a *Alert, level engin
 	s.resolved.Add(1)
 	s.log().Info("alert resolved", "alert_id", a.ID, "location_id", a.LocationID, "level", level)
 
-	subs, err := listSubscriptions(ctx, tx, &a.LocationID)
+	subs, err := listSubscriptions(ctx, tx, &a.LocationID, false)
 	if err != nil {
 		return err
 	}
@@ -282,7 +282,7 @@ func (s *Service) notifyAbove(ctx context.Context, tx *sql.Tx, alertID int64, le
 	if err != nil || a == nil {
 		return err
 	}
-	subs, err := listSubscriptions(ctx, tx, &a.LocationID)
+	subs, err := listSubscriptions(ctx, tx, &a.LocationID, false)
 	if err != nil {
 		return err
 	}

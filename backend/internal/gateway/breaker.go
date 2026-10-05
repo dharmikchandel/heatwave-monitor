@@ -1,7 +1,7 @@
 // Package gateway implements the API gateway: the single public entry point. It
 // proxies requests to the owning service, composes a location's climate picture
 // from several services in parallel (degrading gracefully when one is down), and
-// protects the system with timeouts, circuit breakers, rate limits and an admin gate.
+// protects the system with timeouts, circuit breakers, rate limits and session-based access control.
 package gateway
 
 import (

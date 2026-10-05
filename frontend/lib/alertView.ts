@@ -62,12 +62,16 @@ export function summarizeNotifications(notifications: Pick<AlertNotification, "s
   return { total, sent, pending, failed, cancelled, text };
 }
 
+/** The services a reading passes through, in order; the accounts service sits outside that flow. */
+export const PIPELINE_SERVICES: ServiceStatus["name"][] = ["weather", "processing", "prediction", "risk", "alert"];
+
 export const SERVICE_INFO: Record<ServiceStatus["name"], { label: string; role: string }> = {
   weather: { label: "Weather data", role: "Fetches live conditions and forecasts for every watched city." },
   processing: { label: "Data processing", role: "Repairs gaps, computes heat index and daily metrics." },
   prediction: { label: "Prediction", role: "Estimates the chance of a heatwave warning for each day." },
   risk: { label: "Risk assessment", role: "Turns probabilities and temperatures into risk levels, with reasons." },
   alert: { label: "Alerts & notifications", role: "Opens, escalates and resolves alerts, and notifies subscribers." },
+  user: { label: "Accounts", role: "Registers people, signs them in, and keeps their saved cities." },
 };
 
 export const CIRCUIT_TEXT: Record<ServiceStatus["circuit"], string> = {

@@ -2,7 +2,10 @@ module github.com/dharmikchandel/heatwave-monitor/backend
 
 go 1.26.0
 
-require modernc.org/sqlite v1.60.1
+require (
+	golang.org/x/crypto v0.57.0
+	modernc.org/sqlite v1.60.1
+)
 
 require (
 	github.com/dustin/go-humanize v1.0.1 // indirect

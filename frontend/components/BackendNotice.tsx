@@ -15,7 +15,9 @@ export default function BackendNotice({ what, reason, onRetry }: BackendNoticePr
   const Icon = notConnected ? Laptop : CloudOff;
   const message = notConnected
     ? `${what} come from the Heatwave Monitor backend, which is not connected to this deployment. The dashboard still works: it fetches weather directly and computes risk in your browser.`
-    : reason === "rate_limited"
+    : reason === "unauthorized"
+      ? `Sign in to see ${what.toLowerCase()}.`
+      : reason === "rate_limited"
       ? `The backend is busy right now. ${what} will load again in a moment.`
       : reason === "timeout"
         ? `The backend is slow to answer, so ${what.toLowerCase()} could not be loaded yet.`

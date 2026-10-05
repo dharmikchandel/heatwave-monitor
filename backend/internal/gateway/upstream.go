@@ -68,7 +68,7 @@ func (u *Upstream) Counts() (ok, failed, rejected int64) {
 	return u.ok.Load(), u.failed.Load(), u.rejected.Load()
 }
 
-// Do calls the upstream. A transport error, timeout or 5xx counts against the
+// Do calls the upstream with exactly the headers given. A transport error, timeout or 5xx counts against the
 // breaker; 4xx responses are the upstream working correctly and do not.
 func (u *Upstream) Do(ctx context.Context, method, path, rawQuery string, body []byte, header http.Header) (Result, error) {
 	if !u.Breaker.Allow() {
@@ -88,9 +88,9 @@ func (u *Upstream) Do(ctx context.Context, method, path, rawQuery string, body [
 		u.Breaker.Abort()
 		return Result{}, &CallError{Upstream: u.Name, Kind: KindUnavailable, Err: err}
 	}
-	for _, h := range []string{"Content-Type", "Accept"} { // never forward credentials or cookies
-		if v := header.Get(h); v != "" {
-			req.Header.Set(h, v)
+	for name, values := range header { // callers build this with Gateway.outbound, never from a client's headers
+		for _, v := range values {
+			req.Header.Add(name, v)
 		}
 	}
 

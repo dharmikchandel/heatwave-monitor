@@ -117,8 +117,8 @@ func (g *Gateway) Collector(w io.Writer) {
 	}
 	io.WriteString(w, "# HELP gateway_rate_limited_total Requests refused by rate limiting.\n# TYPE gateway_rate_limited_total counter\n")
 	writef(w, "gateway_rate_limited_total %d\n", g.rateLimited.Load())
-	io.WriteString(w, "# HELP gateway_admin_denied_total Admin requests refused.\n# TYPE gateway_admin_denied_total counter\n")
-	writef(w, "gateway_admin_denied_total %d\n", g.adminDenied.Load())
+	io.WriteString(w, "# HELP gateway_auth_denied_total Requests refused for missing, invalid or insufficient credentials.\n# TYPE gateway_auth_denied_total counter\n")
+	writef(w, "gateway_auth_denied_total %d\n", g.authDenied.Load())
 	io.WriteString(w, "# HELP gateway_climate_total Composed climate responses by status.\n# TYPE gateway_climate_total counter\n")
 	for i, name := range []string{"ok", "partial", "warming"} {
 		writef(w, "gateway_climate_total{status=%q} %d\n", name, g.climate[i].Load())

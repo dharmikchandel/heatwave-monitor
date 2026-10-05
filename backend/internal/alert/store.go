@@ -18,6 +18,7 @@ import (
 const (
 	ChannelWebhook = "webhook"
 	ChannelLog     = "log"
+	ChannelInApp   = "inapp" // shown in the user's inbox; there is nothing to deliver
 )
 
 // queryer is satisfied by both *sql.DB and *sql.Tx, so the same helpers serve
@@ -55,6 +56,7 @@ type Subscription struct {
 	CreatedAt  time.Time        `json:"createdAt"`
 
 	secret string
+	userID *int64
 }
 
 // NewSubscription is the input for creating a subscription.
@@ -65,6 +67,7 @@ type NewSubscription struct {
 	Target     string
 	Secret     string
 	Label      string
+	UserID     *int64 // set for in-app subscriptions, which belong to a user
 }
 
 func (s *Service) validateSubscription(in NewSubscription) (engine.RiskLevel, error) {
@@ -82,7 +85,14 @@ func (s *Service) validateSubscription(in NewSubscription) (engine.RiskLevel, er
 		return "", validationError("label must be at most 100 characters")
 	}
 
+	if (in.Channel == ChannelInApp) != (in.UserID != nil) {
+		return "", validationError("only the %q channel is for users, and it needs a user", ChannelInApp)
+	}
 	switch in.Channel {
+	case ChannelInApp:
+		if in.Target != "" || in.Secret != "" {
+			return "", validationError("the %s channel takes no target or secret", ChannelInApp)
+		}
 	case ChannelWebhook:
 		if err := s.validateWebhookURL(in.Target); err != nil {
 			return "", err
@@ -95,7 +105,7 @@ func (s *Service) validateSubscription(in NewSubscription) (engine.RiskLevel, er
 			return "", validationError("the log channel takes no target or secret")
 		}
 	default:
-		return "", validationError("channel must be %q or %q", ChannelWebhook, ChannelLog)
+		return "", validationError("channel must be %q, %q or %q", ChannelWebhook, ChannelLog, ChannelInApp)
 	}
 	return level, nil
 }
@@ -138,26 +148,19 @@ func (s *Service) CreateSubscription(ctx context.Context, in NewSubscription) (S
 	}
 	defer tx.Rollback()
 
-	if s.MaxSubscriptions > 0 {
-		var n int
-		if err := tx.QueryRowContext(ctx, `SELECT COUNT(*) FROM subscriptions WHERE active = 1`).Scan(&n); err != nil {
-			return Subscription{}, err
-		}
-		if n >= s.MaxSubscriptions {
-			return Subscription{}, ErrTooManySubs
-		}
-	}
 	var loc any
 	if in.LocationID != nil {
 		loc = *in.LocationID
 	}
-	res, err := tx.ExecContext(ctx,
-		`INSERT INTO subscriptions (location_id, min_level, channel, target, secret, label, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)`,
-		loc, string(level), in.Channel, in.Target, in.Secret, strings.TrimSpace(in.Label), ms(s.now()))
+	var id int64
+	if in.UserID != nil {
+		id, err = s.upsertUserSubscription(ctx, tx, in, level, loc)
+	} else {
+		id, err = s.insertOperatorSubscription(ctx, tx, in, level, loc)
+	}
 	if err != nil {
 		return Subscription{}, err
 	}
-	id, _ := res.LastInsertId()
 	sub, err := getSubscription(ctx, tx, id)
 	if err != nil {
 		return Subscription{}, err
@@ -165,21 +168,74 @@ func (s *Service) CreateSubscription(ctx context.Context, in NewSubscription) (S
 	return sub, tx.Commit()
 }
 
-const subscriptionColumns = `id, location_id, min_level, channel, target, secret, label, active, created_at`
+// insertOperatorSubscription adds a webhook or log subscription, subject to the operator limit.
+func (s *Service) insertOperatorSubscription(ctx context.Context, tx *sql.Tx, in NewSubscription, level engine.RiskLevel, loc any) (int64, error) {
+	if s.MaxSubscriptions > 0 {
+		var n int
+		if err := tx.QueryRowContext(ctx, `SELECT COUNT(*) FROM subscriptions WHERE active = 1 AND user_id IS NULL`).Scan(&n); err != nil {
+			return 0, err
+		}
+		if n >= s.MaxSubscriptions {
+			return 0, ErrTooManySubs
+		}
+	}
+	res, err := tx.ExecContext(ctx,
+		`INSERT INTO subscriptions (location_id, min_level, channel, target, secret, label, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)`,
+		loc, string(level), in.Channel, in.Target, in.Secret, strings.TrimSpace(in.Label), ms(s.now()))
+	if err != nil {
+		return 0, err
+	}
+	return res.LastInsertId()
+}
+
+// upsertUserSubscription follows a location for a user. Following it again just changes
+// the threshold, so the call is safe to repeat.
+func (s *Service) upsertUserSubscription(ctx context.Context, tx *sql.Tx, in NewSubscription, level engine.RiskLevel, loc any) (int64, error) {
+	var id int64
+	err := tx.QueryRowContext(ctx,
+		`SELECT id FROM subscriptions WHERE user_id = ? AND active = 1 AND COALESCE(location_id, 0) = COALESCE(?, 0)`, *in.UserID, loc).Scan(&id)
+	switch {
+	case err == nil:
+		_, err = tx.ExecContext(ctx, `UPDATE subscriptions SET min_level = ? WHERE id = ?`, string(level), id)
+		return id, err
+	case !errors.Is(err, sql.ErrNoRows):
+		return 0, err
+	}
+	var n int
+	if err := tx.QueryRowContext(ctx, `SELECT COUNT(*) FROM subscriptions WHERE user_id = ? AND active = 1`, *in.UserID).Scan(&n); err != nil {
+		return 0, err
+	}
+	if n >= s.maxUserSubs() {
+		return 0, ErrTooManySubs
+	}
+	res, err := tx.ExecContext(ctx,
+		`INSERT INTO subscriptions (location_id, min_level, channel, label, created_at, user_id) VALUES (?, ?, ?, ?, ?, ?)`,
+		loc, string(level), ChannelInApp, strings.TrimSpace(in.Label), ms(s.now()), *in.UserID)
+	if err != nil {
+		return 0, err
+	}
+	return res.LastInsertId()
+}
+
+const subscriptionColumns = `id, location_id, min_level, channel, target, secret, label, active, created_at, user_id`
 
 func scanSubscription(r interface{ Scan(...any) error }) (Subscription, error) {
 	var (
 		sub     Subscription
 		loc     sql.NullInt64
+		user    sql.NullInt64
 		level   string
 		active  int
 		created int64
 	)
-	if err := r.Scan(&sub.ID, &loc, &level, &sub.Channel, &sub.Target, &sub.secret, &sub.Label, &active, &created); err != nil {
+	if err := r.Scan(&sub.ID, &loc, &level, &sub.Channel, &sub.Target, &sub.secret, &sub.Label, &active, &created, &user); err != nil {
 		return Subscription{}, err
 	}
 	if loc.Valid {
 		sub.LocationID = &loc.Int64
+	}
+	if user.Valid {
+		sub.userID = &user.Int64
 	}
 	sub.MinLevel, sub.Active, sub.CreatedAt, sub.HasSecret = engine.RiskLevel(level), active == 1, fromMS(created), sub.secret != ""
 	return sub, nil
@@ -193,14 +249,20 @@ func getSubscription(ctx context.Context, q queryer, id int64) (Subscription, er
 	return sub, err
 }
 
-// ListSubscriptions returns active subscriptions, optionally only those for one location
-// (including the "every location" ones that apply to it).
+// ListSubscriptions returns the operators' active subscriptions, optionally only those for
+// one location (including the "every location" ones that apply to it). Users' own in-app
+// subscriptions are private to them and never listed here.
 func (s *Service) ListSubscriptions(ctx context.Context, locationID *int64) ([]Subscription, error) {
-	return listSubscriptions(ctx, s.DB, locationID)
+	return listSubscriptions(ctx, s.DB, locationID, true)
 }
 
-func listSubscriptions(ctx context.Context, q queryer, locationID *int64) ([]Subscription, error) {
+// listSubscriptions is also what alert matching uses, with operatorOnly false so that
+// users' subscriptions are included.
+func listSubscriptions(ctx context.Context, q queryer, locationID *int64, operatorOnly bool) ([]Subscription, error) {
 	query, args := `SELECT `+subscriptionColumns+` FROM subscriptions WHERE active = 1`, []any{}
+	if operatorOnly {
+		query += ` AND user_id IS NULL`
+	}
 	if locationID != nil {
 		query += ` AND (location_id IS NULL OR location_id = ?)`
 		args = append(args, *locationID)
@@ -221,14 +283,23 @@ func listSubscriptions(ctx context.Context, q queryer, locationID *int64) ([]Sub
 	return out, rows.Err()
 }
 
-// DeleteSubscription deactivates a subscription and cancels notifications still waiting for it.
+// DeleteSubscription deactivates an operator subscription and cancels notifications still
+// waiting for it. Users' subscriptions are theirs to remove (DeleteUserSubscription).
 func (s *Service) DeleteSubscription(ctx context.Context, id int64) error {
+	return s.deactivate(ctx, id, nil)
+}
+
+func (s *Service) deactivate(ctx context.Context, id int64, userID *int64) error {
 	tx, err := s.DB.BeginTx(ctx, nil)
 	if err != nil {
 		return err
 	}
 	defer tx.Rollback()
-	res, err := tx.ExecContext(ctx, `UPDATE subscriptions SET active = 0 WHERE id = ? AND active = 1`, id)
+	query, args := `UPDATE subscriptions SET active = 0 WHERE id = ? AND active = 1 AND user_id IS NULL`, []any{id}
+	if userID != nil {
+		query, args = `UPDATE subscriptions SET active = 0 WHERE id = ? AND active = 1 AND user_id = ?`, []any{id, *userID}
+	}
+	res, err := tx.ExecContext(ctx, query, args...)
 	if err != nil {
 		return err
 	}
@@ -473,4 +544,128 @@ func (s *Service) ListNotifications(ctx context.Context, status string, limit in
 		out = append(out, n)
 	}
 	return out, rows.Err()
+}
+
+// ---- users: subscriptions and inbox ----
+
+// UserSubscriptions lists a user's active in-app subscriptions.
+func (s *Service) UserSubscriptions(ctx context.Context, userID int64) ([]Subscription, error) {
+	rows, err := s.DB.QueryContext(ctx, `SELECT `+subscriptionColumns+` FROM subscriptions WHERE user_id = ? AND active = 1 ORDER BY id`, userID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	out := []Subscription{}
+	for rows.Next() {
+		sub, err := scanSubscription(rows)
+		if err != nil {
+			return nil, err
+		}
+		out = append(out, sub)
+	}
+	return out, rows.Err()
+}
+
+// DeleteUserSubscription stops a user following a location. Notifications they already
+// received stay in their inbox.
+func (s *Service) DeleteUserSubscription(ctx context.Context, userID, id int64) error {
+	return s.deactivate(ctx, id, &userID)
+}
+
+// InboxItem is one in-app notification, with the alert text as it was when it was sent.
+type InboxItem struct {
+	ID           int64            `json:"id"`
+	Kind         string           `json:"kind"`
+	Level        engine.RiskLevel `json:"level"`
+	CreatedAt    time.Time        `json:"createdAt"`
+	ReadAt       *time.Time       `json:"readAt,omitempty"`
+	AlertID      int64            `json:"alertId"`
+	LocationID   int64            `json:"locationId"`
+	LocationName string           `json:"locationName"`
+	Headline     string           `json:"headline"`
+	Summary      string           `json:"summary"`
+}
+
+// Inbox is a user's newest notifications and how many are unread overall.
+type Inbox struct {
+	Unread        int         `json:"unread"`
+	Notifications []InboxItem `json:"notifications"`
+}
+
+// Inbox returns the user's newest in-app notifications, including those from subscriptions
+// they have since removed.
+func (s *Service) Inbox(ctx context.Context, userID int64, limit int) (Inbox, error) {
+	box := Inbox{Notifications: []InboxItem{}}
+	if err := s.DB.QueryRowContext(ctx,
+		`SELECT COUNT(*) FROM notifications n JOIN subscriptions s ON s.id = n.subscription_id
+		  WHERE s.user_id = ? AND n.read_at IS NULL`, userID).Scan(&box.Unread); err != nil {
+		return Inbox{}, err
+	}
+	rows, err := s.DB.QueryContext(ctx,
+		`SELECT n.id, n.kind, n.level, n.created_at, n.read_at, n.payload
+		   FROM notifications n JOIN subscriptions s ON s.id = n.subscription_id
+		  WHERE s.user_id = ? ORDER BY n.id DESC LIMIT ?`, userID, limit)
+	if err != nil {
+		return Inbox{}, err
+	}
+	defer rows.Close()
+	for rows.Next() {
+		var (
+			it      InboxItem
+			level   string
+			created int64
+			read    sql.NullInt64
+			payload string
+			note    Notification
+		)
+		if err := rows.Scan(&it.ID, &it.Kind, &level, &created, &read, &payload); err != nil {
+			return Inbox{}, err
+		}
+		if err := json.Unmarshal([]byte(payload), &note); err != nil {
+			return Inbox{}, fmt.Errorf("decode notification %d: %w", it.ID, err)
+		}
+		it.Level, it.CreatedAt, it.ReadAt = engine.RiskLevel(level), fromMS(created), nullTime(read)
+		it.AlertID, it.LocationID, it.LocationName = note.Alert.ID, note.Alert.LocationID, note.Alert.LocationName
+		it.Headline, it.Summary = note.Alert.Headline, note.Alert.Summary
+		box.Notifications = append(box.Notifications, it)
+	}
+	return box, rows.Err()
+}
+
+// MarkRead marks one of the user's notifications read. Reading it again keeps the first time.
+func (s *Service) MarkRead(ctx context.Context, userID, id int64) error {
+	res, err := s.DB.ExecContext(ctx,
+		`UPDATE notifications SET read_at = COALESCE(read_at, ?)
+		  WHERE id = ? AND subscription_id IN (SELECT id FROM subscriptions WHERE user_id = ?)`, ms(s.now()), id, userID)
+	if err != nil {
+		return err
+	}
+	if n, _ := res.RowsAffected(); n == 0 {
+		return ErrNotFound
+	}
+	return nil
+}
+
+// MarkAllRead marks everything in the user's inbox read.
+func (s *Service) MarkAllRead(ctx context.Context, userID int64) error {
+	_, err := s.DB.ExecContext(ctx,
+		`UPDATE notifications SET read_at = ? WHERE read_at IS NULL
+		   AND subscription_id IN (SELECT id FROM subscriptions WHERE user_id = ?)`, ms(s.now()), userID)
+	return err
+}
+
+// ForgetUser deletes a user's subscriptions and inbox (used when the account is deleted).
+func (s *Service) ForgetUser(ctx context.Context, userID int64) error {
+	tx, err := s.DB.BeginTx(ctx, nil)
+	if err != nil {
+		return err
+	}
+	defer tx.Rollback()
+	if _, err := tx.ExecContext(ctx, `DELETE FROM notifications WHERE subscription_id IN (SELECT id FROM subscriptions WHERE user_id = ?)`, userID); err != nil {
+		return err
+	}
+	if _, err := tx.ExecContext(ctx, `DELETE FROM subscriptions WHERE user_id = ?`, userID); err != nil {
+		return err
+	}
+	return tx.Commit()
 }

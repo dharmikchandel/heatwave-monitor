@@ -41,6 +41,7 @@ func run(ctx context.Context, app *httpx.App) error {
 		PredictionURL: config.String("PREDICTION_BASE_URL", "http://localhost:8083"),
 		RiskURL:       config.String("RISK_BASE_URL", "http://localhost:8084"),
 		AlertURL:      config.String("ALERT_BASE_URL", "http://localhost:8085"),
+		UserURL:       config.String("USER_BASE_URL", "http://localhost:8086"),
 
 		UpstreamTimeout: config.Duration("UPSTREAM_TIMEOUT", 3*time.Second),
 		ClimateTimeout:  config.Duration("CLIMATE_TIMEOUT", 5*time.Second),
@@ -49,9 +50,10 @@ func run(ctx context.Context, app *httpx.App) error {
 
 		RateLimit:      gateway.RateConfig{PerMinute: config.Float("RATE_LIMIT_PER_MIN", 240), Burst: config.Int("RATE_LIMIT_BURST", 60)},
 		WriteRateLimit: gateway.RateConfig{PerMinute: config.Float("WRITE_RATE_LIMIT_PER_MIN", 10), Burst: config.Int("WRITE_RATE_LIMIT_BURST", 5)},
+		AuthRateLimit:  gateway.RateConfig{PerMinute: config.Float("AUTH_RATE_LIMIT_PER_MIN", 4), Burst: config.Int("AUTH_RATE_LIMIT_BURST", 8)},
 		TrustProxy:     config.Bool("TRUST_PROXY", false),
 		CORSOrigins:    origins,
-		AdminToken:     os.Getenv("ADMIN_TOKEN"),
+		SecureCookies:  config.Bool("COOKIE_SECURE", false),
 	}
 
 	gw := gateway.New(cfg, app.Log)
@@ -59,9 +61,6 @@ func run(ctx context.Context, app *httpx.App) error {
 	gw.Register(app.Mux)
 	app.Metrics.AddCollector(func(w io.Writer) { gw.Collector(w) })
 
-	if cfg.AdminToken == "" {
-		app.Log.Warn("ADMIN_TOKEN is not set: admin endpoints (delete, refresh, simulation, subscriptions, acknowledge) are disabled")
-	}
 	if cfg.TrustProxy {
 		app.Log.Info("trusting X-Forwarded-For for client addresses; only enable this behind a proxy you control")
 	}

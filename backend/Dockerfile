@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1
 #
-# One Dockerfile for all five Go services (weather, processing, risk, alert,
+# One Dockerfile for all six Go services (weather, processing, risk, alert, user,
 # gateway). Pick the service with --build-arg SERVICE=<name>.
 
 FROM golang:1.26-alpine AS build
@@ -13,8 +13,15 @@ RUN --mount=type=cache,target=/go/pkg/mod go mod download
 COPY cmd ./cmd
 COPY internal ./internal
 
+# Compile the shared packages once, here, before anything that depends on the service. Docker
+# builds the services side by side and merges identical steps, so this slow step (the pure-Go
+# SQLite driver) runs once instead of once per service, which also keeps memory use in check.
+# The flags must match the final build or the compiled packages are not reused.
+RUN --mount=type=cache,target=/go/pkg/mod --mount=type=cache,target=/root/.cache/go-build \
+    CGO_ENABLED=0 go build -trimpath ./internal/...
+
 ARG SERVICE
-RUN test -n "$SERVICE" || { echo "build with --build-arg SERVICE=<weather|processing|risk|alert|gateway>" >&2; exit 1; }
+RUN test -n "$SERVICE" || { echo "build with --build-arg SERVICE=<weather|processing|risk|alert|user|gateway>" >&2; exit 1; }
 # Static binary (the SQLite driver is pure Go): no libc, no CGO, nothing to patch at runtime.
 RUN --mount=type=cache,target=/go/pkg/mod --mount=type=cache,target=/root/.cache/go-build \
     CGO_ENABLED=0 go build -trimpath -buildvcs=false -ldflags="-s -w" -o /out/service ./cmd/${SERVICE}

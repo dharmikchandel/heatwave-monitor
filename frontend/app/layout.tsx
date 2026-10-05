@@ -3,6 +3,7 @@ import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import FooterNote from "@/components/FooterNote";
 import Header from "@/components/Header";
+import { AuthProvider } from "@/lib/AuthContext";
 import { ClimateProvider } from "@/lib/ClimateContext";
 import "./globals.css";
 
@@ -19,7 +20,7 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Heatwave Monitor — Climate Intelligence Dashboard",
   description:
-    "Real-time heatwave monitoring, heat risk analytics, and early warning forecasts powered by client-side climate intelligence.",
+    "Heatwave monitoring, heat risk analytics, early-warning forecasts and alerts for any city.",
 };
 
 export const viewport: Viewport = {
@@ -56,13 +57,15 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
       </head>
       <body className="min-h-full flex flex-col bg-background text-foreground">
-        <ClimateProvider>
-          <Header />
-          <main className="mx-auto flex w-full max-w-7xl flex-1 flex-col gap-5 px-4 py-6 sm:px-6 lg:px-8">{children}</main>
-          <footer className="mx-auto w-full max-w-7xl px-4 py-6 text-center text-xs text-muted sm:px-6 lg:px-8">
-            <FooterNote />
-          </footer>
-        </ClimateProvider>
+        <AuthProvider>
+          <ClimateProvider>
+            <Header />
+            <main className="mx-auto flex w-full max-w-7xl flex-1 flex-col gap-5 px-4 py-6 sm:px-6 lg:px-8">{children}</main>
+            <footer className="mx-auto w-full max-w-7xl px-4 py-6 text-center text-xs text-muted sm:px-6 lg:px-8">
+              <FooterNote />
+            </footer>
+          </ClimateProvider>
+        </AuthProvider>
         <Analytics />
       </body>
     </html>

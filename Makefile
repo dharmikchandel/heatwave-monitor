@@ -6,22 +6,20 @@ SHELL := /bin/bash
 
 COMPOSE := docker compose -f deploy/docker-compose.yml --project-directory .
 
-# Where the API gateway listens (same for `make up` and `make dev`) and which admin token the
-# helpers send. Without ADMIN_TOKEN in .env they use "demo-token", which `make demo` and
-# `make dev` configure; `make up` leaves admin endpoints closed unless .env sets a token.
+# Where the API gateway listens (same for `make up` and `make dev`). The admin helpers sign in
+# as the administrator first (scripts/admin_token.sh reads the credentials from .env).
 GATEWAY_PORT ?= 8088
 GATEWAY      ?= http://localhost:$(GATEWAY_PORT)
 API          := $(GATEWAY)/api/v1
-ADMIN        := $(if $(ADMIN_TOKEN),$(ADMIN_TOKEN),demo-token)
-AUTH         := -H "Authorization: Bearer $(ADMIN)"
+AUTH         = -H "Authorization: Bearer $$(scripts/admin_token.sh)"
 JSON         := $(shell command -v jq >/dev/null 2>&1 && echo "jq ." || echo "python3 -m json.tool")
 ID           ?= 1
 
 .DEFAULT_GOAL := help
-.PHONY: help doctor \
+.PHONY: help doctor env \
         up demo down restart clean build logs ps \
         dev dev-stop dev-restart dev-status dev-logs dev-clean \
-        status cities climate alerts alerts-all notifications refresh scenario \
+        status cities climate alerts alerts-all notifications users refresh scenario admin-token \
         test test-go test-py test-ts lint fmt smoke \
         train vectors
 
@@ -31,14 +29,23 @@ help: ## show this list
 
 ##@ Run everything in Docker (needs Docker)
 
-up: ## build and start the system with LIVE weather (admin endpoints stay closed unless .env sets ADMIN_TOKEN)
+env: ## create .env (with a random administrator password) if it does not exist yet
+	@if [ -f .env ]; then echo ".env already exists; leaving it alone"; \
+	  grep -Eq '^ADMIN_PASSWORD=.+' .env || echo "note: ADMIN_PASSWORD is empty in .env, so no administrator account is created"; \
+	else \
+	  pw=$$(head -c 24 /dev/urandom | od -An -tx1 | tr -d ' \n'); \
+	  sed "s|^ADMIN_PASSWORD=.*|ADMIN_PASSWORD=$$pw|" .env.example > .env; \
+	  echo "created .env; administrator login: admin@heatwave.local / $$pw"; fi
+
+up: env ## build and start the system with LIVE weather
 	$(COMPOSE) up -d --build --wait
 	@echo; echo "frontend  http://localhost:$${FRONTEND_PORT:-3000}"; echo "api       $(API)/status"
 
-demo: ## build and start with SIMULATED weather + admin token, so you can create a heatwave: make scenario S=extreme
-	WEATHER_SOURCE=simulated ADMIN_TOKEN=$(ADMIN) RESOLVE_AFTER=$${RESOLVE_AFTER:-30s} COOLDOWN=$${COOLDOWN:-2m} \
+demo: env ## build and start with SIMULATED weather, so you can create a heatwave: make scenario S=extreme
+	WEATHER_SOURCE=simulated RESOLVE_AFTER=$${RESOLVE_AFTER:-30s} COOLDOWN=$${COOLDOWN:-2m} \
 	  $(COMPOSE) up -d --build --wait
-	@echo; echo "frontend  http://localhost:$${FRONTEND_PORT:-3000}"; echo "api       $(API)/status"; echo "admin token: $(ADMIN)"
+	@echo; echo "frontend  http://localhost:$${FRONTEND_PORT:-3000}"; echo "api       $(API)/status"
+	@echo "administrator login: see ADMIN_EMAIL / ADMIN_PASSWORD in .env"
 	@echo "try: make scenario S=extreme   |   make alerts   |   make climate ID=1"
 
 down: ## stop the system (data volumes are kept)
@@ -61,7 +68,7 @@ ps: ## show container status and health
 
 ##@ Run everything locally without Docker (needs go, uv, bun)
 
-dev: ## build and start all 7 processes locally with simulated weather
+dev: ## build and start all 8 processes locally with simulated weather
 	scripts/dev.sh start
 
 dev-stop: ## stop the local processes (data kept)
@@ -95,6 +102,12 @@ alerts: ## open alerts
 
 alerts-all: ## open and resolved alerts
 	@curl -sS "$(API)/alerts" | $(JSON)
+
+admin-token: ## sign in as the administrator and print a session token (for curl)
+	@scripts/admin_token.sh
+
+users: ## all accounts (admin)
+	@curl -sS $(AUTH) $(API)/admin/users | $(JSON)
 
 notifications: ## notification delivery state (admin): make notifications STATUS=failed
 	@curl -sS $(AUTH) "$(API)/notifications$(if $(STATUS),?status=$(STATUS))" | $(JSON)

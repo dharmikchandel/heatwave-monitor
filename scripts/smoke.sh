@@ -13,9 +13,9 @@ cd "$(dirname "$0")/.."
 # A separate compose project, volumes and ports, so a running dev stack is untouched.
 export COMPOSE_PROJECT_NAME=heatwave-smoke
 export WEATHER_SOURCE=simulated SIMULATED_SCENARIO=normal
-export ADMIN_TOKEN=smoke-admin-token
+export ADMIN_EMAIL=smoke-admin@heatwave.local ADMIN_PASSWORD=smoke-admin-password-1
 export RESOLVE_AFTER=3s COOLDOWN=10s POLL_INTERVAL=1h
-export WRITE_RATE_LIMIT_PER_MIN=600 WRITE_RATE_LIMIT_BURST=100
+export WRITE_RATE_LIMIT_PER_MIN=600 WRITE_RATE_LIMIT_BURST=100 AUTH_RATE_LIMIT_PER_MIN=600 AUTH_RATE_LIMIT_BURST=100
 export GATEWAY_PORT=18080 FRONTEND_PORT=13000
 export REVISION="${REVISION:-smoke}"
 
@@ -27,7 +27,7 @@ cleanup() {
   status=$?
   if [ "$status" -ne 0 ]; then
     echo; echo "==== smoke test failed (exit $status): recent service logs ===="
-    compose logs --no-color --tail=40 weather processing prediction risk alert gateway 2>/dev/null || true
+    compose logs --no-color --tail=40 weather processing prediction risk alert user gateway 2>/dev/null || true
   fi
   if [ -z "${SMOKE_KEEP:-}" ]; then
     compose down --volumes --remove-orphans >/dev/null 2>&1 || true

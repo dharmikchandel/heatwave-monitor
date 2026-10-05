@@ -10,6 +10,7 @@ import { searchLocations } from "@/lib/api";
 import type { GeoLocation } from "@/lib/types";
 import { cn, FOCUS_RING, formatClock, formatRelativeTime } from "@/lib/utils";
 import ThemeToggle from "./ThemeToggle";
+import UserMenu from "./UserMenu";
 
 const NAV_LINKS = [
   { href: "/", label: "Dashboard" },
@@ -243,6 +244,8 @@ export default function Header() {
         </div>
 
         <ThemeToggle />
+
+        <UserMenu />
 
         <div className="hidden flex-col items-end leading-tight lg:flex">
           <span className="flex items-center gap-1.5 text-xs font-medium">

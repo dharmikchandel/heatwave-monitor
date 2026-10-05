@@ -24,14 +24,14 @@ func TestStatusAllHealthy(t *testing.T) {
 	b := healthyBackends(t)
 	g := newGW(t, b.config())
 	r, body, svcs := statusOf(g)
-	if r.Code != 200 || body["status"] != "ok" || len(svcs) != 5 {
+	if r.Code != 200 || body["status"] != "ok" || len(svcs) != 6 {
 		t.Fatalf("= %d %s", r.Code, r.Body)
 	}
 	order := []string{}
 	for _, s := range body["services"].([]any) {
 		order = append(order, s.(map[string]any)["name"].(string))
 	}
-	if !eq(order, []string{"weather", "processing", "prediction", "risk", "alert"}) {
+	if !eq(order, []string{"weather", "processing", "prediction", "risk", "alert", "user"}) {
 		t.Errorf("services listed as %v, want pipeline order", order)
 	}
 	for name, s := range svcs {
@@ -84,7 +84,7 @@ func TestStatusDistinguishesNotReadyFromDown(t *testing.T) {
 
 func TestStatusAllDown(t *testing.T) {
 	b := healthyBackends(t)
-	for _, f := range []*fake{b.weather, b.processing, b.prediction, b.risk, b.alert} {
+	for _, f := range []*fake{b.weather, b.processing, b.prediction, b.risk, b.alert, b.user} {
 		f.Close()
 	}
 	g := newGW(t, b.config())

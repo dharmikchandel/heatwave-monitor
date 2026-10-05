@@ -63,7 +63,8 @@ type Service struct {
 	Cooldown time.Duration
 	// AllowedHosts, when non-empty, restricts webhook targets to these hostnames.
 	AllowedHosts     []string
-	MaxSubscriptions int           // 0 = unlimited
+	MaxSubscriptions int           // operator subscriptions (webhook/log); 0 = unlimited
+	MaxUserSubs      int           // in-app subscriptions per user; default 20
 	Retention        time.Duration // resolved alerts kept this long; default 30d
 
 	handled  atomic.Int64
@@ -85,6 +86,13 @@ func (s *Service) log() *slog.Logger {
 		return s.Log
 	}
 	return slog.New(slog.NewTextHandler(io.Discard, nil))
+}
+
+func (s *Service) maxUserSubs() int {
+	if s.MaxUserSubs > 0 {
+		return s.MaxUserSubs
+	}
+	return 20
 }
 
 func (s *Service) openLevel() engine.RiskLevel {

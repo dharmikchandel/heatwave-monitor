@@ -10,6 +10,7 @@ import HeatwaveRiskCard from "@/components/HeatwaveRiskCard";
 import MetricsGrid from "@/components/MetricsGrid";
 import SafetyAdvisory from "@/components/SafetyAdvisory";
 import SourceBadge from "@/components/SourceBadge";
+import WatchControls from "@/components/WatchControls";
 import { useClimate } from "@/lib/ClimateContext";
 import { cn, FOCUS_RING } from "@/lib/utils";
 
@@ -57,16 +58,19 @@ export default function Home() {
                   <h2 className="text-sm font-bold uppercase tracking-wide text-muted">{locationLabel || "Current Conditions"}</h2>
                   <SourceBadge />
                 </div>
-                <button
-                  type="button"
-                  onClick={() => setIsExportOpen(true)}
-                  className={cn(
-                    "flex items-center gap-1.5 rounded-full border border-surface-border bg-surface/60 px-3 py-1.5 text-xs font-semibold transition hover:bg-surface",
-                    FOCUS_RING,
-                  )}
-                >
-                  <FileDown className="h-3.5 w-3.5" aria-hidden="true" /> Export Report
-                </button>
+                <div className="flex flex-wrap items-start justify-end gap-3">
+                  <WatchControls />
+                  <button
+                    type="button"
+                    onClick={() => setIsExportOpen(true)}
+                    className={cn(
+                      "flex items-center gap-1.5 rounded-full border border-surface-border bg-surface/60 px-3 py-1.5 text-xs font-semibold transition hover:bg-surface",
+                      FOCUS_RING,
+                    )}
+                  >
+                    <FileDown className="h-3.5 w-3.5" aria-hidden="true" /> Export Report
+                  </button>
+                </div>
               </div>
               <MetricsGrid climateData={climateData} heatIndexC={assessment.heatIndexC} unit={unit} />
             </div>

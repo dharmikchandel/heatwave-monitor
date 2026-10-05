@@ -113,6 +113,7 @@ export type BackendFailure =
   | "unavailable" // unreachable, erroring or circuit open
   | "timeout"
   | "rate_limited"
+  | "unauthorized" // the backend wants a signed-in user (to add a new city)
   | "not_ready" // the backend has no data for this location yet
   | "bad_response";
 
@@ -127,6 +128,8 @@ export function describeFallback(reason: BackendFailure | null): string {
       return "No backend is configured; computing everything in your browser.";
     case "rate_limited":
       return "The backend is busy (rate limited); showing locally computed data.";
+    case "unauthorized":
+      return "Sign in to have the backend track new cities; showing locally computed data.";
     case "timeout":
       return "The backend is slow to respond; showing locally computed data.";
     case "not_ready":
@@ -316,6 +319,7 @@ function failureFor(status: number, body: unknown): Failure {
   const code = isRecord(body) && isRecord(body.error) ? body.error.code : undefined;
   if (code === "backend_not_configured") return new Failure("disabled");
   if (status === 429) return new Failure("rate_limited");
+  if (status === 401) return new Failure("unauthorized");
   if (status === 504) return new Failure("timeout");
   if (status === 404 && !isRecord(body)) return new Failure("disabled"); // an HTML 404: nothing serves /api/v1 here
   return new Failure(status >= 500 || status === 0 ? "unavailable" : "bad_response");
@@ -438,7 +442,8 @@ export function createBackendClient(options: BackendClientOptions = {}): Backend
       } catch (err) {
         if (signal?.aborted) throw err;
         const reason = err instanceof Failure ? err.reason : "unavailable";
-        // "disabled" and outages are worth remembering; a rate limit clears sooner; not_ready is per-location.
+        // "disabled" and outages are worth remembering; a rate limit clears sooner; not_ready and
+        // unauthorized are about one city (the others still work), so they are not remembered.
         if (reason === "disabled" || reason === "unavailable" || reason === "timeout" || reason === "bad_response") {
           downUntil = now() + (reason === "disabled" ? downCooldownMs * 4 : downCooldownMs);
           downReason = reason;
@@ -519,7 +524,7 @@ export interface AlertNotification {
   subscriptionId: number;
   kind: "opened" | "escalated" | "resolved";
   level: HeatRiskLevel;
-  channel: "webhook" | "log";
+  channel: "webhook" | "log" | "inapp";
   status: "pending" | "sent" | "failed" | "cancelled";
   attempts: number;
   createdAt: string;
@@ -533,7 +538,7 @@ export interface AlertDetail extends AlertRecord {
 }
 
 export interface ServiceStatus {
-  name: "weather" | "processing" | "prediction" | "risk" | "alert";
+  name: "weather" | "processing" | "prediction" | "risk" | "alert" | "user";
   /** "ok", "unavailable" (reachable but not ready) or "down". */
   status: "ok" | "unavailable" | "down";
   ready: boolean;

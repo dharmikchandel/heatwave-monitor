@@ -61,7 +61,7 @@ describe("overallMessage", () => {
 });
 
 test("every service the gateway reports has a name and role, and every circuit state an explanation", () => {
-  for (const name of ["weather", "processing", "prediction", "risk", "alert"] as const) {
+  for (const name of ["weather", "processing", "prediction", "risk", "alert", "user"] as const) {
     expect(SERVICE_INFO[name].label.length).toBeGreaterThan(3);
     expect(SERVICE_INFO[name].role.length).toBeGreaterThan(10);
   }

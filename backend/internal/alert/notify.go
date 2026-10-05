@@ -36,10 +36,16 @@ func (s *Service) createNotification(ctx context.Context, tx *sql.Tx, alertID in
 		return fmt.Errorf("alert %d vanished while notifying", alertID)
 	}
 
+	// An in-app notification needs no delivery: it is "sent" the moment it exists, and
+	// the user reads it from their inbox.
+	status, sentAt := "pending", any(nil)
+	if sub.Channel == ChannelInApp {
+		status, sentAt = "sent", ms(now)
+	}
 	res, err := tx.ExecContext(ctx,
-		`INSERT INTO notifications (alert_id, subscription_id, kind, level, created_at, channel, next_attempt_at, payload)
-		 VALUES (?, ?, ?, ?, ?, ?, ?, '')`,
-		alertID, sub.ID, kind, string(level), ms(now), sub.Channel, ms(now))
+		`INSERT INTO notifications (alert_id, subscription_id, kind, level, created_at, channel, status, next_attempt_at, sent_at, payload)
+		 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, '')`,
+		alertID, sub.ID, kind, string(level), ms(now), sub.Channel, status, ms(now), sentAt)
 	if err != nil {
 		return fmt.Errorf("create notification: %w", err)
 	}

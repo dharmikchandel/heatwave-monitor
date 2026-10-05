@@ -2,6 +2,7 @@
 
 import { createContext, useCallback, useContext, useEffect, useRef, useState, type ReactNode } from "react";
 import { ApiError, climateCacheKey, fetchClimateData, readCache, writeCache } from "./api";
+import { useAuth } from "./AuthContext";
 import { backend, climateFromBackend, insightFromBackend, riskFromBackend, type BackendFailure } from "./backend";
 import { assessHeatwave, buildDailyRiskForecast } from "./heatwaveEngine";
 import type { BackendInsight, ClimateData, DailyRiskForecast, DataSource, GeoLocation, HeatwaveAssessment } from "./types";
@@ -77,6 +78,7 @@ export function ClimateProvider({ children }: { children: ReactNode }) {
   const [backendRisk, setBackendRisk] = useState<ReturnType<typeof riskFromBackend>>(null);
   const [fallbackReason, setFallbackReason] = useState<BackendFailure | null>(null);
   const latestRequest = useRef(0); // ignore answers for a location the user has already left
+  const { version: authVersion } = useAuth();
 
   const locateDevice = useCallback(() => {
     if (typeof navigator === "undefined" || !navigator.geolocation) {
@@ -175,6 +177,19 @@ export function ClimateProvider({ children }: { children: ReactNode }) {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     if (location) loadClimateData(location);
   }, [location, loadClimateData]);
+
+  // Signing in or out changes what the backend lets this person do (adding a new city needs an
+  // account), so look again. The first value is the initial one: the load above already covers it.
+  const seenAuthVersion = useRef(authVersion);
+  useEffect(() => {
+    if (seenAuthVersion.current === authVersion) return;
+    seenAuthVersion.current = authVersion;
+    backend.reset();
+    // Synchronizes with the remote climate API after the signed-in user changed: the same
+    // unavoidable async fetch as the effect above, not derivable state.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    if (location) void loadClimateData(location);
+  }, [authVersion, location, loadClimateData]);
 
   function selectLocation(next: GeoLocation) {
     setLocationState(next);

@@ -4,7 +4,7 @@ import { Activity, AlertTriangle, CheckCircle2, XCircle } from "lucide-react";
 import BackendNotice from "@/components/BackendNotice";
 import ModelCard from "@/components/ModelCard";
 import ServiceStatusCard from "@/components/ServiceStatusCard";
-import { overallMessage, type Tone } from "@/lib/alertView";
+import { overallMessage, PIPELINE_SERVICES, type Tone } from "@/lib/alertView";
 import { fetchModelInfo, fetchSystemStatus, type SystemStatus } from "@/lib/backend";
 import { usePolling, useNow } from "@/lib/usePolling";
 import { cn, formatRelativeTime } from "@/lib/utils";
@@ -29,8 +29,8 @@ export default function StatusPage() {
       <div>
         <h1 className="text-xl font-bold tracking-tight sm:text-2xl">System Status</h1>
         <p className="mt-1 text-sm text-muted">
-          Each reading flows through five services in turn: weather data, processing, prediction, risk assessment and alerts. Here is how each is
-          doing, as seen by the gateway that fronts them.
+          Each reading flows through five services in turn: weather data, processing, prediction, risk assessment and alerts. A sixth keeps
+          accounts. Here is how each is doing, as seen by the gateway that fronts them.
         </p>
       </div>
 
@@ -41,10 +41,11 @@ export default function StatusPage() {
         <>
           <Overall data={status.data} stale={status.failure !== null} />
 
-          <ol className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3" aria-label="Services in pipeline order">
-            {status.data.services.map((service, i) => (
-              <ServiceStatusCard key={service.name} service={service} step={i + 1} />
-            ))}
+          <ol className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3" aria-label="Services, pipeline first">
+            {status.data.services.map((service) => {
+              const place = PIPELINE_SERVICES.indexOf(service.name);
+              return <ServiceStatusCard key={service.name} service={service} step={place < 0 ? null : place + 1} />;
+            })}
           </ol>
 
           {model.data && <ModelCard model={model.data} />}

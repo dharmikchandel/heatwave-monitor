@@ -13,19 +13,20 @@ DEV="$ROOT/.dev"
 BIN="$DEV/bin"; DATA="$DEV/data"; LOGS="$DEV/logs"; PIDS="$DEV/pids"
 
 # Startup order = pipeline order; the gateway and frontend come last.
-SERVICES=(weather processing prediction risk alert gateway frontend)
-GO_SERVICES=(weather processing risk alert gateway)
+SERVICES=(weather processing prediction risk alert user gateway frontend)
+GO_SERVICES=(weather processing risk alert user gateway)
 
 port_of() {
   case "$1" in
     weather) echo 8081;; processing) echo 8082;; prediction) echo 8083;; risk) echo 8084;;
-    alert) echo 8085;; gateway) echo "${GATEWAY_PORT:-8088}";; frontend) echo "${FRONTEND_PORT:-3000}";;
+    alert) echo 8085;; user) echo 8086;; gateway) echo "${GATEWAY_PORT:-8088}";; frontend) echo "${FRONTEND_PORT:-3000}";;
   esac
 }
 ready_path() { [ "$1" = frontend ] && echo / || echo /readyz; }
 
 # Defaults for manual testing (all overridable from the environment).
-: "${WEATHER_SOURCE:=simulated}" "${SIMULATED_SCENARIO:=normal}" "${ADMIN_TOKEN:=demo-token}"
+: "${WEATHER_SOURCE:=simulated}" "${SIMULATED_SCENARIO:=normal}"
+: "${ADMIN_EMAIL:=admin@heatwave.local}" "${ADMIN_PASSWORD:=dev-admin-password}"   # local use only
 : "${RESOLVE_AFTER:=30s}" "${COOLDOWN:=2m}" "${POLL_INTERVAL:=15m}" "${DEFAULT_LOG_SUBSCRIPTION:=true}"
 
 say() { printf '%s\n' "$*"; }
@@ -58,7 +59,7 @@ start_one() {
     die "port $port (needed by $s) is already in use: $(ss -ltnp 2>/dev/null | grep -E "[:.]${port}\s" | head -1 | tr -s ' ')"
   fi
 
-  local -a env_vars=("PORT=$port" "DB_PATH=$DATA/$s.db" "ADMIN_TOKEN=$ADMIN_TOKEN")
+  local -a env_vars=("PORT=$port" "DB_PATH=$DATA/$s.db")
   local -a cmd
   case "$s" in
     weather)    env_vars+=("WEATHER_SOURCE=$WEATHER_SOURCE" "SIMULATED_SCENARIO=$SIMULATED_SCENARIO" "POLL_INTERVAL=$POLL_INTERVAL" "PROCESSING_URL=http://127.0.0.1:8082/internal/events"); cmd=("$BIN/weather");;
@@ -66,9 +67,10 @@ start_one() {
     prediction) env_vars+=("RISK_URL=http://127.0.0.1:8084/internal/events" "PYTHONPATH=$ROOT/backend/prediction/src"); cmd=("$ROOT/backend/prediction/.venv/bin/python" -m prediction);;
     risk)       env_vars+=("ALERT_URL=http://127.0.0.1:8085/internal/events"); cmd=("$BIN/risk");;
     alert)      env_vars+=("RESOLVE_AFTER=$RESOLVE_AFTER" "COOLDOWN=$COOLDOWN" "DEFAULT_LOG_SUBSCRIPTION=$DEFAULT_LOG_SUBSCRIPTION"); cmd=("$BIN/alert");;
+    user)       env_vars+=("ADMIN_EMAIL=$ADMIN_EMAIL" "ADMIN_PASSWORD=$ADMIN_PASSWORD"); cmd=("$BIN/user");;
     gateway)    env_vars+=("WEATHER_BASE_URL=http://127.0.0.1:8081" "PROCESSING_BASE_URL=http://127.0.0.1:8082" "PREDICTION_BASE_URL=http://127.0.0.1:8083"
-                           "RISK_BASE_URL=http://127.0.0.1:8084" "ALERT_BASE_URL=http://127.0.0.1:8085" "CORS_ORIGINS=http://localhost:$(port_of frontend)"
-                           "WRITE_RATE_LIMIT_BURST=${WRITE_RATE_LIMIT_BURST:-50}" "TRUST_PROXY=true"); cmd=("$BIN/gateway");;
+                           "RISK_BASE_URL=http://127.0.0.1:8084" "ALERT_BASE_URL=http://127.0.0.1:8085" "USER_BASE_URL=http://127.0.0.1:8086" "CORS_ORIGINS=http://localhost:$(port_of frontend)"
+                           "WRITE_RATE_LIMIT_BURST=${WRITE_RATE_LIMIT_BURST:-50}" "AUTH_RATE_LIMIT_PER_MIN=60" "AUTH_RATE_LIMIT_BURST=30" "TRUST_PROXY=true"); cmd=("$BIN/gateway");;
     frontend)   env_vars+=("GATEWAY_URL=http://127.0.0.1:$(port_of gateway)"); cmd=(bun run dev);;
   esac
 
@@ -101,7 +103,7 @@ do_start() {
 The system is running (weather source: $WEATHER_SOURCE).
   frontend  http://localhost:$(port_of frontend)
   api       http://localhost:$(port_of gateway)/api/v1/status
-  admin token: $ADMIN_TOKEN
+  admin login: $ADMIN_EMAIL / $ADMIN_PASSWORD  (created on first start only)
 Try:  make status | make climate ID=1 | make scenario S=extreme | make alerts | make dev-logs
 Stop: make dev-stop
 MSG

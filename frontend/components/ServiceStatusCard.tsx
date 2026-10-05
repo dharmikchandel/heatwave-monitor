@@ -8,7 +8,8 @@ const STATUS_STYLE: Record<ServiceStatus["status"], { label: string; dot: string
   down: { label: "Down", dot: "bg-red-600", text: "text-red-700 dark:text-red-400" },
 };
 
-export default function ServiceStatusCard({ service, step }: { service: ServiceStatus; step: number }) {
+/** `step` is the service's place in the data pipeline, or null for one outside it (accounts). */
+export default function ServiceStatusCard({ service, step }: { service: ServiceStatus; step: number | null }) {
   const info = SERVICE_INFO[service.name] ?? { label: service.name, role: "" };
   const style = STATUS_STYLE[service.status];
   const checks = Object.entries(service.checks ?? {});
@@ -17,9 +18,11 @@ export default function ServiceStatusCard({ service, step }: { service: ServiceS
     <li className="glass-card flex flex-col gap-2 rounded-2xl p-4">
       <div className="flex items-start justify-between gap-2">
         <div className="flex items-center gap-2">
-          <span className="flex h-6 w-6 items-center justify-center rounded-full bg-surface text-[11px] font-bold text-muted" aria-hidden="true">
-            {step}
-          </span>
+          {step !== null && (
+            <span className="flex h-6 w-6 items-center justify-center rounded-full bg-surface text-[11px] font-bold text-muted" aria-hidden="true">
+              {step}
+            </span>
+          )}
           <h3 className="text-sm font-bold">{info.label}</h3>
         </div>
         <span className={cn("inline-flex items-center gap-1.5 text-xs font-semibold", style.text)}>

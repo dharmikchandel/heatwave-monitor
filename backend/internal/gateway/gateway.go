@@ -1,8 +1,6 @@
 package gateway
 
 import (
-	"crypto/sha256"
-	"crypto/subtle"
 	"errors"
 	"fmt"
 	"io"
@@ -18,7 +16,7 @@ import (
 // Config holds everything the gateway needs.
 type Config struct {
 	// Base URLs of the backend services, without a trailing path.
-	WeatherURL, ProcessingURL, PredictionURL, RiskURL, AlertURL string
+	WeatherURL, ProcessingURL, PredictionURL, RiskURL, AlertURL, UserURL string
 
 	UpstreamTimeout time.Duration // per call to one service; default 3s
 	ClimateTimeout  time.Duration // for the whole composed climate response; default 5s
@@ -28,9 +26,12 @@ type Config struct {
 
 	RateLimit      RateConfig // all requests, per client
 	WriteRateLimit RateConfig // POST/PUT/DELETE, per client, on top of RateLimit
-	TrustProxy     bool       // take the client address from X-Forwarded-For
+	AuthRateLimit  RateConfig // sign-in, registration and password changes, per client, on top of both
+	TrustProxy     bool       // take the client address from X-Forwarded-For and X-Forwarded-Proto
 	CORSOrigins    []string
-	AdminToken     string // bearer token for admin routes; empty disables them
+
+	SecureCookies bool          // always mark the session cookie Secure (otherwise only behind https)
+	SessionCache  time.Duration // how long a resolved session is remembered; default 5s, negative disables
 
 	Clock func() time.Time // for rate limiting and breakers; defaults to time.Now
 }
@@ -42,16 +43,17 @@ type Gateway struct {
 	cfg Config
 	log *slog.Logger
 
-	weather, processing, prediction, risk, alert *Upstream
+	weather, processing, prediction, risk, alert, user *Upstream
 
-	cors    CORS
-	limiter *Limiter
-	writes  *Limiter
+	cors     CORS
+	limiter  *Limiter
+	writes   *Limiter
+	auths    *Limiter
+	sessions *sessionCache
 
 	rateLimited atomic.Int64
-	adminDenied atomic.Int64
+	authDenied  atomic.Int64
 	climate     [3]atomic.Int64 // ok, partial, warming
-	tokenHash   [32]byte
 }
 
 // New builds a gateway. Zero-valued settings take their defaults.
@@ -71,9 +73,15 @@ func New(cfg Config, log *slog.Logger) *Gateway {
 	g := &Gateway{cfg: cfg, log: log, cors: CORS{Origins: cfg.CORSOrigins}}
 	g.limiter = NewLimiter(cfg.RateLimit, cfg.Clock)
 	g.writes = NewLimiter(cfg.WriteRateLimit, cfg.Clock)
-	if cfg.AdminToken != "" {
-		g.tokenHash = sha256.Sum256([]byte(cfg.AdminToken))
+	g.auths = NewLimiter(cfg.AuthRateLimit, cfg.Clock)
+	switch {
+	case cfg.SessionCache == 0:
+		cfg.SessionCache = 5 * time.Second
+	case cfg.SessionCache < 0:
+		cfg.SessionCache = 0
 	}
+	g.cfg = cfg
+	g.sessions = newSessionCache(cfg.SessionCache, cfg.Clock)
 
 	up := func(name, base string) *Upstream {
 		return &Upstream{
@@ -89,27 +97,26 @@ func New(cfg Config, log *slog.Logger) *Gateway {
 	g.prediction = up("prediction", cfg.PredictionURL)
 	g.risk = up("risk", cfg.RiskURL)
 	g.alert = up("alert", cfg.AlertURL)
+	g.user = up("user", cfg.UserURL)
 	return g
 }
 
 // upstreams lists the backends in pipeline order.
 func (g *Gateway) upstreams() []*Upstream {
-	return []*Upstream{g.weather, g.processing, g.prediction, g.risk, g.alert}
+	return []*Upstream{g.weather, g.processing, g.prediction, g.risk, g.alert, g.user}
 }
 
 // routeOpts says how a route is protected.
 type routeOpts struct {
-	admin bool // requires the admin token
+	auth   authLevel
+	strict bool // sign-in style route: also counts against the stricter auth rate limit
 }
 
 // route registers a handler behind the standard chain:
-// CORS headers -> security headers -> rate limits -> (admin gate) -> handler.
+// CORS headers -> security headers -> rate limits -> authentication -> handler.
 func (g *Gateway) route(mux *http.ServeMux, pattern string, opts routeOpts, h http.HandlerFunc) {
-	var next http.Handler = h
-	if opts.admin {
-		next = g.adminGate(next)
-	}
-	next = g.rateLimit(next)
+	next := g.authenticate(opts.auth, h)
+	next = g.rateLimit(opts.strict, next)
 	next = secureHeaders(next)
 	mux.Handle(pattern, g.cors.middleware(next))
 }
@@ -122,14 +129,17 @@ func secureHeaders(next http.Handler) http.Handler {
 	})
 }
 
-// rateLimit applies the general limit to every request and the stricter write
-// limit to anything that changes state.
-func (g *Gateway) rateLimit(next http.Handler) http.Handler {
+// rateLimit applies the general limit to every request, the stricter write limit to
+// anything that changes state, and the strictest to sign-in style routes.
+func (g *Gateway) rateLimit(strict bool, next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		key := ClientKey(r, g.cfg.TrustProxy)
 		limiters := []*Limiter{g.limiter}
-		if r.Method != http.MethodGet && r.Method != http.MethodHead {
+		if !safeMethod(r.Method) {
 			limiters = append(limiters, g.writes)
+		}
+		if strict {
+			limiters = append(limiters, g.auths)
 		}
 		for _, l := range limiters {
 			if ok, wait, _ := l.Allow(key); !ok {
@@ -144,35 +154,14 @@ func (g *Gateway) rateLimit(next http.Handler) http.Handler {
 	})
 }
 
-// adminGate requires "Authorization: Bearer <ADMIN_TOKEN>". With no token
-// configured the admin routes are closed to everyone, so a forgotten setting can
-// never leave them open.
-func (g *Gateway) adminGate(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if g.cfg.AdminToken == "" {
-			g.adminDenied.Add(1)
-			httpx.WriteError(w, r, http.StatusForbidden, "admin_disabled", "admin endpoints are disabled: no ADMIN_TOKEN is configured")
-			return
-		}
-		got, ok := strings.CutPrefix(r.Header.Get("Authorization"), "Bearer ")
-		sum := sha256.Sum256([]byte(got)) // compare fixed-size digests: constant time and no length leak
-		if !ok || subtle.ConstantTimeCompare(sum[:], g.tokenHash[:]) != 1 {
-			g.adminDenied.Add(1)
-			w.Header().Set("WWW-Authenticate", `Bearer realm="heatwave-monitor admin"`)
-			httpx.WriteError(w, r, http.StatusUnauthorized, "unauthorized", "a valid admin token is required")
-			return
-		}
-		next.ServeHTTP(w, r)
-	})
-}
-
 // Register adds the gateway's routes to mux.
 func (g *Gateway) Register(mux *http.ServeMux) {
-	public, admin := routeOpts{}, routeOpts{admin: true}
+	public, user, admin := routeOpts{}, routeOpts{auth: authUser}, routeOpts{auth: authAdmin}
+	signIn := routeOpts{strict: true}
+	changePassword := routeOpts{auth: authUser, strict: true}
 
-	// Public: reads, plus adding a city (the core feature of the search box).
+	// Public: reads of shared data.
 	g.route(mux, "GET /api/v1/locations", public, g.pass(g.weather, "/locations"))
-	g.route(mux, "POST /api/v1/locations", public, g.pass(g.weather, "/locations"))
 	g.route(mux, "GET /api/v1/locations/{id}", public, g.passID(g.weather, "/locations/%d"))
 	g.route(mux, "GET /api/v1/locations/{id}/climate", public, g.climateHandler)
 	g.route(mux, "GET /api/v1/alerts", public, g.pass(g.alert, "/alerts"))
@@ -180,7 +169,29 @@ func (g *Gateway) Register(mux *http.ServeMux) {
 	g.route(mux, "GET /api/v1/model", public, g.pass(g.prediction, "/model"))
 	g.route(mux, "GET /api/v1/status", public, g.statusHandler)
 
-	// Admin: anything that changes shared state, or exposes operational detail.
+	// Accounts and sessions.
+	g.route(mux, "POST /api/v1/auth/register", signIn, g.newSession("/register"))
+	g.route(mux, "POST /api/v1/auth/login", signIn, g.newSession("/login"))
+	g.route(mux, "POST /api/v1/auth/logout", public, g.logout)
+	g.route(mux, "GET /api/v1/auth/session", public, g.session)
+	g.route(mux, "POST /api/v1/auth/password", changePassword, g.newSession("/me/password"))
+	g.route(mux, "DELETE /api/v1/auth/account", changePassword, g.deleteAccount)
+
+	// Signed-in users: adding a city (the core feature of the search box), their watchlist,
+	// the cities they want alerts for, and their inbox.
+	g.route(mux, "POST /api/v1/locations", user, g.pass(g.weather, "/locations"))
+	g.route(mux, "GET /api/v1/me/watchlist", user, g.pass(g.user, "/watchlist"))
+	g.route(mux, "PUT /api/v1/me/watchlist/{id}", user, g.passID(g.user, "/watchlist/%d"))
+	g.route(mux, "DELETE /api/v1/me/watchlist/{id}", user, g.passID(g.user, "/watchlist/%d"))
+	g.route(mux, "GET /api/v1/me/subscriptions", user, g.pass(g.alert, "/my/subscriptions"))
+	g.route(mux, "POST /api/v1/me/subscriptions", user, g.pass(g.alert, "/my/subscriptions"))
+	g.route(mux, "DELETE /api/v1/me/subscriptions/{id}", user, g.passID(g.alert, "/my/subscriptions/%d"))
+	g.route(mux, "GET /api/v1/me/notifications", user, g.pass(g.alert, "/my/notifications"))
+	g.route(mux, "POST /api/v1/me/notifications/read", user, g.pass(g.alert, "/my/notifications/read"))
+	g.route(mux, "POST /api/v1/me/notifications/{id}/read", user, g.passID(g.alert, "/my/notifications/%d/read"))
+
+	// Administrators: anything that changes shared state, exposes operational detail or
+	// manages accounts.
 	g.route(mux, "DELETE /api/v1/locations/{id}", admin, g.passID(g.weather, "/locations/%d"))
 	g.route(mux, "POST /api/v1/locations/{id}/refresh", admin, g.passID(g.weather, "/locations/%d/refresh"))
 	g.route(mux, "GET /api/v1/simulation", admin, g.pass(g.weather, "/simulation"))
@@ -191,6 +202,9 @@ func (g *Gateway) Register(mux *http.ServeMux) {
 	g.route(mux, "DELETE /api/v1/subscriptions/{id}", admin, g.passID(g.alert, "/subscriptions/%d"))
 	g.route(mux, "GET /api/v1/notifications", admin, g.pass(g.alert, "/notifications"))
 	g.route(mux, "GET /api/v1/rejections/{service}", admin, g.rejections)
+	g.route(mux, "GET /api/v1/admin/users", admin, g.pass(g.user, "/admin/users"))
+	g.route(mux, "POST /api/v1/admin/users/{id}/disable", admin, g.setDisabled("disable"))
+	g.route(mux, "POST /api/v1/admin/users/{id}/enable", admin, g.setDisabled("enable"))
 }
 
 // pass proxies to a fixed upstream path.
@@ -220,33 +234,50 @@ func (g *Gateway) rejections(w http.ResponseWriter, r *http.Request) {
 	g.forward(w, r, up, "/rejections")
 }
 
-// forward sends the request to the upstream and relays the answer verbatim.
-func (g *Gateway) forward(w http.ResponseWriter, r *http.Request, up *Upstream, path string) {
-	var body []byte
-	if r.Body != nil && r.Method != http.MethodGet && r.Method != http.MethodHead {
-		var err error
-		body, err = io.ReadAll(http.MaxBytesReader(w, r.Body, maxRequestBody))
-		if err != nil {
-			var tooBig *http.MaxBytesError
-			if errors.As(err, &tooBig) {
-				httpx.WriteError(w, r, http.StatusRequestEntityTooLarge, "body_too_large", fmt.Sprintf("request body must be at most %d bytes", maxRequestBody))
-			} else {
-				httpx.WriteError(w, r, http.StatusBadRequest, "bad_request", "could not read the request body")
-			}
-			return
-		}
+// readBody reads a request's body, within the size limit. On failure it has already answered.
+func (g *Gateway) readBody(w http.ResponseWriter, r *http.Request) ([]byte, bool) {
+	if r.Body == nil || safeMethod(r.Method) {
+		return nil, true
 	}
-
-	res, err := up.Do(r.Context(), r.Method, path, r.URL.RawQuery, body, r.Header)
+	body, err := io.ReadAll(http.MaxBytesReader(w, r.Body, maxRequestBody))
 	if err != nil {
-		g.writeCallError(w, r, err)
-		return
+		var tooBig *http.MaxBytesError
+		if errors.As(err, &tooBig) {
+			httpx.WriteError(w, r, http.StatusRequestEntityTooLarge, "body_too_large", fmt.Sprintf("request body must be at most %d bytes", maxRequestBody))
+		} else {
+			httpx.WriteError(w, r, http.StatusBadRequest, "bad_request", "could not read the request body")
+		}
+		return nil, false
 	}
+	return body, true
+}
+
+// relay writes an upstream's answer to the client as it came.
+func (g *Gateway) relay(w http.ResponseWriter, res Result) {
 	if ct := res.Header.Get("Content-Type"); ct != "" {
 		w.Header().Set("Content-Type", ct)
 	}
+	if ra := res.Header.Get("Retry-After"); ra != "" {
+		w.Header().Set("Retry-After", ra)
+	}
 	w.WriteHeader(res.Status)
 	w.Write(res.Body)
+}
+
+// forward sends the request to the upstream and relays the answer verbatim. It returns
+// the status it answered with (0 when the call failed).
+func (g *Gateway) forward(w http.ResponseWriter, r *http.Request, up *Upstream, path string) int {
+	body, ok := g.readBody(w, r)
+	if !ok {
+		return 0
+	}
+	res, err := up.Do(r.Context(), r.Method, path, r.URL.RawQuery, body, g.outbound(r))
+	if err != nil {
+		g.writeCallError(w, r, err)
+		return 0
+	}
+	g.relay(w, res)
+	return res.Status
 }
 
 // writeCallError turns a failed upstream call into a uniform error response that
