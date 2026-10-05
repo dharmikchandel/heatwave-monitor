@@ -145,6 +145,9 @@ def pipeline() -> None:
 
     status, page = http("GET", FRONTEND + "/")
     check(status == 200 and "Heatwave" in str(page), "the frontend serves its page", status)
+    for path, heading in (("/alerts", "Heat Alerts"), ("/status", "System Status")):
+        status, page = http("GET", FRONTEND + path)
+        check(status == 200 and heading in str(page), f"the frontend serves its {path} page", status)
     status, via_frontend = http("GET", FRONTEND + "/api/v1/status")
     check(status == 200 and isinstance(via_frontend, dict) and via_frontend.get("status") == "ok",
           "the frontend proxies /api/v1 to the gateway (what the browser uses)", (status, via_frontend))

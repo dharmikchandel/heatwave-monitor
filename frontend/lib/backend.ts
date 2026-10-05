@@ -287,6 +287,40 @@ class Failure extends Error {
   }
 }
 
+/** One JSON request with a timeout. Network failures and timeouts become Failures; a caller's abort is rethrown. */
+async function requestJson(doFetch: Fetch, url: string, init: RequestInit | undefined, timeoutMs: number, signal?: AbortSignal) {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), timeoutMs);
+  const onAbort = () => controller.abort();
+  signal?.addEventListener("abort", onAbort);
+  try {
+    const res = await doFetch(url, { ...init, signal: controller.signal, headers: { Accept: "application/json", ...init?.headers } });
+    let body: unknown = null;
+    try {
+      body = await res.json();
+    } catch {
+      // not JSON: an HTML error page from a proxy in front of a dead backend, for instance
+    }
+    return { status: res.status, body };
+  } catch (err) {
+    if (signal?.aborted) throw err; // the caller moved on; not a backend failure
+    throw new Failure(controller.signal.aborted ? "timeout" : "unavailable");
+  } finally {
+    clearTimeout(timer);
+    signal?.removeEventListener("abort", onAbort);
+  }
+}
+
+/** Classify a non-success answer. */
+function failureFor(status: number, body: unknown): Failure {
+  const code = isRecord(body) && isRecord(body.error) ? body.error.code : undefined;
+  if (code === "backend_not_configured") return new Failure("disabled");
+  if (status === 429) return new Failure("rate_limited");
+  if (status === 504) return new Failure("timeout");
+  if (status === 404 && !isRecord(body)) return new Failure("disabled"); // an HTML 404: nothing serves /api/v1 here
+  return new Failure(status >= 500 || status === 0 ? "unavailable" : "bad_response");
+}
+
 export function createBackendClient(options: BackendClientOptions = {}): BackendClient {
   const baseUrl = options.baseUrl ?? API_BASE;
   const doFetch: Fetch = options.fetchImpl ?? ((input, init) => fetch(input, init));
@@ -318,38 +352,8 @@ export function createBackendClient(options: BackendClientOptions = {}): Backend
     }
   }
 
-  async function request(path: string, init: RequestInit | undefined, signal?: AbortSignal) {
-    const controller = new AbortController();
-    const timer = setTimeout(() => controller.abort(), timeoutMs);
-    const onAbort = () => controller.abort();
-    signal?.addEventListener("abort", onAbort);
-    try {
-      const res = await doFetch(baseUrl + path, { ...init, signal: controller.signal, headers: { Accept: "application/json", ...init?.headers } });
-      let body: unknown = null;
-      try {
-        body = await res.json();
-      } catch {
-        // not JSON: an HTML error page from a proxy in front of a dead backend, for instance
-      }
-      return { status: res.status, body };
-    } catch (err) {
-      if (signal?.aborted) throw err; // the caller moved on; not a backend failure
-      throw new Failure(controller.signal.aborted ? "timeout" : "unavailable");
-    } finally {
-      clearTimeout(timer);
-      signal?.removeEventListener("abort", onAbort);
-    }
-  }
-
-  /** Classify a non-success answer. */
-  function failureFor(status: number, body: unknown): Failure {
-    const code = isRecord(body) && isRecord(body.error) ? body.error.code : undefined;
-    if (code === "backend_not_configured") return new Failure("disabled");
-    if (status === 429) return new Failure("rate_limited");
-    if (status === 504) return new Failure("timeout");
-    if (status === 404 && !isRecord(body)) return new Failure("disabled"); // an HTML 404: nothing serves /api/v1 here
-    return new Failure(status >= 500 || status === 0 ? "unavailable" : "bad_response");
-  }
+  const request = (path: string, init: RequestInit | undefined, signal?: AbortSignal) =>
+    requestJson(doFetch, baseUrl + path, init, timeoutMs, signal);
 
   async function findOrRegister(loc: Place, signal?: AbortSignal): Promise<number> {
     const key = geoKey(loc.latitude, loc.longitude);
@@ -458,3 +462,116 @@ function safeLocalStorage(): KeyValueStorage | null {
 
 /** The app-wide client. */
 export const backend = createBackendClient();
+
+// ---- reading other endpoints (alerts, status, model) ----
+
+export type ApiRead<T> = { ok: true; data: T } | { ok: false; reason: BackendFailure };
+
+/**
+ * GET an endpoint and return its JSON. Unlike the climate client this has no failure
+ * memory: pages that poll (status, alerts) must keep asking so they notice recovery.
+ * An aborted request rejects, like fetch does.
+ */
+export async function readApi<T>(
+  path: string,
+  options: { signal?: AbortSignal; fetchImpl?: Fetch; baseUrl?: string; timeoutMs?: number; check?: (body: unknown) => body is T } = {},
+): Promise<ApiRead<T>> {
+  const doFetch: Fetch = options.fetchImpl ?? ((input, init) => fetch(input, init));
+  try {
+    const { status, body } = await requestJson(doFetch, (options.baseUrl ?? API_BASE) + path, undefined, options.timeoutMs ?? 5000, options.signal);
+    if (status !== 200) return { ok: false, reason: failureFor(status, body).reason };
+    if (body === null || (options.check && !options.check(body))) return { ok: false, reason: "bad_response" };
+    return { ok: true, data: body as T };
+  } catch (err) {
+    if (err instanceof Failure) return { ok: false, reason: err.reason };
+    throw err;
+  }
+}
+
+export type AlertStatus = "open" | "resolved";
+
+/** An alert as the alerts API serves it. */
+export interface AlertRecord extends BackendAlert {
+  details: {
+    observationId: number;
+    heatwaveExpected: boolean;
+    warningDays: string[];
+    rationale: string[];
+    method: string;
+    modelVersion: string;
+    peak: { date: string; probability: number; level: HeatRiskLevel };
+  };
+  updatedAt: string;
+  resolvedAt?: string;
+  acknowledgedAt?: string;
+  reopenCount: number;
+}
+
+export interface AlertTimelineEntry {
+  at: string;
+  kind: "opened" | "escalated" | "deescalated" | "resolved" | "reopened";
+  level: HeatRiskLevel;
+  note?: string;
+}
+
+export interface AlertNotification {
+  id: number;
+  subscriptionId: number;
+  kind: "opened" | "escalated" | "resolved";
+  level: HeatRiskLevel;
+  channel: "webhook" | "log";
+  status: "pending" | "sent" | "failed" | "cancelled";
+  attempts: number;
+  createdAt: string;
+  sentAt?: string;
+  lastError?: string;
+}
+
+export interface AlertDetail extends AlertRecord {
+  history: AlertTimelineEntry[];
+  notifications: AlertNotification[];
+}
+
+export interface ServiceStatus {
+  name: "weather" | "processing" | "prediction" | "risk" | "alert";
+  /** "ok", "unavailable" (reachable but not ready) or "down". */
+  status: "ok" | "unavailable" | "down";
+  ready: boolean;
+  latencyMs: number;
+  checks?: Record<string, string>;
+  error?: string;
+  /** The gateway's circuit breaker for this service. */
+  circuit: "closed" | "open" | "half-open";
+}
+
+export interface SystemStatus {
+  status: "ok" | "degraded" | "down";
+  services: ServiceStatus[];
+  checkedAt: string;
+}
+
+export interface ModelInfo {
+  loaded: boolean;
+  version?: string;
+  trainedAt?: string;
+  horizons?: number;
+  training?: { cities: string[]; years: string; samples: number; baseRate: number; target: string };
+  evaluation?: {
+    holdoutYears: string;
+    perHorizon: { horizon: number; auc: number; brier: number; brierClimatology: number }[];
+    leaveOneCityOut?: { cities: { city: string; auc: number | null }[] };
+  };
+}
+
+const isAlertList = (b: unknown): b is { alerts: AlertRecord[] } => isRecord(b) && Array.isArray(b.alerts);
+const isAlertDetail = (b: unknown): b is AlertDetail => isRecord(b) && typeof b.id === "number" && Array.isArray(b.history) && Array.isArray(b.notifications);
+const isSystemStatus = (b: unknown): b is SystemStatus => isRecord(b) && typeof b.status === "string" && Array.isArray(b.services);
+const isModelInfo = (b: unknown): b is ModelInfo => isRecord(b) && typeof b.loaded === "boolean";
+
+type ReadOptions = Parameters<typeof readApi>[1];
+
+export const fetchAlerts = (status: AlertStatus | "all", options?: ReadOptions) =>
+  readApi<{ alerts: AlertRecord[] }>(`/alerts?status=${status}&limit=100`, { ...options, check: isAlertList });
+export const fetchAlertDetail = (id: number, options?: ReadOptions) => readApi<AlertDetail>(`/alerts/${id}`, { ...options, check: isAlertDetail });
+export const fetchSystemStatus = (options?: ReadOptions) => readApi<SystemStatus>("/status", { ...options, check: isSystemStatus });
+export const fetchModelInfo = (options?: ReadOptions) => readApi<ModelInfo>("/model", { ...options, check: isModelInfo });

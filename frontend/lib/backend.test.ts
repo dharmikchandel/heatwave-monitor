@@ -5,8 +5,10 @@ import {
   climateFromBackend,
   createBackendClient,
   describeFallback,
+  fetchAlerts,
   geoKey,
   insightFromBackend,
+  readApi,
   riskFromBackend,
 } from "./backend";
 
@@ -373,4 +375,75 @@ test("reset() makes the next call really try the backend (the user pressed Retry
   c.reset();
   await c.fetchClimate(mumbai);
   expect(api.calls).toHaveLength(2);
+});
+
+// ---- readApi: the plain reader used by the alerts and status pages ----
+
+
+describe("readApi", () => {
+  const reply = (status: number, body: unknown) => async () => new Response(JSON.stringify(body), { status, headers: { "Content-Type": "application/json" } });
+
+  test("returns the parsed body", async () => {
+    const r = await readApi<{ a: number }>("/x", { fetchImpl: reply(200, { a: 1 }) });
+    expect(r).toEqual({ ok: true, data: { a: 1 } });
+  });
+
+  test("asks the right URL, as JSON", async () => {
+    let seen = null as { url: string; accept: string | null } | null; // assigned inside the fake fetch
+    await readApi("/alerts?status=open", {
+      fetchImpl: async (input, init) => {
+        seen = { url: String(input), accept: new Headers(init?.headers).get("Accept") };
+        return new Response("{}", { status: 200 });
+      },
+    });
+    expect(seen).toEqual({ url: "/api/v1/alerts?status=open", accept: "application/json" });
+  });
+
+  test("classifies failures the same way the climate client does", async () => {
+    const reason = async (status: number, body: unknown) => (await readApi("/x", { fetchImpl: reply(status, body) }) as { reason: string }).reason;
+    expect(await reason(429, { error: { code: "rate_limited" } })).toBe("rate_limited");
+    expect(await reason(504, { error: { code: "upstream_timeout" } })).toBe("timeout");
+    expect(await reason(503, { error: { code: "backend_not_configured" } })).toBe("disabled");
+    expect(await reason(503, { error: { code: "unavailable" } })).toBe("unavailable");
+    expect(await reason(400, { error: { code: "invalid_id" } })).toBe("bad_response");
+    const html = await readApi("/x", { fetchImpl: async () => new Response("<html>404</html>", { status: 404 }) });
+    expect(html).toEqual({ ok: false, reason: "disabled" });
+  });
+
+  test("rejects an answer of the wrong shape or a 200 that is not JSON", async () => {
+    const isList = (b: unknown): b is { alerts: unknown[] } => typeof b === "object" && b !== null && Array.isArray((b as { alerts?: unknown }).alerts);
+    expect(await readApi("/x", { fetchImpl: reply(200, { nope: 1 }), check: isList })).toEqual({ ok: false, reason: "bad_response" });
+    expect(await readApi("/x", { fetchImpl: async () => new Response("not json", { status: 200 }) })).toEqual({ ok: false, reason: "bad_response" });
+  });
+
+  test("network errors and timeouts are failures, not exceptions", async () => {
+    expect(await readApi("/x", { fetchImpl: async () => { throw new TypeError("Failed to fetch"); } })).toEqual({ ok: false, reason: "unavailable" });
+    const hang = (_i: RequestInfo | URL, init?: RequestInit) => new Promise<Response>((_res, rej) => init?.signal?.addEventListener("abort", () => rej(new DOMException("aborted", "AbortError"))));
+    expect(await readApi("/x", { fetchImpl: hang, timeoutMs: 20 })).toEqual({ ok: false, reason: "timeout" });
+  });
+
+  test("a caller who navigates away aborts the request (it rejects, like fetch)", async () => {
+    const controller = new AbortController();
+    const hang = (_i: RequestInfo | URL, init?: RequestInit) => new Promise<Response>((_res, rej) => init?.signal?.addEventListener("abort", () => rej(new DOMException("aborted", "AbortError"))));
+    const pending = readApi("/x", { fetchImpl: hang, signal: controller.signal, timeoutMs: 5000 });
+    controller.abort();
+    await expect(pending).rejects.toBeDefined();
+  });
+
+  test("has no failure memory: a polling page must notice the backend coming back", async () => {
+    let calls = 0;
+    const flaky = async () => {
+      calls++;
+      return calls < 3 ? new Response("{}", { status: 503 }) : new Response(JSON.stringify({ alerts: [] }), { status: 200 });
+    };
+    expect((await readApi("/x", { fetchImpl: flaky })).ok).toBe(false);
+    expect((await readApi("/x", { fetchImpl: flaky })).ok).toBe(false);
+    expect((await readApi("/x", { fetchImpl: flaky })).ok).toBe(true);
+    expect(calls).toBe(3);
+  });
+
+  test("fetchAlerts validates the list shape", async () => {
+    expect(await fetchAlerts("open", { fetchImpl: reply(200, { alerts: [] }) })).toEqual({ ok: true, data: { alerts: [] } });
+    expect(await fetchAlerts("open", { fetchImpl: reply(200, { alerts: "nope" }) })).toEqual({ ok: false, reason: "bad_response" });
+  });
 });
