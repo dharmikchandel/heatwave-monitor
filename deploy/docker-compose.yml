@@ -21,7 +21,7 @@ x-hardened: &hardened
     options: {max-size: "10m", max-file: "3"}
 
 x-go-build: &go-build
-  context: services
+  context: backend
   args:
     REVISION: ${REVISION:-dev}
 
@@ -62,7 +62,7 @@ services:
     <<: *hardened
     image: heatwave-monitor/prediction:${TAG:-dev}
     build:
-      context: services/prediction
+      context: backend/prediction
       args: {REVISION: "${REVISION:-dev}"}
     environment:
       PORT: "8083"
@@ -135,7 +135,8 @@ services:
     <<: *hardened
     image: heatwave-monitor/frontend:${TAG:-dev}
     build:
-      context: .
+      context: .                     # repo root: the build also needs testdata/
+      dockerfile: frontend/Dockerfile
       args: {REVISION: "${REVISION:-dev}"}
     depends_on:
       gateway: {condition: service_healthy}

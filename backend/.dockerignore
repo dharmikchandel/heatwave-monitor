@@ -1,0 +1,6 @@
+# The Go image only needs go.mod, go.sum, cmd/ and internal/. In particular, never
+# send the Python service (and its virtualenv) to the daemon.
+prediction
+bin
+data
+*.db*

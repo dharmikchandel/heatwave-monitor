@@ -1,4 +1,4 @@
-"""Train the heatwave probability model and write services/prediction/src/prediction/model.json.
+"""Train the heatwave probability model and write backend/prediction/src/prediction/model.json.
 
     cd scripts/train && uv run python train.py
 
@@ -42,10 +42,10 @@ from sklearn.metrics import brier_score_loss, log_loss, roc_auc_score
 from sklearn.preprocessing import StandardScaler
 
 HERE = Path(__file__).resolve().parent
-sys.path.insert(0, str(HERE.parents[1] / "services" / "prediction" / "src"))
+sys.path.insert(0, str(HERE.parents[1] / "backend" / "prediction" / "src"))
 from prediction.features import FEATURES, Day, day_features, expand_poly2  # noqa: E402  (shared with the service)
 
-OUT_PATH = HERE.parents[1] / "services" / "prediction" / "src" / "prediction" / "model.json"
+OUT_PATH = HERE.parents[1] / "backend" / "prediction" / "src" / "prediction" / "model.json"
 CACHE = HERE / ".cache"
 
 START, END = "1991-01-01", "2024-12-31"

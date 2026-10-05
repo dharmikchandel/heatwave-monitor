@@ -102,6 +102,17 @@ Note the **Danger** tier specifically requires two or more consecutive days at o
 ## Project Structure
 
 ```text
+frontend/     the Next.js app described above
+backend/      Go services + the Python prediction service
+deploy/       docker-compose
+scripts/      smoke test, local runner, model training
+testdata/     fixtures shared by the frontend and backend tests
+Makefile      one place for every run/test command: `make help`
+```
+
+Inside `frontend/`:
+
+```text
 app/
 ├── layout.tsx          # Root layout — theme bootstrap, ClimateProvider, Header, footer, Analytics
 ├── page.tsx             # Dashboard (/)
@@ -135,6 +146,8 @@ lib/
 **Prerequisites:** [Bun](https://bun.sh) (or npm/yarn/pnpm — swap the commands below accordingly).
 
 ```bash
+cd frontend
+
 # Install dependencies
 bun install
 
@@ -188,7 +201,7 @@ Weather and geocoding data is provided by the [Open-Meteo API](https://open-mete
 This project deploys cleanly to [Vercel](https://vercel.com) with zero configuration:
 
 1. Push this repository to GitHub/GitLab/Bitbucket.
-2. Import it in the [Vercel dashboard](https://vercel.com/new) — Next.js is auto-detected.
+2. Import it in the [Vercel dashboard](https://vercel.com/new) — Next.js is auto-detected. Set the project's **Root Directory** to `frontend`.
 3. Deploy. No environment variables are required.
 4. To see Web Analytics data, open the project in the Vercel dashboard and enable **Analytics** for it — the `<Analytics />` component is already wired into the app, but Vercel's dashboard toggle is a separate, one-time step.
 
